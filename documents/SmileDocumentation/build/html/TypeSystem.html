@@ -1,0 +1,728 @@
+
+<!DOCTYPE html>
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta content="Описание концепций, языковых и инструментальных средств функционально-потокового параллельного программирования." name="description" />
+<meta content="парадигмы программирования, функционально-потоковое параллельное программирование" name="keywords" />
+
+    <title>5. Заметки по поводу типов в Smile &#8212; документация smile </title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="shortcut icon" href="_static/smile48.png"/>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="6. Заметки по поводу функций в Smile" href="SmileFunctions.html" />
+    <link rel="prev" title="4. Синтаксис языка программирования Smile" href="SmileSyntaxRu.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             accesskey="I">указатель</a></li>
+        <li class="right" >
+          <a href="SmileFunctions.html" title="6. Заметки по поводу функций в Smile"
+             accesskey="N">вперёд</a> |</li>
+        <li class="right" >
+          <a href="SmileSyntaxRu.html" title="4. Синтаксис языка программирования Smile"
+             accesskey="P">назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">5. </span>Заметки по поводу типов в Smile</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="smile">
+<h1><span class="section-number">5. </span>Заметки по поводу типов в Smile<a class="headerlink" href="#smile" title="Ссылка на этот заголовок">¶</a></h1>
+<p>В документе проводится анализ возможных вариантов организации системы типоа в статически типизированном языке функционально-потокового параллельного программирования (СТЯФППП). В принципе, так как речь идет об организации данных, полученные результаты могут быть применены к различным языкам как функционального, так и императивного программирования. В целом используемые приемы больше затрагивают процедурный подход, в котором использование процедур (или функций), связанных с типом часто трактуется как разновидность объектно-ориентированного стиля.</p>
+<div class="section" id="id1">
+<h2><span class="section-number">5.1. </span>Введение<a class="headerlink" href="#id1" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Целью данного документа является описание системы типов, которую предполагается использовать в языке программирования Smile. Это описание опирается на анализ вариантов, затрагивающих различные аспекты реализации. К основным моментам, с которыми нужно определиться, относятся:</p>
+<ul class="simple">
+<li><p>представление статических типов в языке Smile;</p></li>
+<li><p>представление базовых типов и их связь с константами и константными выражениями;</p></li>
+<li><p>описание типов в функциях и описание функциональных типов;</p></li>
+<li><p>анализ возможности и вариантов использования структурной и именованной эквивалентности типов</p></li>
+<li><p>преобразование типов, включая (если это так называется) возможное их разыменование;</p></li>
+<li><p>определение новых типов пользователем, затрагивающих как статическую, так и динамическую типизацию;</p></li>
+<li><p>организация обобщений и анализ вариантов реализации полиморфизма типов с выбором варианта (вариантов) для текущей реализации, включая реализацию общего для всех типа (any).</p></li>
+</ul>
+<p>В основном этот документ пока трактуется как драфт. Он переродится в официальное сообщение (в составную часть официального сообщения) после реализации определенного варианта в языке программирования, получив при этом версию 1.0.</p>
+<p><em>На текущий момент пришел к следующему результату. Предполагается что для любых данных тип будет именованным, то есть, либо он будет базовым, либо будет сформированным в описании type.</em></p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p><strong>Smile</strong> - язык функционально-потокового параллельного программирования со статической типизацией. Изменение названия языка обусловлено существенной сменой парадигмы и иными концептам, лежащими в основе организации данных. Язык <strong>Пифагор</strong> (<strong>Pifagor</strong>) является динамически типизированным. Поэтому введение в него статических данных может привести к определенным несовместимостям ранее написанных программ. Вполне возможно, что <strong>Пифагор</strong> будет развиваться дальше в направлении, отличном от того, куда пойдет <strong>Smile</strong>. Поэтому изменение названия языка считаю вполне оправданным.</p>
+</div>
+</div>
+<div class="section" id="id2">
+<h2><span class="section-number">5.2. </span>Представление статических типов<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h2>
+<p>В языке программирования Smile предполагается использование статической типизации для всех типов данных, обеспечивающих формирование как агрегатов, так и обобщений. Вместе с тем следует отметить, что использование обобщений как при использовании полиморфизма, так и при его отсутствии (в мономорфных языках) автоматически ведет к тому, что тип альтернатив формируется и может быть определен только во время выполнения программы.
+Вопросы, связанные с обобщением данных рассматриваются после того, как будут описаны варианты, связанные с их агрегированием.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Можно отметить, что не существуют языков программирования, в которых теми или иными средствами нельзя было бы определять тип данных во время выполнения. Это объясняется тем, что практически во всех реальных задачах встречаются обобщения, задающие альтернативы, реальный тип специализаций в которых формируется только на этапе выполнения программы. Вопрос заключается только в том, каким образом осуществляется проверка типа во время выполнения. Используется полиморфизм или это происходит явным образом. Можно даже сказать, что статически типизированные языки в большей степени являются <em>статико-динамически типизированными</em>.</p>
+</div>
+<p>В любом языке можно выделить атомарные и составные (конструируемые) типы данных. К атомарным относятся неделимые типы, которые определяют базовую функциональность языка.
+Составные типы состоят из атомарных и могут быть как строго определенными, так и задаваемыми без наложения ряда ограничений, например, их размерности, которая может формироваться динамически во время выполнения программы. Атомарным типом соответствуют константы, для которых задан как способ их записи, так и ряд семантических параметров, например, диапазон. Составные типы образуют разнообразные структурные конфигурации и состоят из констант атомарного типа, а также из других структурных конфигураций, соответствующих семантике языка.</p>
+<p>Наряду с типами, описывающими организацию данных, существуют и описания функций, которые взаимодействуют с данными через описание типов аргументов и результатов. Функции также могут выступать в качестве данных. Поэтому для них характерен функциональный тип. Функции могут быть предопределенными и производными. Предопределенные функции определяют базовый набор операций языка над заданными атомарными (базовыми) типами данных и определенными видами составных типов. Их набор фиксирован. Производные функции создаются программистом и образуют именованные конструкции, состоящие из предопределенных функций, а также из производных функции, включая их рекурсивные определения. Каждой производной функции однозначно соответствует имя, задаваемое программистом или сигнатура, если допускается перегрузка имен фукнций. <em>Предполагается что в языке программирования smile будет реализована сигнатурная однозначность, при которой уникальность функции будет определяться по ее имени и типу аргумента</em>.</p>
+<p>Независимо от разновидности типа программа оперирует величинами, каждой из которых в текущий момент соответствует тип и значение. Это соответствие можно задать двойкой:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Величина</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">тип</span><span class="p">,</span> <span class="n">значение</span><span class="o">&gt;</span> <span class="o">.</span>
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h3><span class="section-number">5.2.1. </span>Атомарные типы<a class="headerlink" href="#id3" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Атомарные типы описываются путем задания их имени с предшествующим (без разделителя) значком &#64;.
+Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@int</span><span class="p">,</span> <span class="nd">@signal</span><span class="o">...</span>
+</pre></div>
+</div>
+<p>В языке имеются величины, обозначаемые идентификаторами. Для них в синтаксисе языка предусмотрено явное задание типа в виде:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Обозначение</span><span class="nd">@тип</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="nd">@int</span><span class="p">,</span> <span class="n">b</span><span class="nd">@bool</span><span class="p">,</span> <span class="n">A</span><span class="nd">@float</span><span class="o">...</span>
+</pre></div>
+</div>
+<p>Тип констант определяется их видом и текущим контекстом. При этом вид констант различного типа формируется за счет соответствующих синтаксических правил:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Целое</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;+:|&quot;</span><span class="o">-</span><span class="s2">&quot;]{/ цифра /}.</span>
+<span class="n">Действительное</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;+:|&quot;</span><span class="o">-</span><span class="s2">&quot;]{/ цифра /}&quot;</span><span class="o">.</span><span class="s2">&quot;{/ цифра /} [Порядок] | {/ цифра /} Порядок.</span>
+<span class="n">Порядок</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;E&quot;</span><span class="o">|</span><span class="s2">&quot;e&quot;</span><span class="p">)[</span><span class="s2">&quot;+:|&quot;</span><span class="o">-</span><span class="s2">&quot;]{/ цифра /}.</span>
+<span class="n">Булевское</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span> <span class="o">|</span> <span class="s2">&quot;false&quot;</span><span class="o">.</span>
+<span class="n">Символьное</span> <span class="o">=</span> <span class="s2">&quot;&#39;&quot;</span> <span class="n">значение_символа</span> <span class="s2">&quot;&#39;&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Текущий контекст позволяет на этапе компиляции рассматривать ряд констант как константы другого типа, что бывает удобным для сокращения описания. В частности, если целочисленная константа участвует в операциях над действительными числами, она автоматически преобразуется в действительное число. С другой стороны целочисленные константы 0 и 1 могут быть также автоматически преобразованы в булевские true и false, если используются в булевском контексте.
+Во всех остальных случаях необходимо использовать явное приведение одного типа к другому в соответствии с аксиоматикой языка. Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">123.5</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="mi">45</span><span class="p">:</span><span class="nb">float</span><span class="o">...</span>
+</pre></div>
+</div>
+<div class="section" id="id4">
+<h4><span class="section-number">5.2.1.1. </span>Основные атомарные типы<a class="headerlink" href="#id4" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Состав атомарных типов определяется аксиоматикой языка программирования. В принципе этот состав для концепции функционально-потокового параллельного программирования может изменяться, определяя тем самым различные языки (подъязыки), построенные на основе единого каркасного языка (праязыка), основной функцией которого является формирование общего программоформирующего фундамента. Этот фундамент определяется программо-формирующими операторами функционально-потоковой модели параллельных вычислений (ФПМПВ), а также составными типами данных, введенными для реализации статической системы типов.</p>
+<p>В данном случае предполагается формирование базового универсального подъязыка, содержащего атомарные типы, присущие традиционным языкам программирования. Помимо этого ряд атомарных типов входят в состав каркасного языка и поэтому имеются во всех подъязыках (каркасные атомарные типы). Наличие каркасных типов обуславливается их использованием в базовых программоформирующих операторах, без которых ФПМПВ не может быть сформирована.</p>
+<p>К каркасным атомарным типам относятся:</p>
+<ol class="arabic">
+<li><p>Сигнальный тип (&#64;signal), для которого отсутствует значение. В языке программирования его наличие задается символом восклицательного знака: «!». Описание в виде пары &lt;тип, значение&gt; выглядит следующим образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="nd">@signal</span><span class="p">,</span> <span class="n">null</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>где null означает отсутствие значения. При попытке получить значение сигнального типа формируется ошибка.</p>
+<p>Рассматриваемый универсальный язык имеет следующий состав атомарных типов.</p>
+<ol class="arabic simple">
+<li><p>Целочисленный тип (<code class="docutils literal notranslate"><span class="pre">&#64;int</span></code>). Предполагает в данном случае, что это 32 или 64 разрядные целые числа в зависимости от разрядности целых чисел в архитектуре компьютера (в соответствии с разрядностью типа int языка программирования C++). Данному типу соответствуют целочисленные константы.</p></li>
+<li><p>Действительный тип (<code class="docutils literal notranslate"><span class="pre">&#64;float</span></code>). Определяет 64-разрядные числа с плавающией точкой, аналогичные по представлению числам типа double языка программирования C++. Данному типу соответствуют действительные константы. Не относится к каркасному типу</p></li>
+<li><p>Булевский тип (<code class="docutils literal notranslate"><span class="pre">&#64;bool</span></code>). Определяет значения <code class="docutils literal notranslate"><span class="pre">true</span></code> и <code class="docutils literal notranslate"><span class="pre">false</span></code>. По представлению в памяти соответствуюет типу <code class="docutils literal notranslate"><span class="pre">bool</span></code> языка программирования C++.</p></li>
+<li><p>Символьный тип (<code class="docutils literal notranslate"><span class="pre">&#64;char</span></code>). Определяет отдельные символы в кодировке UTF-8. Данному типу соответствуют символьные константы языка.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>В ходе первоначальной реализации предполагается в качестве базовых реализовать следующие типы:</p>
+<ul class="simple">
+<li><p>signal;</p></li>
+<li><p>bool;</p></li>
+<li><p>int.</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h3><span class="section-number">5.2.2. </span>Составные (конструируемые) типы<a class="headerlink" href="#id5" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Составные типы объединяют атомарные и ранее созданные составные типы в более сложные конструкции. Основным для них является способ конструирования нового типа, а не то, каким образом этот тип описывается на атомарном уровне. Каждый язык программирования имеет свой набор составных типов, обеспечивающих специфические для этого языка методы их формирования. Для языка программирования Smile можно выделить следующие составные типы:</p>
+<ul class="simple">
+<li><p>вектор (<strong>vector</strong>);</p></li>
+<li><p>рой (<strong>swarm</strong>);</p></li>
+<li><p>очередь (<strong>queue</strong>);</p></li>
+<li><p>задержкe (<strong>delay</strong>);</p></li>
+<li><p>структуру (<strong>struct</strong>);</p></li>
+<li><p>обобщение (<strong>union</strong>).</p></li>
+</ul>
+<p>Помимо этого на базе общих основных типов можно создавать конкретные подтипы, ориентированные на поддержку конкретных конструкций.</p>
+<div class="section" id="id6">
+<h4><span class="section-number">5.2.2.1. </span>Вектор<a class="headerlink" href="#id6" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Вектор описывается с использованием как круглых скобок соответствующего вида, так и с возможностью представления через идентификаторы:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Вектор</span> <span class="o">=</span> <span class="s2">&quot;@&quot;</span><span class="p">[</span><span class="s2">&quot;vector&quot;</span><span class="p">]</span><span class="s2">&quot;(&quot;</span>
+          <span class="p">(</span> <span class="p">[</span><span class="n">Целое</span> <span class="o">|</span> <span class="n">ЦелочисленноеКонстантноеВыражение</span><span class="p">]</span> <span class="n">Тип</span> <span class="p">]</span> <span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s2">&quot;..&quot;</span> <span class="n">Тип</span><span class="p">)</span>
+       <span class="s2">&quot;)&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Данное описание позволяет формировать векторы, состоящие из элементов только одного типа. Это обеспечивает поддержку статической типизации, что необходимо для реализации компилируемого языка.</p>
+<p>Вектор, состоящий из двух целочисленных атомов:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">@</span><span class="p">(</span><span class="nd">@int</span><span class="p">,</span> <span class="nd">@int</span><span class="p">)</span> <span class="o">==</span> <span class="nd">@vector</span><span class="p">(</span><span class="nd">@int</span><span class="p">,</span><span class="nd">@int</span><span class="p">)</span> <span class="o">==</span> <span class="o">@</span><span class="p">(</span><span class="mi">2</span><span class="nd">@int</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Вместо повторения одинаковых и следующих подряд описаний допускается использовать коэффициент повторений. Например, обозначение <code class="docutils literal notranslate"><span class="pre">3&#64;int</span></code> является кратким обозначением цепочки однородных элементов эквивалетной из последовательности, не объединенной в структурную единицу.
+То есть:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span><span class="nd">@int</span> <span class="o">==</span> <span class="nd">@int</span><span class="p">,</span> <span class="nd">@int</span>
+</pre></div>
+</div>
+<p>В общем случае коэффициент повторения может быть задан не только целым числом на и целочисленным константным выражением, включающим и символические обозначения констант:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">N</span><span class="nd">@int</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">k</span><span class="p">):</span><span class="o">*</span><span class="nd">@real</span><span class="p">,</span> <span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="n">K</span><span class="p">):</span><span class="o">-</span><span class="nd">@char</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p><em>Пока в предварительной версии до такого глубокого погружения опускаться не планируется.</em></p>
+</div>
+<p>Предполагается, что данное выражение вычисляется во время компиляции для всех предопределенных векторов.</p>
+<p>Если вектор состоит из произвольного числа элементов, то вместо конкретного числа указывается многоточие из двух точек:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">@</span><span class="p">(</span><span class="o">..</span><span class="nd">@bool</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>При этом данный вид векторов допускается только при описании параметров функций или в случае их динамического порождения. В этом случае при вызове функции осуществляется подстановка вектора конкретной длины, известной во время ее выполнения. Аналогичным образом можно использовать обозначения по принципу единственного присваивания в случае динамического формирования вектора.</p>
+<p>В любом случае допускается использование векторов размерностью не менее единицы.</p>
+</div>
+<div class="section" id="id7">
+<h4><span class="section-number">5.2.2.2. </span>Рой<a class="headerlink" href="#id7" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Описание роя аналогично описанию вектора. Отличие заключается в использовании квадратных скобок вместо круглых:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Вектор</span> <span class="o">=</span> <span class="s2">&quot;@&quot;</span><span class="p">[</span><span class="s2">&quot;swarm&quot;</span><span class="p">]</span> <span class="s2">&quot;[&quot;</span>
+          <span class="p">(</span> <span class="p">[</span><span class="n">Целое</span> <span class="o">|</span> <span class="n">ЦелочисленноеКонстантноеВыражение</span><span class="p">]</span> <span class="n">Тип</span> <span class="p">]</span> <span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s2">&quot;..&quot;</span> <span class="n">Тип</span><span class="p">)</span>
+       <span class="s2">&quot;]&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Назначение роя заключается в описание независимых однотипных элементов, появляющихся в произвольный момент времени и асинхронно обрабатываемых как данные или функции с использованием оператора интерпретации. Рой также должен иметь фиксированный размер, известный перед его обработкой. Аналогичным образом допускается описание роя с изначально не заданной размерностью.</p>
+</div>
+<div class="section" id="id8">
+<h4><span class="section-number">5.2.2.3. </span>Очередь<a class="headerlink" href="#id8" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Описание очереди аналогично описанию вектора. Отличие заключается в обязательном использовании ключевого слова queue:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Вектор</span> <span class="o">=</span> <span class="s2">&quot;@&quot;</span> <span class="n">queue</span> <span class="s2">&quot;(&quot;</span>
+          <span class="p">(</span> <span class="p">[</span><span class="n">Целое</span> <span class="o">|</span> <span class="n">ЦелочисленноеКонстантноеВыражение</span><span class="p">]</span> <span class="n">Тип</span> <span class="p">]</span> <span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s2">&quot;..&quot;</span> <span class="n">Тип</span><span class="p">)</span>
+       <span class="s2">&quot;)&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Назначение очереди заключается в выдаче элементов по мере их появления независимо от того, на каком месте находится этот элемент в очереди из фиксированного числа элементов. Помимо этого в общем случае очередь может связываться со структурами данных неизвестной размерности (файлы, потоки управляющей информации и т.д.). В этом случае используется обозначение без указания размерности. Очередь считается готовой при появлении любого одного элемента. Описание функционирования (как и для прочих) в описании семантики.</p>
+</div>
+<div class="section" id="id9">
+<h4><span class="section-number">5.2.2.4. </span>Задержка<a class="headerlink" href="#id9" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Описание задержки отличается наличием только одного элемента, задающего тип. Данный элемент размещается в фигурных скобках, ключевое слово <code class="docutils literal notranslate"><span class="pre">delay</span></code> перед которыми может отсутствовать:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Задержка</span> <span class="o">=</span> <span class="s2">&quot;@&quot;</span><span class="p">[</span><span class="s2">&quot;delay&quot;</span><span class="p">]</span> <span class="s2">&quot;{&quot;</span> <span class="n">Тип</span> <span class="s2">&quot;}&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Назначение задержки заключается в описании выражений, выполнение которых необходимо задержать до выполнения некоторых условий. Помимо этого возможно использование задержки для задания приоритета выполнения в скобочных выражениях.</p>
+</div>
+<div class="section" id="id10">
+<h4><span class="section-number">5.2.2.5. </span>Структура<a class="headerlink" href="#id10" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Структура может состоять из набора разнотипных именованных элементов. Ей соответствует следующее синтаксическое описание:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Структура</span> <span class="o">=</span> <span class="s2">&quot;@&quot;</span><span class="n">struct</span> <span class="s2">&quot;(&quot;</span> <span class="n">Идентификатор</span> <span class="n">Тип</span> <span class="p">{</span><span class="s2">&quot;,&quot;</span> <span class="n">Идентификатор</span> <span class="n">Тип</span><span class="p">}</span> <span class="s2">&quot;)&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@struct</span><span class="p">(</span><span class="n">a</span><span class="nd">@int</span><span class="p">,</span> <span class="n">b</span><span class="nd">@signal</span><span class="p">,</span> <span class="n">flag</span><span class="nd">@bool</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Именованные поля структур используются для доступа к ним при выполнении функций. Заполнение полей структур может осуществляться централизованно с использованием указания имени формируемой структуры или децентрализованно по отдельным полям с использованием принципа единственного присваивания.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Вдальнейшем нужно будет описать более подробно.</p>
+</div>
+</div>
+<div class="section" id="id11">
+<h4><span class="section-number">5.2.2.6. </span>Обобщение<a class="headerlink" href="#id11" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Пока не описано.</p>
+</div>
+</div>
+</div>
+<div class="section" id="id12">
+<h2><span class="section-number">5.3. </span>Описание функциональных типов<a class="headerlink" href="#id12" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Любой из функциональных типов на уровне постпредставления (то есть, после компиляции) будет задаваться двойкой типов: именованным типом аргумента и именованным типом результата:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ОписаниеФункциональногоТипа</span> <span class="o">=</span> <span class="s2">&quot;@&quot;</span><span class="n">ИмяТипа</span> <span class="s2">&quot;-&gt;&quot;</span> <span class="s2">&quot;@&quot;</span><span class="n">ИмяТипа</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Это же касается и аксиоматики типов базовых операций.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Думаю, что можно будет допускать перегрузку имен функций, идентифицируя отличие по сигнатуре, которую предполагается определять по имени функции и типу аргумента. При этом, по всей видимости, необходимо, чтобы сигнатурные типы не перекрывались, то есть, чтобы обобщающий тип (такой вполне может появиться) не перекрывал входящий в него тип. В противном случае появится неоднозначность сигнатур. Использовать для идентификации тип результата считаю нецелесообразным. <em>Вместе с тем следует отметить, что пока вопрос об использовании перегрузки функций не проработан окончательно.</em></p>
+</div>
+<p>Определение функции задается следующим образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ОпределениеФункции</span> <span class="o">=</span> <span class="s2">&quot;funcdef&quot;</span> <span class="p">[[</span><span class="n">ИдентификаторАргумента</span><span class="p">]</span><span class="s2">&quot;@&quot;</span> <span class="n">ИмяТипаАргумента</span><span class="p">]</span> <span class="s2">&quot;-&gt;&quot;</span> <span class="n">ИмяТипаРезультата</span> <span class="n">ТелоФункции</span> <span class="p">[</span><span class="s2">&quot;;&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Примеры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">funcdef</span> <span class="n">ArgName</span><span class="nd">@Type1</span><span class="o">-&gt;</span><span class="nd">@Type2</span>
+</pre></div>
+</div>
+<p>Для прототипов функций имена аргументов и тело не указываются:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ПрототипФункции</span> <span class="o">=</span> <span class="s2">&quot;funcdef&quot;</span> <span class="p">[</span><span class="s2">&quot;@&quot;</span> <span class="n">ИмяТипаАргумента</span><span class="p">]</span> <span class="s2">&quot;-&gt;&quot;</span> <span class="n">ИмяТипаРезультата</span> <span class="p">[</span><span class="s2">&quot;;&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Примеры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">funcdef</span> <span class="nd">@Type1</span><span class="o">-&gt;</span><span class="nd">@Type2</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>В перспективе можно также подумать над различными вариантами сокращенных описаний, не нарушающих распознавание конструкций. Например, можно не указывать аргумент, если ввести имя по умолчанию в виде подчеркивания «_», что широко используется в различных языках программирования. Можно также опускать запятые и даже пробелы, а также знак <code class="docutils literal notranslate"><span class="pre">-&gt;</span></code>, если это не приводит к неоднозначному толкованию. Но весь этот сахар на потом, когда будет реализован основной каркас.</p>
+</div>
+<p>Предполагается перегрузка функций по именам за счет разного типа аргумента.
+Соответствующим образом это может идентифицироваться в именах файлов добавлением после имени функции обозначения типа аргумента <code class="docutils literal notranslate"><span class="pre">&#64;Type</span></code>. Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">abs</span><span class="nd">@int</span>
+<span class="nb">abs</span><span class="nd">@real</span>
+</pre></div>
+</div>
+<p>Аналогичным образом можно описывать и базовые функции, задавая их через различные именованные типы, которые и определяют отличие при одинаковом знаке операции. Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="o">+</span> <span class="o">&lt;&lt;</span> <span class="n">funcdef</span> <span class="nd">@IntPair</span><span class="o">-&gt;</span><span class="nd">@int</span>
+<span class="n">func</span><span class="o">+</span> <span class="o">&lt;&lt;</span> <span class="n">funcdef</span> <span class="nd">@RealPair</span><span class="o">-&gt;</span><span class="nd">@real</span>
+<span class="n">func</span><span class="o">+</span> <span class="o">&lt;&lt;</span> <span class="n">funcdef</span> <span class="nd">@BoolPair</span><span class="o">-&gt;</span><span class="nd">@bool</span>
+</pre></div>
+</div>
+<p>где предварительно определены имена типов, задающих аргументы, в описании типов:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IntPair</span>  <span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="o">@</span><span class="p">(</span><span class="mi">2</span><span class="nd">@int</span><span class="p">)</span>
+<span class="n">RealPair</span> <span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="o">@</span><span class="p">(</span><span class="mi">2</span><span class="n">real</span><span class="p">)</span>
+<span class="n">BoolPair</span> <span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="o">@</span><span class="p">(</span><span class="mi">2</span><span class="nd">@bool</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Возможно в будущем стоит подумать о заголовка функции без задания слова funcdef (то же можно подумать и для констант).
+Тогда описание заголовка функции может выглядеть следующим образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">FuncName</span><span class="o">&lt;&lt;</span> <span class="n">X</span><span class="nd">@ArgTypeName</span><span class="o">-&gt;</span><span class="nd">@ResTypeName</span>
+</pre></div>
+</div>
+<p>или:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">FuncName</span><span class="o">&lt;&lt;</span> <span class="nd">@ArgTypeName</span><span class="o">-&gt;</span><span class="nd">@ResTypeName</span>
+</pre></div>
+</div>
+<p>Все это нужно смотреть в ходе дальнейшей работы.</p>
+<div class="section" id="id13">
+<h3><span class="section-number">5.3.1. </span>Размышления по поводу именованной и структурной эквивалентности типов<a class="headerlink" href="#id13" title="Ссылка на этот заголовок">¶</a></h3>
+<p>На текущий момент привлекательной выглядит именованная эквиалентность, когда при описании типов аргумента и результата используются имена типов, ранее описанных в typedef. В этом случае упрощается сравнение взаимосвязанных функций. Вместе с тем существуют определенные проблемы, которые при непосредственном решении могут затруднить программирование. Пусть существует описание функции сложения:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">func</span><span class="o">+</span> <span class="o">&lt;&lt;</span> <span class="n">funcdef</span> <span class="nd">@IntPair</span><span class="o">-&gt;</span><span class="nd">@int</span>
+</pre></div>
+</div>
+<p>где:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IntPair</span> <span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="o">@</span><span class="p">(</span><span class="mi">2</span><span class="nd">@int</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Тогда при сложении двух целых чисел и использовании только именованной их эквивалентности придется вместо:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">):</span><span class="o">+</span>
+</pre></div>
+</div>
+<p>писать:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">):</span><span class="n">IntPair</span><span class="p">:</span><span class="o">+</span> <span class="p">,</span>
+</pre></div>
+</div>
+<p>что весьма неудобно. При этом все равно семантическому анализатору придется делать проверку на структурную эквивалентность операции приведения типа вместо аналогичной проверки для функции сложения.
+Возможны следующие варианты решения этой проблемы:</p>
+<ol class="arabic simple">
+<li><p>Отказ от именованной эквивалентности в описании типов аргумента и результата функции с переходом к структурной эквивалентности.</p></li>
+<li><p>Допустить в аналогичных выражениях анализ именованных типов на структурную эквивалентность с формируемыми данными.</p></li>
+</ol>
+<p>Пока предпочтительным выглядит второй вариант, обеспечивающий в целом более надежное приведение и преобразование типов. Помимо этого упрощается анализ эквивалентности сигнатур функций за счет сопоставления только на именованную эквивалентность.</p>
+<p>К одному из возможных недостатков такого подхода можно отнести необходимость задания имен типов для всех базовых операций формируемого языка программирования, что ведет к резервированию дополнительного множества имен.</p>
+</div>
+</div>
+<div class="section" id="id14">
+<h2><span class="section-number">5.4. </span>Расширение системы типов за счет использования методов поддержки полиморфизма<a class="headerlink" href="#id14" title="Ссылка на этот заголовок">¶</a></h2>
+<div class="section" id="id15">
+<h3><span class="section-number">5.4.1. </span>Рассматриваемые варианты<a class="headerlink" href="#id15" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Обобщений, определяющие альтернативные типы данных, используются практически в любой реальной программе. Основной их спецификой является определение типа артефакта во время выполнения. В процедурных языках это обычно осуществляется за счет явной проверки типов или признаков типов, явно задаваемых программистом. Например, в языке программирования Pascal признаки задаются в вариантных записях. В языке программирования C альтернативы, задаваемые в объединениях образно связываются с признаками, фиксируемыми в специально выделенной переменной.</p>
+<p>Современном программирование в большинстве ситуаций отказывается от явной проверки типов во время выполнения, заменяя ее на использование полиморфизма, что в целом повышает надежность программ и позволяет эволюционно расширять обобщения.</p>
+<p>Существует несколько интересных подходов, которым стоит уделить внимание. В данном случае проводится анализ отображения на ЯФППП следующих вариантов:</p>
+<ol class="arabic simple">
+<li><p>Использование наследования (или, в трактовке Вирта, расширения) данных (Объектно-ориентированный полиморфизм или ОО-полиморфизм).</p></li>
+<li><p>Применение интерфейсов в стиле языка программирования Go (Go-полиморфизм).</p></li>
+<li><p>Использование процедурно-параметрических обобщений (Процедурно-параметрический полиморфизм или ПП-полиморфизм).</p></li>
+</ol>
+<p>Предполагается рассмотреть особенности отображения этих вариантов на синтаксис языка и на основе этого провести сравнительный анализ полученных вариантов по следующим критериям:</p>
+<ul class="simple">
+<li><p>естественность отображения вводимых конструкций на синтаксис языка;</p></li>
+<li><p>удобство и естественность использования рассматриваемых вариантов при программировании;</p></li>
+<li><p>особенности реализации и эффективность реализации сопоставляемых подходов.</p></li>
+</ul>
+<p>Помимо этого предполагается проанализировать возможность совместного использования (или использования каких-то совместных комбинаций) с точки зрения их совместимости и перекрытия.</p>
+<p>Возможность реализации в ЯФППП различных вариантов полиморфизма во многом определяются дуализмом представления функции интерпретации, которая имеет два аргумента, один из которых трактуется как значение, а другой в качестве функции. Исходя из этого как префиксная запись <code class="docutils literal notranslate"><span class="pre">F^X</span></code>, так и и ее постфиксный аналог <code class="docutils literal notranslate"><span class="pre">X:F</span></code> могут толковаться двояко:</p>
+<ol class="arabic simple">
+<li><p>Функция <code class="docutils literal notranslate"><span class="pre">F</span></code> обрабатывает аргумент <code class="docutils literal notranslate"><span class="pre">X</span></code>, что соответствует традиционной трактовке процедурного программирования.</p></li>
+<li><p>Объект <code class="docutils literal notranslate"><span class="pre">X</span></code> вызывает свой метод <code class="docutils literal notranslate"><span class="pre">F</span></code>, что в принципе соответствует объектной трактовке.</p></li>
+</ol>
+<p>Такой дуализм подкрепляется еще и тем, что в реализации Smile в функциях предполагается использовать только именованные типы. Это должно повысить надежность программы за счет именованной эквивалентности. Помимо этого должны стать проще (?? то ли слово?) формальное доказательство корректности программ, а так же преобразование в параллельные программы написанные на традиционных (других?) языках программирования.</p>
+</div>
+<div class="section" id="id16">
+<h3><span class="section-number">5.4.2. </span>Наследование (расширение)<a class="headerlink" href="#id16" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Само по себе наследование, особенно когда речь идет о структурах, содержащих только данные, не является ОО атрибутом. Оно прекрасно может использоваться и в процедурных языках. Примерами таких языков являются Оберон и C++. Вместе с тем, в сочетании с методами, использование наследования является основным приемом формирования программных объектов в ОО языках программирования. Размещение внутри формируемого артефакта размещаются как данных, так и методов не вполне соответствует концепции функционального программирования (особенно для ФПППП). Однако существуют языки, в которых механизм наследования реализован структур, содержащих только данные, а виртуализация обеспечивается посредством процедур (функций) связанных с типом. В качестве примера можно привести языки Оберон-2 и Ада. Аналогичный подход в принципе может быть использован и в ЯФППП.</p>
+<div class="section" id="id17">
+<h4><span class="section-number">5.4.2.1. </span>Возможный вариант описания ОО-полиморфизма в ЯФППП<a class="headerlink" href="#id17" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Пуст <code class="docutils literal notranslate"><span class="pre">T</span></code> - базовый тип артефакта, определяемы при ссылке на значение как <code class="docutils literal notranslate"><span class="pre">&#64;T</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Определение артефакта <code class="docutils literal notranslate"><span class="pre">U</span></code>, расширяющего <code class="docutils literal notranslate"><span class="pre">T</span></code>, предполагается осуществлять следующим образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">U</span> <span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="n">T</span><span class="o">+</span><span class="n">РасширениеТипа</span> <span class="p">,</span>
+</pre></div>
+</div>
+<p>Где расширение типа - это дополнительные поля характеризующие специализацию, задаваемые с учетом использования методов описания, представленных выше.</p>
+<p><em>В связи с тем, что речь идет только об организации данных, возможно расширение типа за счет использования множественного наследования, хотя нужно внимательно посмотреть, насколько целесообразен и реализуем подобный вариант</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">U</span> <span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="n">T1</span><span class="p">,</span><span class="n">T2</span><span class="p">,</span><span class="n">Tn</span><span class="o">+</span><span class="n">РасширениеТипа</span>
+</pre></div>
+</div>
+<p><em>Следует однако отметить, что при таком варианте возникают непредвиденные сложности, которые пока сложно проанализировать. Поэтому на данном этапе от дальнейшего анализа этого варианта отказываюсь.</em></p>
+<p>Так как каждый вновь формируемый тип имеет имеет свое имя, задаваемое в соответствии с синтаксисом и семантикой языка, достаточно просто описать функции - обработчики специализаций, связанные с типом, расширяющие базовую функцию (по аналогии с процедедурами, связанными с типом, языка программирования Оберон-2).
+Например, если имеется функция <code class="docutils literal notranslate"><span class="pre">F</span></code> над базовым типом типом <code class="docutils literal notranslate"><span class="pre">T</span></code> и аргументом-сообщением W, описываемая как:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="p">(</span><span class="nd">@T</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">funcdef</span> <span class="n">x</span><span class="nd">@W</span><span class="o">-&gt;</span><span class="nd">@Q</span> <span class="o">...</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>то ее расширение будет отличаться указанием типа &#64;U дочернего расширения:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="p">(</span><span class="nd">@U</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">funcdef</span> <span class="n">x</span><span class="nd">@W</span><span class="o">-&gt;</span><span class="nd">@Q</span> <span class="o">....</span>
+</pre></div>
+</div>
+<p>Таким образом, формируемое описание функции практически ничем не отличается от описание ее перегрузки, осуществляемой при статическом полиморфизме. И в том и другом случае идентификация осуществляется по сигнатуре, что отображается в разных именах, задаваемых при размещении в репозитории:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="nd">@T@W</span> <span class="o">-</span> <span class="n">для</span> <span class="n">первой</span> <span class="n">функции</span><span class="p">,</span>
+<span class="n">F</span><span class="nd">@U@W</span> <span class="o">-</span> <span class="n">для</span> <span class="n">второй</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>В том случае, если для расширения типа отсутствует функция, вызывается функция родительского типа. Родительская функция может быть абстрактной. В этом случае необходимо наличие всех обработчиков специализаций, каждый из которых обрабатывает свой расширяемый тип.</p>
+<p>При вызове функции в программе подставляется функция, соответствующая своему расширению типа или родительскому типу, если свой обработчик специализации отсутствует.</p>
+<p>В случае с множественным наследованием возможны варианты, когда для различных базовых типов будут свои функции. В этом случае обработчики специализаций могут быть прописаны в соответствии с функциями каждого базового типа. Пусть даны следующие обработчики обобщений:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F1</span><span class="p">(</span><span class="nd">@T1</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">prefunc</span> <span class="nd">@W1</span><span class="o">-&gt;</span><span class="nd">@Q</span>
+<span class="n">F2</span><span class="p">(</span><span class="nd">@T2</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">prefunc</span> <span class="nd">@W2</span><span class="o">-&gt;</span><span class="nd">@R</span>
+</pre></div>
+</div>
+<p>Тогда для расширения типа <code class="docutils literal notranslate"><span class="pre">U</span></code> можно будет (с учетом вышесказанного) написать следующие обработчики специализаций:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F1</span> <span class="o">&lt;&lt;</span> <span class="n">prefunc</span> <span class="nd">@U</span><span class="o">-&gt;</span><span class="nd">@Q</span>
+<span class="n">F2</span> <span class="o">&lt;&lt;</span> <span class="n">prefunc</span> <span class="nd">@U</span><span class="o">-&gt;</span><span class="nd">@R</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id18">
+<h4><span class="section-number">5.4.2.2. </span>Возможные проблемы использования наследования в ЯФППП<a class="headerlink" href="#id18" title="Ссылка на этот заголовок">¶</a></h4>
+<p><strong>Наложение ограничений на базовый тип</strong></p>
+<p>Базовый тип интегрируется с расширением. Поэтому он должен четко идентифицироваться в различных случаях. Возможно, что в качестве базы могут выступать только ограниченные конструкции. Например, только списки с локально именованными полями, эквивалентные структурам традиционных языков.</p>
+<p>Также нужно проанализировать возможные коллизии, возникающие при множественном наследовании, и определить целесообразность использования множественного наследования.</p>
+</div>
+</div>
+<div class="section" id="go">
+<h3><span class="section-number">5.4.3. </span>Go-полиморфизм<a class="headerlink" href="#go" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Особенностью реализации полиморфизма в языке программирования Go является применение интерфейсов для обобщения поведения отдельных структур данных, не связанных между собой. В отличие от наследования для обобщаемых структур отсутствует общий родитель, что напоминает объединение, используемое в процедурных языках программирования, не поддерживающих полиморфизм. Интерфейс собирает воедино функции, связанные с типом, без указания этого типа. Экземпляр интерфейса может объявляться в качестве переменной к которой может быть подсоединена любая структурная переменная. Это соединение осуществляется в том случае если структурная переменная является связанной для всех функций, указанных в интерфейсе. Так как при создании интерфейса и после этого нигде не оговаривается состав допустимых структур, разработчик может создавать любую новую структуру и создавать для ее обработки произвольные функции связанные с типом этой структуры. Тем самым обеспечивая в любой момент возможность привязки к любому интерфейсу.</p>
+<p>По сути интерфейс является обобщением относительно разнообразных типов данных с указанием того, какие обработчики специализаций должны присутствовать у этого типа данных. Отсутствие родителя позволяет эволюционно подключать новую структуру в других пакетах, обеспечивая тем самым эволюционное расширение альтернатив. При добавлении новой функции, связанной с типом возможно формирование нового обобщения за счет создания соответствующего интерфейса.</p>
+<p>К достоинствам подхода можно отнести гибкое добавление новых несвязанных структур и обеспечение их разнообразного объединения вокруг общих функций обработки за счет создания множества соответствующих обобщающих интерфейсов на все случае жизни. Нет жесткой зависимости специализаций от обобщения, как это происходит при наследовании, когда все специализации выстраиваются от одного родителя. Следует правда отметить, что при необходимости в традиционных ОО языках можно отдельно формировать основы специализации, которые включаются в дальнейшеем в производные классы, формируемые от разных базовых классов. Однако это уже не прямое решение а моделирование интерфейсов Go.</p>
+<p>Среди недостатков данного подхода можно отметить возможность автоматического включения тех процедур, которые нежелательно было бы иметь в общем списке, так как включение осуществляется по имени функции.</p>
+<div class="section" id="id19">
+<h4><span class="section-number">5.4.3.1. </span>Возможный вариант использования Go-полиморфизма в ЯФППП<a class="headerlink" href="#id19" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Синтаксически данный подход в ЯФППП реализовать достаточно просто. Пусть имеется множество типов <code class="docutils literal notranslate"><span class="pre">T1,</span> <span class="pre">T2,</span> <span class="pre">...,</span> <span class="pre">Tn</span></code>, которое и в дальнейшем может расширяться. Каждый из этих типов объявляется в качестве аргумента, связанного с функцией во множестве функций <code class="docutils literal notranslate"><span class="pre">F1,</span> <span class="pre">F2,</span> <span class="pre">...,</span> <span class="pre">Fk</span></code>. Этот аргумент, как и в случае ОО-полиморфизма можно связать с именем при описании функции. Остальные данные передаеются как параметры обычной функции. Описание функции, связанной с типом будет выглядеть следующим образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="p">(</span><span class="nd">@T</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">funcdef</span> <span class="n">x</span><span class="nd">@W</span><span class="o">-&gt;</span><span class="nd">@Q</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Любое подмножество функций, связанных с типом можно завернуть в создаваемый интерфейс. Слово <code class="docutils literal notranslate"><span class="pre">interface</span></code> в случае ЯФППП получается не совсем к месту. Вместо него предлагается использовать нейтральное ключевое слово <code class="docutils literal notranslate"><span class="pre">group</span></code>, которое показывает группировку воедино множество функци с со связанным аргументом одного типа в группу. Тогда формируемую группу для заданных типов и функций можно описать следующим образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Gi</span> <span class="o">&lt;&lt;</span> <span class="n">group</span> <span class="p">{</span>
+    <span class="n">Fj</span> <span class="nd">@Wj</span><span class="o">-&gt;</span><span class="nd">@Qj</span><span class="p">,</span>
+    <span class="n">Fl</span> <span class="nd">@Wl</span><span class="o">-&gt;</span><span class="nd">@Ql</span><span class="p">,</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">Ft</span> <span class="nd">@Wt</span><span class="o">-&gt;</span><span class="nd">@Qt</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>То есть, собираем в группу требуемые функции для каждой из связанных структур, которые их имеют.</p>
+<p>Сами функции (Fj…) являются функциями, связанными с конкретными типами данных. Связанный аргумент задаетс в описании функции (в круглых скобках после ее имени). Тип результата указывается для того, чтобы исключить те функции, которые формируют разный тип результата при одинаковой сигнатуре и, следовательно, не могут быть включены в группу.</p>
+<p>Помимо этого, в отличие от Go, предлагается ввести ограничитель, который контролирует типы данных, допустимых для использования в группе, его можно задать путем перечисления допустимых альтернатив следующим образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">V</span> <span class="o">&lt;&lt;</span> <span class="n">union</span> <span class="p">{</span> <span class="n">Ti</span><span class="p">,</span> <span class="n">Tj</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">Tk</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>Тогда группа с ограничителем может выглядеть следующим образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Gi</span> <span class="o">&lt;&lt;</span> <span class="n">group</span> <span class="p">{</span>
+    <span class="n">Fj</span><span class="o">-&gt;</span><span class="n">Qj</span><span class="p">,</span>
+    <span class="n">Fl</span><span class="o">-&gt;</span><span class="n">Ql</span><span class="p">,</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">Ft</span><span class="o">-&gt;</span><span class="n">Qt</span>
+<span class="p">}</span> <span class="n">V</span>
+</pre></div>
+</div>
+<p>или:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Gi</span> <span class="o">&lt;&lt;</span> <span class="n">group</span> <span class="p">{</span>
+    <span class="n">Fj</span><span class="o">-&gt;</span><span class="n">Qj</span><span class="p">,</span>
+    <span class="n">Fl</span><span class="o">-&gt;</span><span class="n">Ql</span><span class="p">,</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">Ft</span><span class="o">-&gt;</span><span class="n">Qt</span>
+<span class="p">}</span> <span class="n">union</span> <span class="p">{</span> <span class="n">Ti</span><span class="p">,</span> <span class="n">Tj</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">Tk</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>Применение данного механизма осуществляется следующим образом. В ходе вычислений формируется величина, имеющая тип специализации, входящей в группу, которая является связанным аргументом функции. В соответствии с типом этой величины, подключенной к группе, запускается требуемый обработчик специализации. Подключение к группе осуществляется путем использования имени группы в качестве функции над этой величиной. Повторное подключение осуществляется за счет вызова в другом месте или за счет рекурсивного вызова функции с другим аргументом.
+Пример того, как это может выглядеть:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IntPair</span> <span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="o">@</span><span class="p">(</span><span class="mi">2</span><span class="nd">@int</span><span class="p">)</span>
+<span class="n">RealPair</span> <span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="o">@</span><span class="p">(</span><span class="mi">2</span><span class="nd">@real</span><span class="p">)</span>
+<span class="n">lt</span><span class="p">(</span><span class="nd">@IntPair</span><span class="p">)</span>  <span class="o">&lt;&lt;</span> <span class="n">funcdef</span> <span class="nd">@signal</span><span class="o">-&gt;</span><span class="nd">@bool</span> <span class="p">{</span> <span class="n">x</span><span class="p">:</span><span class="o">&lt;</span><span class="p">:</span><span class="k">return</span> <span class="p">}</span>
+<span class="n">lt</span><span class="p">(</span><span class="nd">@RealPair</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">funcdef</span> <span class="nd">@signal</span><span class="o">-&gt;</span><span class="nd">@bool</span> <span class="p">{</span> <span class="n">x</span><span class="p">:</span><span class="o">&lt;</span><span class="p">:</span><span class="k">return</span> <span class="p">}</span>
+<span class="n">cmpGroup</span><span class="o">&lt;&lt;</span> <span class="n">group</span> <span class="p">{</span><span class="n">lt</span><span class="o">-&gt;</span><span class="nd">@bool</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Где-то в далекой галактике:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a</span><span class="nd">@int</span><span class="o">&lt;&lt;</span> <span class="o">...</span>
+<span class="n">b</span><span class="nd">@int</span><span class="o">&lt;&lt;</span> <span class="o">...</span>
+<span class="o">...</span>
+<span class="n">t</span><span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">):</span><span class="n">cmpGroup</span><span class="p">;</span> <span class="o">//</span> <span class="n">или</span> <span class="n">t</span><span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">):</span><span class="n">IntPair</span><span class="p">:</span><span class="n">cmpGroup</span><span class="p">;</span>
+<span class="n">b</span><span class="o">&lt;&lt;</span> <span class="o">.</span><span class="p">:</span><span class="n">lt</span><span class="p">(</span><span class="n">t</span><span class="p">);</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id20">
+<h4><span class="section-number">5.4.3.2. </span>Вариант с пустой группой<a class="headerlink" href="#id20" title="Ссылка на этот заголовок">¶</a></h4>
+<p>В Go допускается создавать интерфейсы без функций, связанных с типом. В этом случае они используются для привязки любой структуры в качестве альтернативы с динамической фиксацией типа этой альтернативы. В результате, как и в случае процедурного подхода (или в языках с динамической типизацией) можно явно проверить тип привязанного артефакта и выделить его для выполнения операций.
+Чем-то это напоминает объединение языка программирования Ada, в котором тип хранимой альтернативы также формируется автоматически, что повышает надежность по сравнению, например с вариантными записями Паскаля или объединением в Си.</p>
+<p>Вместе с тем вряд ли имеет смысл создавать такие интерфейсы вручную, так как для любых данных достаточно одного такого интерфейса. В случае Smile предлагается создать встроенную группу с именем any, которая по умолчанию трактуется как следующее описание:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">any</span><span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="n">group</span><span class="p">{}</span>
+</pre></div>
+</div>
+<p>Привязка любой величины к группе осуществляется также, как это было описано выше. Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">anyGroup</span><span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">):</span><span class="nb">any</span><span class="o">...</span>
+</pre></div>
+</div>
+<p>Для выполнения операций можно проверить предварительно тип, используя традиционное действие и явное сравнение типов во время выполнения:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">b</span><span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">anyGroup</span><span class="p">:</span><span class="nb">type</span><span class="p">,</span> <span class="n">IntGroup</span><span class="p">)</span><span class="o">:=...</span>
+</pre></div>
+</div>
+<p>После чего, зная правильный тип можно выделить артефакт из группы, осуществляя явным образом корректное приведение, проверяемое компилятором, и вполнить допустимую операцию. Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">anyGroup</span><span class="p">:</span><span class="n">IntPair</span><span class="p">:</span><span class="o">+...</span>
+</pre></div>
+</div>
+<p>Подобный прием практически эквивалентен использованию обобщений в традиционных процедурных языках программирования.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Аналогичным образом имеет смысл рассмотреть тип any для ОО-полиморфизма и ПП-полиморфизма.</p>
+</div>
+</div>
+<div class="section" id="id21">
+<h4><span class="section-number">5.4.3.3. </span>Возможные проблемы использования Go-полиморфизма в ЯФППП<a class="headerlink" href="#id21" title="Ссылка на этот заголовок">¶</a></h4>
+<p>В целом пока не видно никаких особых проблем с реализацией описанного механизма. По сравнению с наследованием все выглядит даже гораздо проще и логичней. Вместе с тем пока непонятно, во что выльется реализация ряда дополнительных фич. Также, в связи со слабой пока изученностью мною реализации этого механизма в Go, не ясно что из этих дополнительных возможностей и как реализовано. В частности можно отметить следующие варианты, которые возможно (для расширения кругозора) потребуют более тщательного изучения возможностей Go:</p>
+<ol class="arabic simple">
+<li><p>Проверка типа значения, включенного в группу.</p></li>
+<li><p>Возможность неявного переноса значения из одной группы в другую.</p></li>
+</ol>
+<p>Первое уже было изучено и работает достаточно просто. Помимо этого естественно имеется возможность выделения значения данного типа из группы для проведения над ним манипуляций с использованием обычных функций. Может оказаться полезным, когда требуемая функция не входит в соответствующую группу (или вообще не входит ни в какую группу). Реализация данной возможности (проверка типа и выделение значения) в общем-то не должно вызвать каких-либо проблем.</p>
+<p>Возможность неявного переноса из группы в группу можно представить примерно так: <code class="docutils literal notranslate"><span class="pre">X:G1:G2</span></code>.
+Это довольно интересная вещь пока не изучена на примере Go. Нужно узнать, есть она или нет в этом языке программирования и в каком виде. Пока думается, что скорее всего нет. Идея заключается в том, чтобы, при наличии совместимости значения, находящегося в одной группе просто перенести его в другую группу без проведения дополнительных явных проверок. Проблема в том, что полиморфное хранение элементов в группе не позволяет знать на этапе компиляции тип значения, так как он формируется во время исполнения. Следовательно, возникновение некорректной систуации не позволяет просто реализовать данный механизм. Необходимо либо выбрасывать исключение, или каким-то другим образом сигнализировать о том, что операция корректно не выполнилась
+Как дополнительный вариант: перед выполнением данной операции можно осуществить проверку эквивалентности групп или явную проверку типа хранимого аргумента, или выделение хранимого аргумента с явным занесением в другую группу, возможно, с предварительной явной проверкой типа. Последнее - это традиционное прямое решение, которе идет помимо полиморфизма и поэтому смотрится не очень хорошо. Но и выбрасывания исключения тоже как-то не хотелось бы.</p>
+</div>
+</div>
+<div class="section" id="id22">
+<h3><span class="section-number">5.4.4. </span>Процедурно-параметрический полиморфизм<a class="headerlink" href="#id22" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Процедурно-параметрический полиморфизм, в отличие от представленных выше двух вариантов базируется на постоянстве типа обобщения, а специализации рассматриваются в качестве расширения обобщения. Поэтому речь идет не о построении нового типа данных, а о формировании дополнительных специализаций на основе уже существующего обобщающего типа.</p>
+<p>Если говорить об особенностях данного подхода, то он изначально ориентирован на реализацию полиморфизма именно в процедурных языках с возможностью эволюционного расширения как процедурно-параметрических обобщений, так и обработчиков специализаций, добавляемых в обобщающую параметрическую процедуру. Данный метод хорошо ложится на традиционные императивные и (в какой-то степени) функциональные языки программирования, обеспечивая поддержку безболезненного расширения кода даже в случае множественного полиморфизма, что также отличает его от двух выше представленных подходов, напрямую поддерживающих только одиночный полиморфизм (от одного аргумента или объекта).</p>
+<p>В целом подход достаточно хорошо описан в различных статьях, показана его гибкость по сравнению с ОО и процедурным подходами на примере простых ситуаций и в случае реализации аналогов патернров проектирования. Учитывая то, что он является нашим ноу-хау, более подробное описание особенностей буду добавлять по мере необходимости.</p>
+<div class="section" id="id23">
+<h4><span class="section-number">5.4.4.1. </span>Возможный вариант использования процедурно-параметрического полиморфизма в ЯФППП<a class="headerlink" href="#id23" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Основная идея подхода - гибкое расширения в случае мультиметодов здесь не совсем подходит, так как каждая функция может обрабатывать только один полиморфный аргумент. Поэтому первоначально имеет смысл рассмотреть ситуацию только для одного аргумента, а дальше куда кривая выведет. В этой ситуации обобщенный тип, которые будет расширяться в дальнейшем специализациями можент объявляться следующим образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">U</span> <span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="n">ОписаниеТипа</span><span class="o">+</span>
+</pre></div>
+</div>
+<p>В данном случае знак <code class="docutils literal notranslate"><span class="pre">+</span></code> показывает, что это не обычный тип, а тип, который впоследствии будет расширяться альтернативными специализациями. В качестве специализаций могут выступать ране определенные типы <code class="docutils literal notranslate"><span class="pre">T1,</span> <span class="pre">T2,</span> <span class="pre">...</span></code> Следует отметить, что описание типа может отстутсвовать. Тогда вместо аналога обобщенной записи будет формироваться пустое процедурно-параметрическое обобщение:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">U</span> <span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="o">+</span>
+</pre></div>
+</div>
+<p>Как вариант, и в первом и втором случае при его создании сразу могут быть включены одна или несколько специализаций. Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">U</span> <span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="n">ОписаниеТипа</span><span class="o">+</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Возможна идентификация специализаций не по типам, а по признакам, которые можно вводить как обозначения:</p>
+<blockquote>
+<div><p>U &lt;&lt; typedef ОписаниеТипа+union(a&lt;&lt;T2, b&lt;&lt;T2, c&lt;&lt;T2)</p>
+</div></blockquote>
+<p>Предполагается что идентификация первоначального параметрического обобщения будет осуществляеться по его имени, как и для любого другого типа. Однако в ходе расширения программ обобщение может быть расширено, что требует введения специальных описателей и дополнительнго представления в репозитории. Или модификации в репозитории уже существующего обобщения, что в принципе тоже может оказаться допустимым, хоть и не поддерживает прямого эволюционного расширения обобщений. Нужно подумать…
+Раcширение обобщения может выглядеть следующим образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">U</span> <span class="o">+</span> <span class="p">(</span><span class="n">T3</span><span class="p">,</span> <span class="n">T4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>или:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">U</span> <span class="o">+</span> <span class="p">(</span><span class="n">d</span><span class="o">&lt;&lt;</span><span class="n">T3</span><span class="p">,</span> <span class="n">e</span><span class="o">&lt;&lt;</span><span class="n">T2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>в зависимости от того, каким образом была сделана идентификация специализаций в исходном обобщении.</p>
+<p><strong>Возможная проблема: как идентифицировать специализации в репозитории?</strong></p>
+<p>Для идентификации специализаций в репозитории возможны различные варианты:</p>
+<ol class="arabic">
+<li><p>При добавлении очередной группы специализаций в обобщение можно просто изменить в репозитории описание этого обобщения, сформировав его более общую структуру, учитывающую все введенные специализации. То есть организовать непосредственное связывание в процессе компиляции с изменением экспорта.</p></li>
+<li><p>Другой вариант может быть связан с расщеплением на отдельные компоненты всех вводимых специализаций обобщения с сохранением для самого обобщения его вида без специализаций, даже если при первоначальном описании специализации были включены. В этом случае записи в репозитории идентифицируются по имени типа обобщения плюс имя признака. При идентификации специализаций по типу имя признака будет совпадать с именем типа. Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">U</span><span class="p">(</span><span class="n">T3</span><span class="p">),</span> <span class="n">U</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>При описании обобщающих функций обобщение задается в качестве связующего аргумента после имени функции. В отличие от ОО-полиморфизма и Go-полиморфизма вместо круглых скобок предполагается использовать квадратные. Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="p">[</span><span class="nd">@U</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">funcdef</span> <span class="n">x</span><span class="nd">@W</span><span class="o">-&gt;</span><span class="nd">@Q</span>        <span class="o">//</span> <span class="n">обобщающая</span> <span class="n">функция</span>
+<span class="n">F</span><span class="p">[</span><span class="nd">@U</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">&lt;&lt;</span> <span class="n">funcdef</span> <span class="n">x</span><span class="nd">@W</span><span class="o">&gt;</span><span class="nd">@Q</span>      <span class="o">//</span> <span class="n">обработчик</span> <span class="n">специализации</span>
+</pre></div>
+</div>
+<p>Предполагается, что как и при процедурно-параметрическом программировании возможна пустая обобщающая функция или обобщающая функция описывающая обработчик по умолчанию (при отстутствии соответствующего обработчика специализации).</p>
+<p>Отличительной чертой ПП-полиморфизма является поддержка множественного полиморфизма, допускающего использование нескольких обобщенных параметров:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">F</span><span class="p">[</span><span class="nd">@U1</span><span class="p">,</span> <span class="nd">@U2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">funcdef</span> <span class="n">x</span><span class="nd">@W</span><span class="o">-&gt;</span><span class="nd">@Q</span>           <span class="o">//</span> <span class="n">обобщающая</span> <span class="n">функция</span>
+<span class="n">F</span><span class="p">[</span><span class="nd">@U1</span><span class="p">(</span><span class="n">d</span><span class="p">),</span><span class="nd">@U2</span><span class="p">(</span><span class="n">T1</span><span class="p">)]</span> <span class="o">&lt;&lt;</span> <span class="n">funcdef</span> <span class="n">x</span><span class="nd">@W</span><span class="o">&gt;</span><span class="nd">@Q</span>      <span class="o">//</span> <span class="n">обработчик</span> <span class="n">специализации</span>
+</pre></div>
+</div>
+<p>Применение обработчиков обобщений осуществляется аналогично использованию ранее рассмотренных подходов. Конкретные специализации задаются в квадратных скобках после имени функции, обычные аргументы поступают на вход этой функции как аргументы оператора интерпретации. Пример:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="o">&lt;&lt;</span> <span class="n">typedef</span> <span class="o">+</span>
+<span class="n">triangle</span><span class="o">&lt;&lt;</span> <span class="o">@</span><span class="p">(</span><span class="n">a</span><span class="o">&lt;&lt;</span><span class="nd">@int</span><span class="p">,</span><span class="n">b</span><span class="o">&lt;&lt;</span><span class="nb">int</span><span class="p">,</span><span class="n">c</span><span class="o">&lt;&lt;</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">rectangle</span><span class="o">&lt;&lt;</span> <span class="o">@</span><span class="p">(</span><span class="n">x</span><span class="o">&lt;&lt;</span><span class="nd">@int</span><span class="p">,</span><span class="n">y</span><span class="o">&lt;&lt;</span><span class="nd">@int</span><span class="p">)</span>
+<span class="n">figure</span><span class="o">+</span><span class="p">(</span><span class="n">t</span><span class="o">&lt;&lt;</span><span class="n">triangle</span><span class="p">,</span><span class="n">r</span><span class="o">&lt;&lt;</span><span class="n">rectangle</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="n">Area</span><span class="p">[</span><span class="nd">@figure</span><span class="p">]</span><span class="o">&lt;&lt;</span><span class="n">funcdef</span> <span class="nd">@signal</span><span class="o">-&gt;</span><span class="nd">@real</span>
+<span class="n">Area</span><span class="p">[</span><span class="n">t</span><span class="o">&lt;&lt;</span><span class="nd">@triangle</span><span class="p">]</span><span class="o">&lt;&lt;</span><span class="n">funcdef</span> <span class="nd">@signal</span><span class="o">-&gt;</span><span class="nd">@real</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+<span class="n">Area</span><span class="p">[</span><span class="n">r</span><span class="o">&lt;&lt;</span><span class="nd">@rectangle</span><span class="p">]</span><span class="o">&lt;&lt;</span><span class="n">funcdef</span> <span class="nd">@signal</span><span class="o">-&gt;</span><span class="nd">@real</span> <span class="p">{</span><span class="o">...</span><span class="p">}</span>
+<span class="o">...</span>
+<span class="n">T</span><span class="nd">@figure</span><span class="o">&lt;&lt;</span> <span class="o">...</span>
+<span class="n">s</span><span class="o">&lt;&lt;</span> <span class="o">.</span><span class="p">:</span><span class="n">Area</span><span class="p">[</span><span class="n">T</span><span class="p">]</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>Специфической особенностью процедурно-параметрического подхода также является отсутствие полиморфного типа. То есть, типа any, объединяющего непонятно какие значения. Каждый тип, включая обобщение, всегда точно известен. Однако в обобщениях существуют специализации, тип которых можно определить явным образом. Поэтому операция type (м.б обозвать иначе?) применяется к определению типа специализации с возвращением признака. Дальнейший доступ к специализации с известным типом осуществляется по имени ее признака.</p>
+<p>Пример:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">T</span><span class="p">:</span><span class="nb">type</span><span class="p">,</span> <span class="n">triangle</span><span class="p">)</span><span class="o">:=</span>
+</pre></div>
+</div>
+<p>… не закончено.</p>
+</div>
+</div>
+<div class="section" id="id24">
+<h3><span class="section-number">5.4.5. </span>Сравнительный анализа рассмотренных подходов<a class="headerlink" href="#id24" title="Ссылка на этот заголовок">¶</a></h3>
+<div class="section" id="id25">
+<h4><span class="section-number">5.4.5.1. </span>Восприятие и простота использования<a class="headerlink" href="#id25" title="Ссылка на этот заголовок">¶</a></h4>
+</div>
+<div class="section" id="id26">
+<h4><span class="section-number">5.4.5.2. </span>Возможность реализации<a class="headerlink" href="#id26" title="Ссылка на этот заголовок">¶</a></h4>
+</div>
+</div>
+<div class="section" id="id27">
+<h3><span class="section-number">5.4.6. </span>Поддержка множественного полиморфизма<a class="headerlink" href="#id27" title="Ссылка на этот заголовок">¶</a></h3>
+<p>При традиционной интерпретации непосредственную поддержку множественного полиморфизма обеспечивает только процедурно-параметрический полиморфизм. Использование наследования и Go-подход с использованием полиморфизма позволяют формировать только монометоды, реализуя мультиметоды через диспетчерезацию (в данном случае прямую проверку типов не рассматриваем, так как речь идет о полиморфизме). Специфика ЯФППП заключается в том, что наличие у фунции только одного аргумента не позволяет напрямую задать мультиметод. Поэтому в данной ситуации процедурно-параметрическая парадигма по реализации мультиметодов становится аналогичной остальным рассмотренным подходам (то есть обеспечивает аналогичную реализацию за счет диспетчеризации), если не вносить дополнительных средств инструментальной поддержки.</p>
+<p>В любом из представленных вариантов реализация мультиметода выливается в создание дополнительных типов, обеспечивающих группировку нескольких полиморфных аргументов. Для различных подходов это можно рассмотреть на общем примере для двух аргументов. Пусть это будет геометрические фигуры: круг и прямоугольник.</p>
+<div class="section" id="id28">
+<h4><span class="section-number">5.4.6.1. </span>Реализация мультиметода в ЯФПП при использовании наследования<a class="headerlink" href="#id28" title="Ссылка на этот заголовок">¶</a></h4>
+</div>
+<div class="section" id="id29">
+<h4><span class="section-number">5.4.6.2. </span>Реализация мультиметода в ЯФПП при использовании Go-подхода<a class="headerlink" href="#id29" title="Ссылка на этот заголовок">¶</a></h4>
+</div>
+<div class="section" id="id30">
+<h4><span class="section-number">5.4.6.3. </span>Реализация мультиметода в ЯФПП при использовании процедурно-параметрического полиморфизма<a class="headerlink" href="#id30" title="Ссылка на этот заголовок">¶</a></h4>
+</div>
+</div>
+<div class="section" id="id31">
+<h3><span class="section-number">5.4.7. </span>Целесообразность совместного использования различных подходов<a class="headerlink" href="#id31" title="Ссылка на этот заголовок">¶</a></h3>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Оглавление</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">5. Заметки по поводу типов в Smile</a><ul>
+<li><a class="reference internal" href="#id1">5.1. Введение</a></li>
+<li><a class="reference internal" href="#id2">5.2. Представление статических типов</a><ul>
+<li><a class="reference internal" href="#id3">5.2.1. Атомарные типы</a><ul>
+<li><a class="reference internal" href="#id4">5.2.1.1. Основные атомарные типы</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id5">5.2.2. Составные (конструируемые) типы</a><ul>
+<li><a class="reference internal" href="#id6">5.2.2.1. Вектор</a></li>
+<li><a class="reference internal" href="#id7">5.2.2.2. Рой</a></li>
+<li><a class="reference internal" href="#id8">5.2.2.3. Очередь</a></li>
+<li><a class="reference internal" href="#id9">5.2.2.4. Задержка</a></li>
+<li><a class="reference internal" href="#id10">5.2.2.5. Структура</a></li>
+<li><a class="reference internal" href="#id11">5.2.2.6. Обобщение</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id12">5.3. Описание функциональных типов</a><ul>
+<li><a class="reference internal" href="#id13">5.3.1. Размышления по поводу именованной и структурной эквивалентности типов</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id14">5.4. Расширение системы типов за счет использования методов поддержки полиморфизма</a><ul>
+<li><a class="reference internal" href="#id15">5.4.1. Рассматриваемые варианты</a></li>
+<li><a class="reference internal" href="#id16">5.4.2. Наследование (расширение)</a><ul>
+<li><a class="reference internal" href="#id17">5.4.2.1. Возможный вариант описания ОО-полиморфизма в ЯФППП</a></li>
+<li><a class="reference internal" href="#id18">5.4.2.2. Возможные проблемы использования наследования в ЯФППП</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#go">5.4.3. Go-полиморфизм</a><ul>
+<li><a class="reference internal" href="#id19">5.4.3.1. Возможный вариант использования Go-полиморфизма в ЯФППП</a></li>
+<li><a class="reference internal" href="#id20">5.4.3.2. Вариант с пустой группой</a></li>
+<li><a class="reference internal" href="#id21">5.4.3.3. Возможные проблемы использования Go-полиморфизма в ЯФППП</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id22">5.4.4. Процедурно-параметрический полиморфизм</a><ul>
+<li><a class="reference internal" href="#id23">5.4.4.1. Возможный вариант использования процедурно-параметрического полиморфизма в ЯФППП</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id24">5.4.5. Сравнительный анализа рассмотренных подходов</a><ul>
+<li><a class="reference internal" href="#id25">5.4.5.1. Восприятие и простота использования</a></li>
+<li><a class="reference internal" href="#id26">5.4.5.2. Возможность реализации</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id27">5.4.6. Поддержка множественного полиморфизма</a><ul>
+<li><a class="reference internal" href="#id28">5.4.6.1. Реализация мультиметода в ЯФПП при использовании наследования</a></li>
+<li><a class="reference internal" href="#id29">5.4.6.2. Реализация мультиметода в ЯФПП при использовании Go-подхода</a></li>
+<li><a class="reference internal" href="#id30">5.4.6.3. Реализация мультиметода в ЯФПП при использовании процедурно-параметрического полиморфизма</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id31">5.4.7. Целесообразность совместного использования различных подходов</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Предыдущий раздел</h4>
+  <p class="topless"><a href="SmileSyntaxRu.html"
+                        title="предыдущая глава"><span class="section-number">4. </span>Синтаксис языка программирования Smile</a></p>
+  <h4>Следующий раздел</h4>
+  <p class="topless"><a href="SmileFunctions.html"
+                        title="следующая глава"><span class="section-number">6. </span>Заметки по поводу функций в Smile</a></p>
+  <div role="note" aria-label="source link">
+    <h3>Эта страница</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/TypeSystem.rst.txt"
+            rel="nofollow">Исходный текст</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Быстрый поиск</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Искать" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             >указатель</a></li>
+        <li class="right" >
+          <a href="SmileFunctions.html" title="6. Заметки по поводу функций в Smile"
+             >вперёд</a> |</li>
+        <li class="right" >
+          <a href="SmileSyntaxRu.html" title="4. Синтаксис языка программирования Smile"
+             >назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">5. </span>Заметки по поводу типов в Smile</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Alexander Legalov.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+    </div>
+  </body>
+</html>

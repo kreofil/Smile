@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta content="Описание концепций, языковых и инструментальных средств функционально-потокового параллельного программирования." name="description" />
+<meta content="парадигмы программирования, функционально-потоковое параллельное программирование" name="keywords" />
+
+    <title>6. Заметки по поводу функций в Smile &#8212; документация smile </title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="shortcut icon" href="_static/smile48.png"/>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="7. Семантическая модель системы программирования и языка" href="SemModel.html" />
+    <link rel="prev" title="5. Заметки по поводу типов в Smile" href="TypeSystem.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             accesskey="I">указатель</a></li>
+        <li class="right" >
+          <a href="SemModel.html" title="7. Семантическая модель системы программирования и языка"
+             accesskey="N">вперёд</a> |</li>
+        <li class="right" >
+          <a href="TypeSystem.html" title="5. Заметки по поводу типов в Smile"
+             accesskey="P">назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">6. </span>Заметки по поводу функций в Smile</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="smile">
+<h1><span class="section-number">6. </span>Заметки по поводу функций в Smile<a class="headerlink" href="#smile" title="Ссылка на этот заголовок">¶</a></h1>
+<p>В принципе в любом языке программирования сейчас можно говорить о функциях как отображении аргумента в результат:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Y</span> <span class="o">=</span> <span class="n">F</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Дополнительные рассуждения могут касаться использования параметрического полиморфизма, связанного с перегрузкой имен функций за счет различия в сигнатурах. В Smile пока не планируется использовать этот полиморфизм. То есть, предполагается, что обычные функции будут отличаться по именам.</p>
+<p>Вместе с тем большинство современных языков поддерживают динамический полиморфизм, который, как в объектно-ориентированных языках, может быть реализован на основе наследования и виртуализации. Помимо этого можно использовать Go-подход или процедурно-параметрический полиморфизм. Предполагается, что какой-то из вариантов будет внедрен после анализа каждого из перечисленных.</p>
+<p>На текущий момент предполагается реализация обычных функций. После их отработки планируется перейти к последующим реализациям.</p>
+<div class="section" id="id1">
+<h2><span class="section-number">6.1. </span>Синтаксис определения обычной функции<a class="headerlink" href="#id1" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Обычная функция описывается следующим синтаксическим правилом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Функция</span> <span class="o">=</span> <span class="n">funcdef</span>
+    <span class="p">[</span> <span class="p">[</span><span class="n">ИдАргумента</span><span class="p">]</span><span class="nd">@ИмяТипаАргумента</span> <span class="p">]</span> <span class="s2">&quot;-&gt;&quot;</span> <span class="nd">@ИмяТипаРезультата</span>
+    <span class="p">(</span><span class="n">ТелоФункции</span> <span class="o">|</span> <span class="s2">&quot;;&quot;</span><span class="p">)</span><span class="o">.</span>
+<span class="n">ТелоФункции</span> <span class="o">=</span> <span class="s2">&quot;{&quot;</span> <span class="n">СписокОператоров</span> <span class="s2">&quot;}&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Отсутствие тела функции предполагает, что на данном этапе мы имеем дело с предварительным ее объявлением, обеспечивающим формирование протототипа. Вместо тела в этом случае ставится <code class="docutils literal notranslate"><span class="pre">&quot;;&quot;</span></code>, которая завершает описание. Этом может оказаться полезным при рекурсивных вызовах, когда, в случае взаимной рекурсии одна из компилируемых функций еще не прошла компиляцию из-за отсутствия полного определения другой. То есть данный подход предполагает исключить из языка явные предварительные описания, такие как <code class="docutils literal notranslate"><span class="pre">prefunc</span></code> в Пифагоре.
+Копиляция неполных определений обеспечивает создание экспортируемых описаний, которые заносятся в таблицу экспорта. Поэтому последующая компиляция функции, вызывающую неполно определенную функцию проходит без проблем.</p>
+<p>Необязательность идентификатора аргумента предполагает использование вместо в него в теле специального зарезервированного имени аргумента, обозначаемого как <code class="docutils literal notranslate"><span class="pre">&quot;_&quot;</span></code>. В принципе этот идентификатор может использоваться одновременно и с именем аргумента, заданным явно. То есть, идентификатор аргумента выступает в роли алиаса для заданного имени.</p>
+<p>Если описание аргумента отсутствует, то это предполагает, что в его качестве выступает запускающий функцию сигнал (функции без параметров вообще в Smile, как и в Пифагоре отсутствуют). То есть, по сути данный вариант предполагает, что заголовок функции будет эквивалентен следующему:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">funcdef</span> <span class="o">-&gt;</span><span class="nd">@T</span> <span class="o">==</span> <span class="n">funcdef</span> <span class="nd">@signal</span><span class="o">-&gt;</span><span class="nd">@T</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Оглавление</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">6. Заметки по поводу функций в Smile</a><ul>
+<li><a class="reference internal" href="#id1">6.1. Синтаксис определения обычной функции</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Предыдущий раздел</h4>
+  <p class="topless"><a href="TypeSystem.html"
+                        title="предыдущая глава"><span class="section-number">5. </span>Заметки по поводу типов в Smile</a></p>
+  <h4>Следующий раздел</h4>
+  <p class="topless"><a href="SemModel.html"
+                        title="следующая глава"><span class="section-number">7. </span>Семантическая модель системы программирования и языка</a></p>
+  <div role="note" aria-label="source link">
+    <h3>Эта страница</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/SmileFunctions.rst.txt"
+            rel="nofollow">Исходный текст</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Быстрый поиск</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Искать" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             >указатель</a></li>
+        <li class="right" >
+          <a href="SemModel.html" title="7. Семантическая модель системы программирования и языка"
+             >вперёд</a> |</li>
+        <li class="right" >
+          <a href="TypeSystem.html" title="5. Заметки по поводу типов в Smile"
+             >назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">6. </span>Заметки по поводу функций в Smile</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Alexander Legalov.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+    </div>
+  </body>
+</html>
