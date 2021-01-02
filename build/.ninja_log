@@ -1,8 +1,0 @@
-# ninja log v5
-4257	4413	1586174834280448515	../bin/smile	42d8e061a5ef65bc
-4	4257	1586174834123783620	src/launcher/CMakeFiles/smile.dir/main.cpp.o	bd04cc510895053
-16	1967	1587208457652082540	src/compiler/CMakeFiles/compiler.dir/util.cpp.o	bd160c89d9dee661
-46	2238	1587208457922079033	src/compiler/CMakeFiles/compiler.dir/parser.cpp.o	7bcc59e0aa50002a
-20	2300	1587208457982078253	src/compiler/CMakeFiles/compiler.dir/tlt.cpp.o	322c63377e403154
-36	2379	1587208458065410504	src/compiler/CMakeFiles/compiler.dir/scanner.cpp.o	e2348edc8bb9df94
-53	5873	1587208461555365141	src/launcher/CMakeFiles/smile.dir/main.cpp.o	bd04cc510895053
