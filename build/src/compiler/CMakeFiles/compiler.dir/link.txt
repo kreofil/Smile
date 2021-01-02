@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../../../lib/libcompiler.a CMakeFiles/compiler.dir/util.cpp.o CMakeFiles/compiler.dir/tlt.cpp.o CMakeFiles/compiler.dir/scanner.cpp.o CMakeFiles/compiler.dir/parser.cpp.o
+/usr/bin/ranlib ../../../lib/libcompiler.a

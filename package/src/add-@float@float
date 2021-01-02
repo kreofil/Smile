@@ -1,0 +1,3 @@
+add << func floatPair@(float,float) -> float {
+    return^+^floatPair
+}

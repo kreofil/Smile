@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="smile"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\src\;CMake Files\src\compiler\;CMake Files\src\expcompiler\;CMake Files\src\launcher\;CMake Files\src\smodel\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\usr\;CMake Files\..\..\..\..\..\usr\lib64\;CMake Files\..\..\..\..\..\usr\lib64\cmake\;CMake Files\..\..\..\..\..\usr\lib64\cmake\Boost-1.75.0\;CMake Files\..\..\..\..\..\usr\lib64\cmake\boost_headers-1.75.0\;CMake Files\..\..\..\..\..\usr\lib64\cmake\boost_program_options-1.75.0\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/al/Projects/git/smile/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/al/Projects/git/smile/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/al/Projects/git/smile/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="compiler">
+				<Option output="/home/al/Projects/git/smile/lib/libcompiler.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/al/Projects/git/smile/build/src/compiler"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/al/Projects/git/smile/src/smodel"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/compiler/Makefile&quot;  VERBOSE=1 compiler"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/compiler/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/compiler/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/compiler/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="compiler/fast">
+				<Option output="/home/al/Projects/git/smile/lib/libcompiler.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/al/Projects/git/smile/build/src/compiler"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/al/Projects/git/smile/src/smodel"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/compiler/Makefile&quot;  VERBOSE=1 compiler/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/compiler/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/compiler/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/compiler/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="expcompiler">
+				<Option output="/home/al/Projects/git/smile/lib/libexpcompiler.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/al/Projects/git/smile/build/src/expcompiler"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/al/Projects/git/smile/src/smodel"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/expcompiler/Makefile&quot;  VERBOSE=1 expcompiler"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/expcompiler/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/expcompiler/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/expcompiler/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="expcompiler/fast">
+				<Option output="/home/al/Projects/git/smile/lib/libexpcompiler.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/al/Projects/git/smile/build/src/expcompiler"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/al/Projects/git/smile/src/smodel"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/expcompiler/Makefile&quot;  VERBOSE=1 expcompiler/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/expcompiler/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/expcompiler/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/expcompiler/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="smile">
+				<Option output="/home/al/Projects/git/smile/bin/smile" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/al/Projects/git/smile/build/../bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DBOOST_ALL_NO_LIB"/>
+					<Add option="-DBOOST_PROGRAM_OPTIONS_DYN_LINK"/>
+					<Add directory="/home/al/Projects/git/smile/src/smodel"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/launcher/Makefile&quot;  VERBOSE=1 smile"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/launcher/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/launcher/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/launcher/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="smile/fast">
+				<Option output="/home/al/Projects/git/smile/bin/smile" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/al/Projects/git/smile/build/../bin"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DBOOST_ALL_NO_LIB"/>
+					<Add option="-DBOOST_PROGRAM_OPTIONS_DYN_LINK"/>
+					<Add directory="/home/al/Projects/git/smile/src/smodel"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include-fixed"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/launcher/Makefile&quot;  VERBOSE=1 smile/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/launcher/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/launcher/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/launcher/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="smodel">
+				<Option output="/home/al/Projects/git/smile/lib/libsmodel.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/al/Projects/git/smile/build/src/smodel"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/al/Projects/git/smile/src/smodel"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/smodel/Makefile&quot;  VERBOSE=1 smodel"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/smodel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/smodel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/smodel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="smodel/fast">
+				<Option output="/home/al/Projects/git/smile/lib/libsmodel.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/al/Projects/git/smile/build/src/smodel"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/al/Projects/git/smile/src/smodel"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/../../../../include/c++/10.1.0/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/10.1.0/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/smodel/Makefile&quot;  VERBOSE=1 smodel/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/smodel/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/smodel/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/al/Projects/git/smile/build/src/smodel/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/al/Projects/git/smile/src/compiler/parser.cpp">
+			<Option target="compiler"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/compiler/parser.h">
+			<Option target="compiler"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/compiler/scanner.cpp">
+			<Option target="compiler"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/compiler/tlt.cpp">
+			<Option target="compiler"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/compiler/util.cpp">
+			<Option target="compiler"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/expcompiler/parser.cpp">
+			<Option target="expcompiler"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/expcompiler/parser.h">
+			<Option target="expcompiler"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/expcompiler/scanner.cpp">
+			<Option target="expcompiler"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/expcompiler/tlt.cpp">
+			<Option target="expcompiler"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/expcompiler/util.cpp">
+			<Option target="expcompiler"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/launcher/main.cpp">
+			<Option target="smile"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/actor.cpp">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/actor.h">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/const.cpp">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/const.h">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/declaration.cpp">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/declaration.h">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/func.cpp">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/func.h">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/funcdeclaration.cpp">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/funcdeclaration.h">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/nametable.cpp">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/nametable.h">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/smodel.cpp">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/smodel.h">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/tuple.cpp">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/tuple.h">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/type.cpp">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/type.h">
+			<Option target="smodel"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/compiler/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\compiler\"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/expcompiler/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\expcompiler\"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/launcher/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\launcher\"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/src/smodel/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\smodel\"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/../../../../../usr/lib64/cmake/BoostDetectToolset-1.75.0.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib64\cmake\"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/../../../../../usr/lib64/cmake/Boost-1.75.0/BoostConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib64\cmake\Boost-1.75.0\"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/../../../../../usr/lib64/cmake/Boost-1.75.0/BoostConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib64\cmake\Boost-1.75.0\"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/../../../../../usr/lib64/cmake/boost_headers-1.75.0/boost_headers-config-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib64\cmake\boost_headers-1.75.0\"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/../../../../../usr/lib64/cmake/boost_headers-1.75.0/boost_headers-config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib64\cmake\boost_headers-1.75.0\"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/../../../../../usr/lib64/cmake/boost_program_options-1.75.0/boost_program_options-config-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib64\cmake\boost_program_options-1.75.0\"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/../../../../../usr/lib64/cmake/boost_program_options-1.75.0/boost_program_options-config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib64\cmake\boost_program_options-1.75.0\"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/../../../../../usr/lib64/cmake/boost_program_options-1.75.0/libboost_program_options-variant-shared.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib64\cmake\boost_program_options-1.75.0\"/>
+		</Unit>
+		<Unit filename="/home/al/Projects/git/smile/../../../../../usr/lib64/cmake/boost_program_options-1.75.0/libboost_program_options-variant-static.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\lib64\cmake\boost_program_options-1.75.0\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

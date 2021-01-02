@@ -1,0 +1,3 @@
+FuncInc01 << func x@int -> int {
+    x:++:return;
+}

@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9. Организация модульной структуры &#8212; документация smile </title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="shortcut icon" href="_static/smile48.png"/>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="10. Транслятор языка программирования Smile" href="SmileTranslator.html" />
+    <link rel="prev" title="8. Размышления по поводу модуля базовых артефактов" href="ModuleSystem.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             accesskey="I">указатель</a></li>
+        <li class="right" >
+          <a href="SmileTranslator.html" title="10. Транслятор языка программирования Smile"
+             accesskey="N">вперёд</a> |</li>
+        <li class="right" >
+          <a href="ModuleSystem.html" title="8. Размышления по поводу модуля базовых артефактов"
+             accesskey="P">назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">9. </span>Организация модульной структуры</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1><span class="section-number">9. </span>Организация модульной структуры<a class="headerlink" href="#id1" title="Ссылка на этот заголовок">¶</a></h1>
+<p>В данном подразделе предполагается сформировать описание модульной структуры языка Smile.
+Основная идея заключается в раздельном формировании артефактов и их объединении в автономные структуры.
+Изначальное название этих структур - репозитории. Однако со временем происходит переосмысление общей организации артефактов.
+В данном случае оно направлено на упрощение.</p>
+<p>Изначально предполагалось, что репозитории обеспечивают иерархическое (или псевдоиерархическое) образование, в котором имя артефакта дополнительно разделяется (точками) на подъимена, что позволяет интерпретировать некоторую вложенность. Однако в настоящее время основной идеей является отказ от подобной вложенности, что обеспечивается заданием имен без точек. То есть предполагается на данном этапе полностью отказаться от иерархии, а формировать каждое отдельное автономное хранилище артефактов как их одноуровневый набор. Поэтому каждый артефакт будет задаваться только своим именем одного уровня (без точки).
+Полученное хранилище уже не имеет смысла называть репозиторием. Больше подходит одно из названий: сборка, пакет, модуль. По всей видимости, пока остановлюсь на пакете.</p>
+<p>Наряду с этим в языке предполагается перегрузка имен функций. Это предполагает идентификацию по дополнительным параметрам, определяющим сигнатуру. Здесь нужно будет подумать над тем, как в рамках этой перегрузки будут формировать процедурно-параметрические обобщения.</p>
+<div class="section" id="id2">
+<h2><span class="section-number">9.1. </span>Организация программного кода<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Основной автономной единицей системы программирования является пакет, который содержит множество артефактов, разрабатываемых программистом. К артефактам относятся функции, типы, константы и прочие программные объекты, из которых создаются программы. Каждый артефакт хранится отдельно от других артефактов и является независимой программной единицей. В текущей разработке каждый артефакт хранится в отдельном файле. В дальнейшем предполагается возможность использовать БД, в которой каждый артефакт планируется представлять отдельной записью.</p>
+<p>Пакет содержит следующие данные:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>исходные тексты артефактов;</p></li>
+<li><p>реверсивные информационные графы артефактов, получаемые во время компиляции;</p></li>
+<li><p>список, задающий описание экспорта пакета;</p></li>
+<li><p>списки с описаниями экспортов импортируемых пакетов</p></li>
+</ul>
+</div></blockquote>
+<p>Предполагается, что весь программный код состоит из множества пакетовв. Программа представляетс собой функцию из некоторого пакета для выполнение которой могут потребоваться другие функции, константы, типы и прочие артефакты, которые могут браться как из текущего пакета, так и импортироваться из других пакетов.</p>
+<p>Общую иерархическую структуру пакета можно представить следующими образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">пакет</span> <span class="p">:</span><span class="o">:=</span>
+    <span class="n">src</span>
+    <span class="n">rig</span>
+    <span class="kn">import</span>
+    <span class="nn">export</span>
+</pre></div>
+</div>
+<p>Программа формируется из отдельных артефактов (сущностей, программных объектов), каждый из которых размещается в своей единице хранения. На текущий момент единицей хранения является файл. В перспективе в качестве единицы хранения предполагается использовать запись в таблице базы данных (БД).</p>
+<p>Таблица экспорта - единица хранения с описанием всех доступных артефактов (списком артефактов). В отличие от определения артефактов их описания содержать только информацию, необходимую для использования другими артефактами.</p>
+<p>Наряду с таблицей экспорта возможны и другие аналогичные таблицы, которые могут содержать списки приватных описаний, доступных только разработчикам данного пакета.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Пока данные таблицы не реализуются из-за упрощения первой версии системы программирования.</p>
+</div>
+<p>Виды артефактов:</p>
+<ol class="arabic simple">
+<li><p>Константа (константное выражение)</p></li>
+<li><p>Функция (описание или определение)</p></li>
+<li><p>Тип</p></li>
+<li><p>Импорт</p></li>
+<li><p>Хранилище (значение или переменная)?</p></li>
+</ol>
+</div>
+<div class="section" id="id3">
+<h2><span class="section-number">9.2. </span>Программа<a class="headerlink" href="#id3" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Программа - это стартовая (запускаемая) функция. То есть, программой может являться любая функция пакета.</p>
+<p>Пакет - это множество артефактов, собранных в единое хранилище (в денном случае это каталог) и таблица экспорта.</p>
+<p>Таблица экспорта доступна из других пакетов через импорт, что позволяет собирать программу из артефактов, размещеннных в разных пакетах.</p>
+<p>Стартовая функция может обращаться к другим артефактам, что в целом определяет программу как сложный артефакт, состоящий из иерархически выстроенных артефактов.</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Оглавление</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">9. Организация модульной структуры</a><ul>
+<li><a class="reference internal" href="#id2">9.1. Организация программного кода</a></li>
+<li><a class="reference internal" href="#id3">9.2. Программа</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Предыдущий раздел</h4>
+  <p class="topless"><a href="ModuleSystem.html"
+                        title="предыдущая глава"><span class="section-number">8. </span>Размышления по поводу модуля базовых артефактов</a></p>
+  <h4>Следующий раздел</h4>
+  <p class="topless"><a href="SmileTranslator.html"
+                        title="следующая глава"><span class="section-number">10. </span>Транслятор языка программирования Smile</a></p>
+  <div role="note" aria-label="source link">
+    <h3>Эта страница</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ModuleStructure.rst.txt"
+            rel="nofollow">Исходный текст</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Быстрый поиск</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Искать" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             >указатель</a></li>
+        <li class="right" >
+          <a href="SmileTranslator.html" title="10. Транслятор языка программирования Smile"
+             >вперёд</a> |</li>
+        <li class="right" >
+          <a href="ModuleSystem.html" title="8. Размышления по поводу модуля базовых артефактов"
+             >назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">9. </span>Организация модульной структуры</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Alexander Legalov.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+    </div>
+  </body>
+</html>

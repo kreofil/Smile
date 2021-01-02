@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../../../lib/libsmodel.a CMakeFiles/smodel.dir/const.cpp.o CMakeFiles/smodel.dir/type.cpp.o CMakeFiles/smodel.dir/func.cpp.o CMakeFiles/smodel.dir/declaration.cpp.o CMakeFiles/smodel.dir/nametable.cpp.o CMakeFiles/smodel.dir/funcdeclaration.cpp.o CMakeFiles/smodel.dir/tuple.cpp.o CMakeFiles/smodel.dir/actor.cpp.o CMakeFiles/smodel.dir/smodel.cpp.o
+/usr/bin/ranlib ../../../lib/libsmodel.a

@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../../../lib/libexpcompiler.a CMakeFiles/expcompiler.dir/util.cpp.o CMakeFiles/expcompiler.dir/tlt.cpp.o CMakeFiles/expcompiler.dir/scanner.cpp.o CMakeFiles/expcompiler.dir/parser.cpp.o
+/usr/bin/ranlib ../../../lib/libexpcompiler.a

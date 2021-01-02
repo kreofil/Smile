@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta content="Описание концепций, языковых и инструментальных средств функционально-потокового параллельного программирования." name="description" />
+<meta content="парадигмы программирования, функционально-потоковое параллельное программирование" name="keywords" />
+
+    <title>10. Транслятор языка программирования Smile &#8212; документация smile </title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="shortcut icon" href="_static/smile48.png"/>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="11. Об ядре языка как о праязыке" href="Pralanguage.html" />
+    <link rel="prev" title="9. Организация модульной структуры" href="ModuleStructure.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             accesskey="I">указатель</a></li>
+        <li class="right" >
+          <a href="Pralanguage.html" title="11. Об ядре языка как о праязыке"
+             accesskey="N">вперёд</a> |</li>
+        <li class="right" >
+          <a href="ModuleStructure.html" title="9. Организация модульной структуры"
+             accesskey="P">назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">10. </span>Транслятор языка программирования Smile</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="smile">
+<h1><span class="section-number">10. </span>Транслятор языка программирования Smile<a class="headerlink" href="#smile" title="Ссылка на этот заголовок">¶</a></h1>
+<div class="section" id="id1">
+<h2><span class="section-number">10.1. </span>Введение<a class="headerlink" href="#id1" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Данный документ содержит набор заметок, формируемых в ходе разработки транслятора с языка функционально-потокового параллельного программирования Smile. Преполагается, что в целом это будет достаточно сумбурный набор рассуждений, причесывание которого, возможно, будет осуществляться в дальнейшем. Основная идея документа - собрать воедино все то, что желательно не забыть когда-нибудь потом.</p>
+</div>
+<div class="section" id="id2">
+<h2><span class="section-number">10.2. </span>Семантическая модель языка<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Предполагается, что семантическая модель языка (СМЯ) будет выделена в отдельный модуль, сформированный в виде динамической библиотеки.</p>
+</div>
+<div class="section" id="id3">
+<h2><span class="section-number">10.3. </span>Синтаксис языка<a class="headerlink" href="#id3" title="Ссылка на этот заголовок">¶</a></h2>
+<div class="section" id="id4">
+<h3><span class="section-number">10.3.1. </span>Список правил<a class="headerlink" href="#id4" title="Ссылка на этот заголовок">¶</a></h3>
+<blockquote>
+<div><p>$ ConstDefinition = «const» ConstExpression.</p>
+<p>$ ConstExpression = ConstTerm [ {«:» ConstTerm} | «^» ConstExpression ].</p>
+<p>$ ConstTerm = Atom | ConstDataList | ConstParList | String | ConstId.</p>
+<p>$ Atom = Integer | Real | Char | Bool | KvalId | Id | Spec | SpecId.</p>
+<p>$ Comment = OneStringComment | ManyStringComment.</p>
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Оглавление</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">10. Транслятор языка программирования Smile</a><ul>
+<li><a class="reference internal" href="#id1">10.1. Введение</a></li>
+<li><a class="reference internal" href="#id2">10.2. Семантическая модель языка</a></li>
+<li><a class="reference internal" href="#id3">10.3. Синтаксис языка</a><ul>
+<li><a class="reference internal" href="#id4">10.3.1. Список правил</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Предыдущий раздел</h4>
+  <p class="topless"><a href="ModuleStructure.html"
+                        title="предыдущая глава"><span class="section-number">9. </span>Организация модульной структуры</a></p>
+  <h4>Следующий раздел</h4>
+  <p class="topless"><a href="Pralanguage.html"
+                        title="следующая глава"><span class="section-number">11. </span>Об ядре языка как о праязыке</a></p>
+  <div role="note" aria-label="source link">
+    <h3>Эта страница</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/SmileTranslator.rst.txt"
+            rel="nofollow">Исходный текст</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Быстрый поиск</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Искать" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             >указатель</a></li>
+        <li class="right" >
+          <a href="Pralanguage.html" title="11. Об ядре языка как о праязыке"
+             >вперёд</a> |</li>
+        <li class="right" >
+          <a href="ModuleStructure.html" title="9. Организация модульной структуры"
+             >назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">10. </span>Транслятор языка программирования Smile</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Alexander Legalov.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
+    </div>
+  </body>
+</html>

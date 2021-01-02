@@ -1,0 +1,3 @@
+FuncSenSignal02 << func x@signal -> signal {
+    !:return
+}
