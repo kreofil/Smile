@@ -10,7 +10,7 @@ void ExportCompile(std::vector<std::string> &e);
 // Список ключевых и зарезервированных слов,
 // которые не могут использоваться в качестве идентификатора
 //std::vector<std::string> Compiler::keyWords;
-std::vector<std::string> Compiler::keyWords{
+std::vector<std::string> Compiler::keyWords {
     "array",
     "const",
     "func",

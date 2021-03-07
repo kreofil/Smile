@@ -8,21 +8,21 @@
 #include "smodel.h"
 
 class Compiler {
-    std::string &artefact;           // ссылка на строку с артефактом
+    std::string &artefact;      // ссылка на строку с артефактом
     //---std::vector<std::string> &exported;   // экспортируемые данные
     int pos;                    // текущая позиция в тексте обрабатываемого артефакта
     int line;                   // строка обрабатываемого артефакта
     int column;                 // колонка в строке для обрабатываемого артефакта
-    std::string lexValue;            // подстрока, определяющая текущую набранную лексему
-    int errCount;       // счетчик ошибок
-    char symbol;        // текущий символ
+    std::string lexValue;       // подстрока, определяющая текущую набранную лексему
+    int errCount;               // счетчик ошибок
+    char symbol;                // текущий символ
     int oldPos;
     int oldLine;
     int oldColumn;
     char oldSymbol;
-    int qualCount;      // Счетчик идентификаторов в составном имени
+    int qualCount;              // Счетчик идентификаторов в составном имени
     static std::vector<std::string> keyWords;   // таблица ключевых слов
-    SemanticModel &sm;  // Семантическая модель языка
+    SemanticModel &sm;          // Семантическая модель языка
 public:
 
     explicit Compiler(std::string &a, SemanticModel &m);

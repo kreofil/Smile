@@ -42,7 +42,7 @@ int main(int argc, const char *argv[])
 */
             ("entity,e", value(&entityName), "Compiled entity");
 
-        // Ограничение позиционных аргументов (возможны без опции) одним
+        // Ограничение позиционных аргументов одним (возможны без опции)
         positional_options_description pos_desc;
         //pos_desc.add("phone", -1);
         pos_desc.add("entity", 1);

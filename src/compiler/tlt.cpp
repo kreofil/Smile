@@ -81,7 +81,7 @@ bool Compiler::isSymbol(char ch) {
 //--------------------------------------------------------------------------
 // Метод, проверяющий достижение конца разбираемой строки
 bool Compiler::isEnd() {
-    if(pos >= artefact.length()) {
+    if(pos >= int(artefact.length())) {
         return true; 
     } else {
         return false;
