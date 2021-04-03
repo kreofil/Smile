@@ -7,13 +7,15 @@
 =================================================
 
 .. toctree::
-    :maxdepth: 3
     :numbered:
-    :caption: Contents:
+    :maxdepth: 3
+    :caption: Содержание:
     
     Introduction
     ModelReference
     SmileReference
+    InterpSemantic
+    DataEtcSemantic
     SmileSyntaxRu
     TypeSystem
     SmileFunctions
