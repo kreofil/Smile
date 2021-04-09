@@ -1,0 +1,264 @@
+
+<!DOCTYPE html>
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>5. Синтаксис языка программирования Smile &#8212; документация smile </title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="shortcut icon" href="_static/smile48.png"/>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="6. Форматы хранимых данных" href="DataFormats.html" />
+    <link rel="prev" title="4. Семантика оператора интерпретации" href="InterpSemantic.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             accesskey="I">указатель</a></li>
+        <li class="right" >
+          <a href="DataFormats.html" title="6. Форматы хранимых данных"
+             accesskey="N">вперёд</a> |</li>
+        <li class="right" >
+          <a href="InterpSemantic.html" title="4. Семантика оператора интерпретации"
+             accesskey="P">назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">5. </span>Синтаксис языка программирования Smile</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="smile">
+<h1><span class="section-number">5. </span>Синтаксис языка программирования Smile<a class="headerlink" href="#smile" title="Ссылка на этот заголовок">¶</a></h1>
+<div class="section" id="id1">
+<h2><span class="section-number">5.1. </span>Лексемы<a class="headerlink" href="#id1" title="Ссылка на этот заголовок">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Сигнал</span> <span class="o">=</span> <span class="s2">&quot;!&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Целое</span> <span class="o">=</span> <span class="p">{</span><span class="o">/</span> <span class="n">Цифра</span> <span class="o">/</span><span class="p">}</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Булевская</span> <span class="o">=</span> <span class="s2">&quot;false&quot;</span> <span class="o">|</span> <span class="s2">&quot;true&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Спецзнак</span> <span class="o">=</span> <span class="s2">&quot;+&quot;</span> <span class="o">|</span> <span class="s2">&quot;-&quot;</span> <span class="o">|</span> <span class="s2">&quot;*&quot;</span> <span class="o">|</span> <span class="s2">&quot;/&quot;</span> <span class="o">|</span> <span class="s2">&quot;%&quot;</span> <span class="o">|</span> <span class="o">...</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Цифра</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="o">|</span> <span class="s2">&quot;1&quot;</span> <span class="o">|</span> <span class="s2">&quot;2&quot;</span> <span class="o">|</span> <span class="s2">&quot;3&quot;</span> <span class="o">|</span> <span class="s2">&quot;4&quot;</span> <span class="o">|</span> <span class="s2">&quot;5&quot;</span> <span class="o">|</span> <span class="s2">&quot;6&quot;</span> <span class="o">|</span> <span class="s2">&quot;7&quot;</span> <span class="o">|</span> <span class="s2">&quot;8&quot;</span> <span class="o">|</span> <span class="s2">&quot;9&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Буква</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span> <span class="o">|</span> <span class="o">...</span> <span class="o">|</span> <span class="s2">&quot;Z&quot;</span> <span class="o">|</span> <span class="s2">&quot;a&quot;</span> <span class="o">|</span> <span class="o">...</span> <span class="o">|</span> <span class="s2">&quot;z&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Идентификатор</span> <span class="o">=</span> <span class="p">(</span><span class="n">Буква</span> <span class="o">|</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="p">{</span><span class="n">Буква</span> <span class="o">|</span> <span class="s2">&quot;_&quot;</span> <span class="o">|</span> <span class="n">Цифра</span><span class="p">}</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ИменованныйТип</span> <span class="o">=</span> <span class="n">Идентификатор</span> <span class="p">[</span> <span class="s2">&quot;.&quot;</span> <span class="n">Идентификатор</span> <span class="p">]</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ИмяДоступа</span> <span class="o">=</span> <span class="n">Идентификатор</span> <span class="p">[</span> <span class="s2">&quot;.&quot;</span> <span class="n">Идентификатор</span> <span class="p">]</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2><span class="section-number">5.2. </span>Программные объекты<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Артефакт</span> <span class="o">=</span> <span class="n">Имя</span> <span class="s2">&quot;&lt;&lt;&quot;</span> <span class="n">ОпределениеАртефакта</span>
+         <span class="o">|</span> <span class="n">ОпределениеАртефакта</span> <span class="s2">&quot;&gt;&gt;&quot;</span> <span class="n">Имя</span> <span class="p">[</span><span class="s2">&quot;;&quot;</span><span class="p">]</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Имя</span> <span class="o">=</span> <span class="n">Идентификатор</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ОпределениеАртефакта = ОпределениеКонстанты
+                 | ОпределениеТипа
+                 | ОпределениеФункции
+                 | ОпределениеИмпорта
+                 | ОпределениеХранилища (?).
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ОпределенниеКонстанты = ЦелочисленнаяКонстанта
+                  | БулевскаяКонстанта
+                  | Сигнал
+                  | КонстантнаяФункция
+                  | КонстантноеВыражение (?).
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ОпределениеТипа</span> <span class="o">=</span> <span class="s2">&quot;@&quot;</span> <span class="p">(</span><span class="n">ИменованныйТип</span>
+            <span class="o">|</span> <span class="n">Вектор</span>
+            <span class="o">|</span> <span class="n">Рой</span>
+            <span class="o">|</span> <span class="n">Структура</span>
+            <span class="o">|</span> <span class="n">Обобщение</span>
+            <span class="o">|</span> <span class="n">ОбобщеннаяСтруктура</span>
+            <span class="o">|</span> <span class="n">ФункциональныйТип</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ИменованныйТип</span> <span class="o">=</span> <span class="n">Идентификатор</span>
+           <span class="o">|</span> <span class="s2">&quot;int&quot;</span>
+           <span class="o">|</span> <span class="s2">&quot;bool&quot;</span>
+           <span class="o">|</span> <span class="s2">&quot;signal&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Размер</span> <span class="o">=</span> <span class="n">Целое</span> <span class="o">|</span> <span class="n">ИмяЦелочисленнойКонстанты</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Вектор</span> <span class="o">=</span> <span class="n">ИменованныйТип</span><span class="s2">&quot;(&quot;</span> <span class="p">[</span><span class="n">Целое</span><span class="p">]</span> <span class="s2">&quot;)&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Рой</span> <span class="o">=</span> <span class="s2">&quot;[&quot;</span> <span class="p">[</span><span class="n">Целое</span><span class="p">]</span> <span class="s2">&quot;]&quot;</span> <span class="n">ИменованныйТип</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Структура</span> <span class="o">=</span> <span class="s2">&quot;(&quot;</span> <span class="n">ИменованныеПоля</span> <span class="o">|</span> <span class="n">НеименованныеПоля</span> <span class="s2">&quot;)&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ИменованныеПоля</span> <span class="o">=</span> <span class="p">(</span><span class="n">Идентификатор</span> <span class="o">|</span> <span class="s2">&quot;[&quot;</span> <span class="n">Идентификатор</span> <span class="p">[</span><span class="s2">&quot;,&quot;</span> <span class="n">Идентификатор</span><span class="p">]</span> <span class="s2">&quot;]&quot;</span><span class="p">)</span> <span class="s2">&quot;@&quot;</span>
+                  <span class="n">ИменованныйТип</span>
+             <span class="p">[</span><span class="s2">&quot;,&quot;</span> <span class="p">(</span><span class="n">Идентификатор</span> <span class="o">|</span> <span class="s2">&quot;[&quot;</span> <span class="n">Идентификатор</span> <span class="p">[</span><span class="s2">&quot;,&quot;</span> <span class="n">Идентификатор</span><span class="p">]</span> <span class="s2">&quot;]&quot;</span><span class="p">)</span> <span class="s2">&quot;@&quot;</span>
+                  <span class="n">ИменованныйТип</span><span class="p">]</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">НеименованныеПоля</span> <span class="o">=</span> <span class="p">[</span><span class="n">целое</span><span class="p">]</span> <span class="s2">&quot;@&quot;</span> <span class="n">ИменованныйТип</span> <span class="p">[</span> <span class="s2">&quot;,&quot;</span> <span class="p">[</span><span class="n">целое</span><span class="p">]</span> <span class="s2">&quot;@&quot;</span> <span class="n">ИменованныйТип</span><span class="p">]</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Обобщение</span> <span class="o">=</span> <span class="s2">&quot;{&quot;</span> <span class="n">ИменованныеПоля</span> <span class="o">|</span> <span class="n">НеименованныеПоля</span> <span class="s2">&quot;}&quot;</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ОбобщеннаяСтруктура</span> <span class="o">=</span> <span class="n">Структура</span> <span class="p">(</span><span class="n">Обобщение</span> <span class="o">|</span> <span class="n">ИмяОбобщения</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ИмяОбобщения</span> <span class="o">=</span> <span class="n">Идентификатор</span> <span class="p">[</span> <span class="s2">&quot;.&quot;</span> <span class="n">Идентификатор</span> <span class="p">]</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>$ ОписаниеТипа = typedef ( ИмяТипа | СоставнойТип | ОграниченныйТип ).</p>
+<p>$ СоставнойТип = Вектор | Группа | Задержка | Структура | Обобщение.</p>
+<dl>
+<dt>$ Вектор = «(» ИмяТипа «)» [ «.» Размер ]</dt><dd><div class="line-block">
+<div class="line">vector ИмяТипа  [ «.» Размер ].</div>
+</div>
+</dd>
+</dl>
+<p>$ ИмяЦелого = Идентификатор.</p>
+<dl>
+<dt>$ Группа =  «[» ИмяТипа «]» [ «.» Размер ]</dt><dd><div class="line-block">
+<div class="line">group ИмяТипа  [ «.» Размер ].</div>
+</div>
+</dd>
+</dl>
+<p>$ Задержка = «{» ИмяТипа «}» | delay ИмяТипа.</p>
+<p>$ Структура = struct «(» [ Поле ] { «,» Поле } «)».</p>
+<dl>
+<dt>$ Поле = {/ ИмяПоля «&lt;&lt;» /} ИмяТипа</dt><dd><div class="line-block">
+<div class="line">ИмяТипа {/ «&gt;&gt;» ИмяПоля /}.</div>
+</div>
+</dd>
+</dl>
+<p>$ ИмяПоля = Идентификатор.</p>
+<p>$ Обобщение = union «(» [ Поле ] { «,» Поле } «)».</p>
+<p>$ ОграниченныйТип = Имя ИмяТипа Тело.</p>
+<p>$ Имя = Идентификатор.</p>
+<p>$ ОписаниеКонстанты = ИмяКонстанты «&lt;&lt;» ( Константа | Константное выражение ).</p>
+<p>$ ИмяКонстанты = Идентификатор.</p>
+<p>$ Константа = Сигнал | [«-«] Целое | | Булевская | Спецзнак.</p>
+<p>$ ОписаниеФункции = funcdef ИмяАргумента ИмяТипа «-&gt;» ТипРезультата [ Тело ].</p>
+<p>$ ИмяАргумента = Идентификатор.</p>
+<p>$ ТипРезультата = ИмяТипа.</p>
+<p>$ Тело = «{» Элемент { («;» | НоваяСтрока) Элемент } «}».</p>
+<p>$ Элемент = Обозначение «&lt;&lt;» Выражение | Выражение [ «&gt;&gt;» Обозначение ].</p>
+<p>$ Выражение = Терм { «^» Выражение | («:» | «::») Терм  }.</p>
+<p>$ Терм = Идентификатор | Блок | Атом | Векторизация | Группировка | ЗадержкаВычислений.</p>
+<p>$ Атом = Константа | ЭлементСтруктуры.</p>
+<p>$ Блок = block Тело.</p>
+<p>$ Векторизация = «(» [ СписокЭлементов ] «)».</p>
+<p>$ СписокЭлементов = Элемент { «,» Элемент }.</p>
+<p>$ Группировка = «[» [ СписокЭлементов ] «]».</p>
+<p>$ ЗадержкаВычислений = «{» Выражение «}».</p>
+<p>$ ЭлементСтруктуры = ИмяСтруктуры «.» ( ИмяПоля ).</p>
+<p>$</p>
+<p>$</p>
+<p>$</p>
+<p>$</p>
+<p>$</p>
+<p>$</p>
+<p>$</p>
+<p>$</p>
+<p>$</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Оглавление</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">5. Синтаксис языка программирования Smile</a><ul>
+<li><a class="reference internal" href="#id1">5.1. Лексемы</a></li>
+<li><a class="reference internal" href="#id2">5.2. Программные объекты</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Предыдущий раздел</h4>
+  <p class="topless"><a href="InterpSemantic.html"
+                        title="предыдущая глава"><span class="section-number">4. </span>Семантика оператора интерпретации</a></p>
+  <h4>Следующий раздел</h4>
+  <p class="topless"><a href="DataFormats.html"
+                        title="следующая глава"><span class="section-number">6. </span>Форматы хранимых данных</a></p>
+  <div role="note" aria-label="source link">
+    <h3>Эта страница</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/SmileSyntaxRu.rst.txt"
+            rel="nofollow">Исходный текст</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Быстрый поиск</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Искать" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             >указатель</a></li>
+        <li class="right" >
+          <a href="DataFormats.html" title="6. Форматы хранимых данных"
+             >вперёд</a> |</li>
+        <li class="right" >
+          <a href="InterpSemantic.html" title="4. Семантика оператора интерпретации"
+             >назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">5. </span>Синтаксис языка программирования Smile</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Alexander Legalov.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.2.
+    </div>
+  </body>
+</html>

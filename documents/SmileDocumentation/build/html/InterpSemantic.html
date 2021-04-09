@@ -1,0 +1,1086 @@
+
+<!DOCTYPE html>
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta content="Описание концепций, языковых и инструментальных средств функционально-потокового параллельного программирования." name="description" />
+<meta content="парадигмы программирования, функционально-потоковое параллельное программирование" name="keywords" />
+
+    <title>4. Семантика оператора интерпретации &#8212; документация smile </title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="shortcut icon" href="_static/smile48.png"/>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="5. Синтаксис языка программирования Smile" href="SmileSyntaxRu.html" />
+    <link rel="prev" title="3. Язык программирования Smile. Предварительное описание" href="SmileReference.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             accesskey="I">указатель</a></li>
+        <li class="right" >
+          <a href="SmileSyntaxRu.html" title="5. Синтаксис языка программирования Smile"
+             accesskey="N">вперёд</a> |</li>
+        <li class="right" >
+          <a href="SmileReference.html" title="3. Язык программирования Smile. Предварительное описание"
+             accesskey="P">назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">4. </span>Семантика оператора интерпретации</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1><span class="section-number">4. </span>Семантика оператора интерпретации<a class="headerlink" href="#id1" title="Ссылка на этот заголовок">¶</a></h1>
+<p>Появление статической типизации привело к пересмотру семантики операций над контейнерными данными. В честности этому содействовало то, что у вектора, роя и потока все данные однотипные, а тип данных известен. Это позволяет выполнять над ними без дополнительной проверки типов не только массовые функции над всеми элементами, но и рассматривать каждый контейнер как единое целое.</p>
+<p>Использование статической типизации также привело к разделению оператора интерпретации на два разных вида: одиночный (одноаргументный) и групповой (массовый, поэлементный). Одиночный оператор интерпретации, обозначаемый через «:» (постфиксная форма) или «^» (префиксная форма) предназначен для задания обычных функций, воспринимающих аргумент в качестве единого целого. Массовый оператор интерпретации используется для задания вычислений над каждым однотипным элементом контейнера, порождая на выходе контейнер с элементами тип которых соответствует типу результата выполняемой функции. Обозначается двойным значком «::» для постфиксной или «^^» для префиксной форм соответственно.</p>
+<p>Использование разных обозначений позволяет однозначно применять функцию с одним и тем же именем в разных контекстах. Например, функция вычитания «-» над аргументом (10, -3), воспринимаемом как вектор, состоящий из двух целых чисел, порождает следующие значения:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>// двуместная функция вычитания над одним аргументом
+(10, -3):- ⇒ 13
+
+// функция смены знака, массово применяемая
+// к двум однотипным аргументам
+(10, -3)::- ⇒ (-10, 3)
+</pre></div>
+</div>
+<p>Разделение оператора интерпретации на массовый и одноаргументный позволяет ввести более гибкий одноаргументный набор дополнительных функций для потока и роя, обеспечивающих обработку асинхронно поступающих данных.</p>
+<p>Одиночный оператор интерпретации обрабатывает как функции, определенные семантикой языка (предопределенные функции), так и функции, разрабатываемые программистом. В отличие от него семантика массового оператора интерпретации ориентирована только на предопределенные функции, обрабатывающие композиции данных.</p>
+<div class="section" id="id2">
+<h2><span class="section-number">4.1. </span>Использование функций с одиночным оператором интерпретации<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Одиночный оператор интрепретации по сути является ключевым, так как не ведет к последующей декомпозиции данных, а рассматривает свои аргументы как единое целое, для каждой пары которых определена семантика выполнения. Эта семантика четко определяет соответствие между функцией и данными. Оператор изначально отслеживает, чтобы аргумент-данные соответствовал сигнатуре аргумента-функции, после чего обеспечивает выполнение функции на обработку данных. При отсутствии этого соответствие результатом является ошибка и прерывание программы.</p>
+<div class="section" id="id3">
+<h3><span class="section-number">4.1.1. </span>Предопределенные функции<a class="headerlink" href="#id3" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Существует большое число предопределенных фунций, сигнатура которых и семантика вычислений определены изначально. Эти функции используются как для выполнения базовых арифметических и логических операций, так и для обеспечения различных композиций и декомпозиций данных, что осуществляется в дополнение к программоформирующим операторам языка.</p>
+<p>Предопределенные функции и данные формируются на основе атомов, каждый из которых может быть в роли как аргумента, так и функции оператора интерпретации. При этом ряд атомарных артефактов могут выступать только в роли данных, другие - в роли функций, третьи - в той и другой.</p>
+<p>Для идентификации предопределенных функций в основном используются специальные символы. Обычно за ними закрепляются вычислительные операции, традиционные для этих символов в большинстве существующих языков программирования. Задаются допустимые аргументы и значения этих функций. При этом типы аргумента и результата являются именованными типами и определяется аксиоматически при описании функции. Допускается перегрузка предопределенных функций, при которой формируются новые сигнатуры.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p><em>В данный момент я пытаюсь выделить подмножество предопределенных функций, предназначенных для формирования каркаса ФПП программы, характерного для Праязыка. В таком виде программа вряд ли может создаваться, так как минимальный набор манипуляций с данными (сравнения и т.д.) необходим даже для самого базового языка.</em></p>
+<p><em>В рассматриваемой версии не все спецзнаки имеют определенную семантику. Предполагается, что в дальнейшем она будет разрабатываться и уточняться. Наряду со специальными знаками в качестве предопределенных функций могут выступать и идентификаторы, которые, как и ключевые слова, запрещены для других применений.</em></p>
+</div>
+<p>Ниже приводится описание семантики предопределенных функций, используемых в текущей версии. Следует отметить, что для аргументов, тип которых при описании не задан результатом будет ошибка: «неправильное использование функции».</p>
+<div class="section" id="id4">
+<h4><span class="section-number">4.1.1.1. </span>Предопределенные функции общего назначения<a class="headerlink" href="#id4" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Предопределенные функции общего назначения обеспечивают универсальные преобразования данных независимо от их типа и структуры. Они позволяют работать с разными артефактами.</p>
+</div>
+<div class="section" id="id5">
+<h4><span class="section-number">4.1.1.2. </span>Использование знака «|»<a class="headerlink" href="#id5" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Знак <strong>«|»</strong> задает функцию нахождения длины контейнерного типа. Аргументом-данными могут быть вектор, кортеж, рой. Результат – целое число, задающее количество элементов на первом уровне вложенности.</p>
+<p>Данная функция имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="o">|</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+<span class="p">:</span><span class="o">|</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span><span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+<span class="p">:</span><span class="o">|</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">any</span><span class="o">...</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</pre></div>
+</div>
+<p>Если аргумент не является одним из указанных контейнерных типов, то результатом является ошибка операции интерпретации <strong>BASEFUNCERROR</strong>. Использование функции позволяет проверить размер аргумента перед обработкой, а лишь затем начать выделение его элементов. Следует при этом отметить, что выделение элементов для кортежа, в соответствии с описанным выше, можеть осуществляться только если тип этих элементов определен на этапе компиляции или если есть возможность приведения к векторному типу.</p>
+<p>Примеры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(a, n, (q, w), s):| ⇒ 4
+[1, 2, 3, 4, 5]:| ⇒ 5
+((1, 2, (f, d), x)):| ⇒ 1
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h4><span class="section-number">4.1.1.3. </span>Использование знака «?»<a class="headerlink" href="#id6" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Функция <strong>«?»</strong> осуществляет единичную селекцию, то есть, ищет в булевском векторе данных позицию едиственного истинного значения и выводит его целочисленный номер. Функция полезна для организации единичного выбора.Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(false, true, false, false):? ⇒ 2
+</pre></div>
+</div>
+<p>Данная функция имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>:? &lt;&lt; func bool(*) -&gt; int
+:? &lt;&lt; func bool[*] -&gt; int
+</pre></div>
+</div>
+<p>Если список булевских величин состоит только из ложных значений, или в том случае, когда в нем имеется несколько истинных значений формируется ошибка базовой функции:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(false, false, false):? ⇒ BASEFUNCERROR
+(true, false, true, false):? ⇒ BASEFUNCERROR
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h4><span class="section-number">4.1.1.4. </span>Использование знака «??»<a class="headerlink" href="#id7" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Функция <strong>«??»</strong>, осуществляет вычисление номеров позиций истинных булевских констант в булевском векторе данных. То есть, используется как селектор множества позиций. В качестве результата формируется целочисленный вектор с номерами тех элементов булевского вектора, чьи значения были равны true. Функция полезна для организации выборочного продолжения дальнейших вычислений с использованием множественного селектора. Полученные целочисленные значения используются для выбора элементов из контейнерных данных
+данных. Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(true, false, true, false, false, true):?? ⇒ (1, 3, 6)
+</pre></div>
+</div>
+<p>Данная функция имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>:?? &lt;&lt; func bool(*) -&gt; int(*)
+:?? &lt;&lt; func bool[*] -&gt; int[*]
+</pre></div>
+</div>
+<p>Если список состоит только из ложных значений, на выходе формируется вектор, не содержащий элементов, автоматически преобразуемый в ошибку базовой функции:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(false, false, false):? ⇒ () ⇒ BASEFUNCERROR
+</pre></div>
+</div>
+</div>
+<div class="section" id="id8">
+<h4><span class="section-number">4.1.1.5. </span>Использование знака «..»<a class="headerlink" href="#id8" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Знак <strong>«..»</strong> используется в качестве функции, формирующей вектор или рой из числовых атомов. В качестве аргумента может выступать трехэлементный вектор или рой, в котором первое число задает начало интервала, второе - его конец, а третье - шаг. Числа могут быть как целые, так и действительные, но одного типа, а шаг принимать как положительные, так и отрицательные значения. Необходимо отсутствие расхождений между значением шага и границами интервала.</p>
+<p>Кроме этого аргумент функции может быть целочисленный двухэлементным вектором или роем. В этом случае первый элемент определяет нижнюю целочисленную границу интервала, а второй верхнюю. При этом нижняя граница должна быть меньше или равной верхней границе, а шаг по умолчания принимается равным единице.</p>
+<p>При некорректном задании границ интервала, идентифицированном во время выполнения, данная функция возвращает ошибку <strong>BOUNDERROR</strong>. Если некорректно задана структура контейнера или тип его элементов, то возвращается ошибка периода компиляции.</p>
+<p>Данная функция имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="o">..</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">int</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="p">:</span><span class="o">..</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">float</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="p">:</span><span class="o">..</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">int</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="p">:</span><span class="o">..</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">float</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="p">:</span><span class="o">..</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">int</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">[</span><span class="o">*</span><span class="p">]</span>
+<span class="p">:</span><span class="o">..</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">float</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">[</span><span class="o">*</span><span class="p">]</span>
+<span class="p">:</span><span class="o">..</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">int</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">[</span><span class="o">*</span><span class="p">]</span>
+<span class="p">:</span><span class="o">..</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">float</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">[</span><span class="o">*</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Примеры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(-3.5, 2.0, 1.5):.. ⇒ (-3.5, -2.0, -0.5, 1.0)
+[1, 5]:.. ⇒ [1, 2, 3, 4, 5]
+(2, 1):.. ⇒ BOUNDERROR
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p><em>В дальнейшем предполагается введение интервальных констант, задающих необходимый диапазон.</em></p>
+</div>
+</div>
+<div class="section" id="dup">
+<h4><span class="section-number">4.1.1.6. </span>Использование функции «dup»<a class="headerlink" href="#dup" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Функция обеспечивает создания вектора из одинаковых элементов путем дублирования. Аргумент – кортеж, первый элемент которого – значение некоторого предопределенного именованного типа, а второй – положительная целочисленная константа. Результат – вектор, элементами которого являются копии первого элемента аргумента, а количество элементов равно значению второго элемента аргумента.</p>
+<p>Пример:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(10, 5):dup ⇒ (10, 10, 10, 10, 10)
+</pre></div>
+</div>
+<p>Функция <strong>dup</strong> в качестве аргумента имеет тип <strong>none:func</strong>.</p>
+<p>Данная функция имеет следующую сигнатуру:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dup</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">any</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>При некорректном задании количества дубликатов, идентифицированном во время выполнения, данная функция возвращает ошибку <strong>BOUNDERROR</strong>.</p>
+</div>
+</div>
+<div class="section" id="id9">
+<h3><span class="section-number">4.1.2. </span>Использование данных<a class="headerlink" href="#id9" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Данные тоже могут допускать различное толкование в зависимости от того, в
+какой части операции интерпретации они встретились.</p>
+<p>Использование сигнальной константы в качестве функции ориентировано на отображение аргумента, поступившего на вход данных в качестве результата.</p>
+<p>Функция имеет следующую сигнатуру:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>:! &lt;&lt; func any -&gt; any
+</pre></div>
+</div>
+<p>То есть, в качестве функции знак «<strong>!</strong>» интерпретируется как пустая операция, осуществляющая пропуск значения аргумента в качестве результата. Данном знаку можно сопоставить следующее определение функции:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>:! &lt;&lt; func x@any -&gt; any {
+    x:return
+}
+</pre></div>
+</div>
+<p>Если аргумент является вектором, группой или атомом, то происходит его выдача в качестве результата.  Если же аргумент определен как задержка, то предварительно оператор интерпретации осуществляет ее раскрытие, ведущее к вычислению задержанного выражения. Полученное значение передается функции, которая и возвращает его уже без дополнительных изменений.</p>
+<p>Пример:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>{(2,3):+}:! ⇒ 5
+</pre></div>
+</div>
+<p>Сигнальная константа также может использовать как аргумент-данные. В этом случае она интерпретируюется как отсутствие аргумента.  Обычно используется с теми функциями, которые не получают аргументов. То есть она воспринимается как сигнал, запускающий функцию в требуемый момент времени. Например, пусть будет задана функция:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sin_pi_div_4</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="p">{</span>
+    <span class="p">(</span><span class="mf">3.14</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">):</span><span class="o">/</span><span class="p">:</span><span class="n">sin</span> <span class="o">&gt;&gt;</span><span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Тогда ее вызов будет оформлен следующим образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>!:sin_pi_div_4
+</pre></div>
+</div>
+<p>Целые положительные числа могут использоваться для выбора элементов из векторов, кортежей и роев. То есть они по сути могут выступать в качестве индексов. Получение элемента из кортежа можно показать на следующем примере:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(10, 9, 8, 7, 6, 5, 4, 3, 2, 1):5 ⇒ 6
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p><em>Вариант с отрицательными индексами убран, так как он ведет к неоднозначному типу результата. Поэтому корректным считается только положительный индекс.</em></p>
+<p>Целые отрицательные числа обеспечивают удаления из из контейнеров элементов с индексом равным абсолютному значению индексирующего числа. Например, после этой операции размер кортежа уменьшается на единицу:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(10, 9, 8, 7, 6, 5, 4, 3, 2, 1):-5 ⇒ (10, 9, 8, 7, 5, 4, 3, 2, 1)
+</pre></div>
+</div>
+</div>
+<p>Данная функция имеет следующую сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nd">@int</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">any</span>
+<span class="p">:</span><span class="nd">@int</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">any</span><span class="o">...</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">any</span>
+<span class="p">:</span><span class="nd">@int</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span><span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="nb">any</span>
+</pre></div>
+</div>
+<p>Знак типа «&#64;» указывает на то что в данном случае подразумевается неименованное значение целочисленноготипа. То есть, любая константа. Возврат значения из вектора происходит тогда, когда данный вектор полностью сформируется и будет готов к использованию в операторе интерпретации.</p>
+<p>При использовании с кортежом необходимо, чтобы все его данные были одного типа, что позволяет получить на выходе предопределенный тип данных неявно сводимый к вектору. Кроме этого возможна ситуация когда разные типы элементов кортежа известны во время компиляции, а значением селектора является константное выражение, что позволяет вывести тип результата. Несоответствие этому условию определяется во время компиляции. Если в качестве данных выступает рой, то оператор интерпретации запускается на выполнения не дожидаясь поступления всех элементов роя. Достаточно наличия целочисленного значения, определяющего функцию селекцию и прихода в рой элемента с указанным индексом. То есть в данной ситуации осуществляется асинхронный выбор элемента, что может ускорить вычисления, но ведет к дополнительным расходам при реализации механизма.</p>
+<p>В случае нулевого или отрицательного значения или значения порождается ошибка <strong>BOUNDERROR</strong>, сигнализирующая о неправильном индексе.</p>
+<div class="section" id="id10">
+<h4><span class="section-number">4.1.2.1. </span>Использование булевских значений в качестве функций<a class="headerlink" href="#id10" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Функция, определяемая булевским значением, осуществляет выбор первого или второго элемента двухэлементного вектора в зависимости от значения. Значение <code class="docutils literal notranslate"><span class="pre">true</span></code> обеспечивает выбор первого элемента вектора, а значение <code class="docutils literal notranslate"><span class="pre">false</span></code> - второго. Оба значения должны принадлежать одному и тому же типу. По сути это селектор значения, реализующий простейшее условие выбора. В качестве аргумента могут выступать двухлементные: вектор, рой, кортеж с элементами одного типа, сводимый к двухэлементному вектору (или булевский селектор является константным выражением). Отличие между вектором (кортежом) и роем определяется в подходе к синхронизации вычислений, как и в случае использования в качестве функций целочисленных селекторов.</p>
+<p>Функция, определяемая булевским значением, имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nd">@bool</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">any</span><span class="p">,</span> <span class="nb">any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">any</span>
+<span class="p">:</span><span class="nd">@bool</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">[</span><span class="nb">any</span><span class="p">,</span> <span class="nb">any</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="nb">any</span>
+</pre></div>
+</div>
+<p>Примеры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(10, 20):true  ⇒ 10
+(10, 20):false ⇒ 20
+[10, 20]:true  ⇒ 10
+[10, 20]:false ⇒ 20
+</pre></div>
+</div>
+<p>В случае вектора меньшей или большей размерности порождается ошибка <strong>BOUNDERROR</strong>, сигнализирующая о неправильном обращении. Следует также отметить, что порядок выбора не связан с числовыми значениями, используемыми для представления <code class="docutils literal notranslate"><span class="pre">true</span></code> и <code class="docutils literal notranslate"><span class="pre">false</span></code>, а определяется в соответствии с общепринятой логикой функционирования условного оператора <code class="docutils literal notranslate"><span class="pre">if...then...else</span></code> традиционных языков программирования.</p>
+</div>
+</div>
+<div class="section" id="id11">
+<h3><span class="section-number">4.1.3. </span>Функции, выполняющие вычисления<a class="headerlink" href="#id11" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Ряд знаков зарезервированы для выполнения функции, свойственных их традиционному применению во многих языках программирования. Следует отметить, что в ряде случаев они изначально перегружены в большей степени, чем соответствующие знаки в ряде других языков. Это обусловлено отсутствием преобразований типов по умолчанию, что обеспечивает большую однозначность и понимание того, в каком контексте используется тот или иной знак. Практически все эти знаки имеют тип <strong>none:func</strong>.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p><em>Следует обратить внимание на присутствие в тексте действительных чисел, которые пока реализовывать не планируется. Но они ведь все равно появятся…</em></p>
+</div>
+<div class="section" id="id12">
+<h4><span class="section-number">4.1.3.1. </span>Сложение «<strong>+</strong>»<a class="headerlink" href="#id12" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Знак «<strong>+</strong>» используется для задания бинарных и унарных операций. В случае бинарных операций его аргументом является двухэлементный кортеж. Интерпретация знака <strong>«+»</strong> в качестве функции зависит от типов элементов кортежа. Если аргумент является двухэлементным кортежом числовых атомов (целых или действительных), то выполняется арифметическое сложение. При сложении двух целых чисел результат всегда является целым числом. В этом случае автоматическое преобразование к действительному числу не происходит даже при переполнении. Сложение действительных чисел осуществляется, когда аргументом функции является двухэлементный кортеж действительных чисел. Результатом в этом случае является действительное число. Следует отметить отсутствие неявных преобразований при выполнении сложения. Исключением является преобразование целочисленной константы «0» в действительный нуль «0.0».</p>
+<p>Если аргумент является числовым атомом, то он выдается в качестве результата без
+каких-либо преобразований.</p>
+<p>Аргумент функции <strong>«+»</strong> может также быть булевским вектором длиной, равной 2. Результатом в этом случае является дизъюнкция (логическое «или»). Допускается одноэлементный булевский атом, порождающий в качестве результата значение этого же элемента.</p>
+<p>Во всех остальных случаях результатом является ошибка операции интерпретации <strong>BASEFUNCERROR</strong>.</p>
+<p>Функция, имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="o">+</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+<span class="p">:</span><span class="o">+</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+<span class="p">:</span><span class="o">+</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<span class="p">:</span><span class="o">+</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">int</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+<span class="p">:</span><span class="o">+</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">float</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+<span class="p">:</span><span class="o">+</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">bool</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</pre></div>
+</div>
+<p>Примеры сложения:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(3, 5):+ ⇒ 8
+(3.0, 5.0):+ ⇒ 8.0
+(3, 5.0):+ ⇒ BASEFUNCERROR
+(5):+ ⇒ BASEFUNCERROR
+5:+ ⇒ 5
+(max_integer, 1):+ ⇒ 0
+(true, false):+ ⇒ true
+true:+ ⇒ true
+false:+ ⇒ false
+(true):+ ⇒ BASEFUNCERROR
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p><em>Арифметические операции над действительными числами пока не реализуются</em></p>
+</div>
+</div>
+<div class="section" id="id13">
+<h4><span class="section-number">4.1.3.2. </span>Использование знака «-»<a class="headerlink" href="#id13" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Знак «<strong>-</strong>» используется для задания бинарных и унарных операций. В случае бинарных операций его аргументом является двухэлементный кортеж. Интерпретация знака «<strong>-</strong>» в качестве функции зависит от типов элементов кортежа. Если аргумент является двухэлементным кортежом числовых атомов (целых или действительных), то выполняется арифметическое вычитание. При вычитании двух целых чисел результат всегда является целым числом. В этом случае автоматическое преобразование к действительному числу не происходит даже при переполнении. Вычитание действительных чисел осуществляется, когда аргументом функции является двухэлементный кортеж действительных чисел. Результатом в этом случае является действительное число. Следует отметить отсутствие неявных преобразований при выполнении вычитания. Исключением является преобразование целочисленной константы «0» в действительный нуль «0.0».</p>
+<p>Если аргумент является числовым атомом, то в качестве результата осуществляется смена знака числа (унарный минус).</p>
+<p>Аргумент функции «<strong>-</strong>» может также быть булевским кортежом длиной, равной 2. Результатом в этом случае является исключающее или. Допускается одноэлементный булевский атом, порождающий в качестве результата инверсное значение.</p>
+<p>Во всех остальных случаях результатом является ошибка операции интерпретации <strong>BASEFUNCERROR</strong>.</p>
+<p>Функция, имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="o">-</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+<span class="p">:</span><span class="o">-</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+<span class="p">:</span><span class="o">-</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<span class="p">:</span><span class="o">-</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">int</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+<span class="p">:</span><span class="o">-</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">float</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+<span class="p">:</span><span class="o">-</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">bool</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</pre></div>
+</div>
+<p>Примеры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(3,5):- ⇒ -2
+(3.0, -5.0):- ⇒ -2.0
+(3, 5.0):- ⇒ BASEFUNCERROR
+(5):- ⇒ BASEFUNCERROR
+5:- ⇒ -5
+(min_integer,-1):- ⇒ 0
+(true,false,true):- ⇒ false
+true:- ⇒ false
+false:- ⇒ true
+(true):- ⇒ false
+</pre></div>
+</div>
+</div>
+<div class="section" id="id14">
+<h4><span class="section-number">4.1.3.3. </span>Использование знака «*»<a class="headerlink" href="#id14" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Знак «<strong>*</strong>» используется для задания бинарной функции умножения. Его аргументом является двухэлементный кортеж. Интерпретация знака «<strong>*</strong>» в качестве функции зависит от типов элементов кортежа. Если аргумент является двухэлементным кортежом числовых атомов (целых или действительных), то выполняется арифметическое умножение. При умножении двух целых чисел результат всегда является целым числом. В этом случае автоматическое преобразование к действительному числу не происходит даже при переполнении. Умножение действительных чисел осуществляется, когда аргументом функции является двухэлементный кортеж действительных чисел. Результатом в этом случае является действительное число. Следует отметить отсутствие неявных преобразований при выполнении умножения. Исключением является преобразование целочисленной константы «0» в действительный нуль «0.0».</p>
+<p>Аргумент функции «<strong>*</strong>» может также быть булевским кортежом длиной, равной 2. Результатом в этом случае является коньюнкция (логическое произведение).</p>
+<p>Во всех остальных случаях результатом является ошибка операции интерпретации <strong>BASEFUNCERROR</strong>.</p>
+<p>Функция, имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="o">*</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+<span class="p">:</span><span class="o">*</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+<span class="p">:</span><span class="o">*</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</pre></div>
+</div>
+<p>Примеры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(3, 5):* ⇒ 15
+(3, 5.0):* ⇒ BASEFUNCERROR
+(3.0, 5.0):* ⇒ 15
+(5):* ⇒ BASEFUNCERROR
+5:* ⇒ BASEFUNCERROR
+(max_integer, 2):* ⇒ New value
+(true, false):* ⇒ false
+(true, true):* ⇒ true
+true:* ⇒ BASEFUNCERROR
+(true):* ⇒ BASEFUNCERROR
+</pre></div>
+</div>
+</div>
+<div class="section" id="id15">
+<h4><span class="section-number">4.1.3.4. </span>Использование знака «/»<a class="headerlink" href="#id15" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Знак «<strong>/</strong>» используется для задания бинарной операции деления. Его аргументом является двухэлементный кортеж. Интерпретация знака «<strong>/</strong>» в качестве функции зависит от типов элементов кортежа. Аргумент должен является двухэлементным кортежом числовых атомов (целых или действительных), что определяет операцию деления. При делении двух целых чисел результат всегда является целым числом. В этом случае автоматическое преобразование к действительному числу не происходит даже при наличии остатка. Деление действительных чисел осуществляется, когда аргументом функции является двухэлементный кортеж действительных чисел. Результатом в этом случае является действительное число. Следует отметить отсутствие неявных преобразований при выполнении деления. Исключением является преобразование целочисленной константы «0» в действительный нуль «0.0».</p>
+<p>При делении на ноль выдается ошибка <strong>ZERODIVERROR</strong>. Во всех остальных случаях результатом является ошибка операции интерпретации <strong>BASEFUNCERROR</strong>.</p>
+<p>Функция, имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="o">/</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+<span class="p">:</span><span class="o">/</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+</pre></div>
+</div>
+<p>Примеры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(3, 5):/ ⇒ 0
+(3.0, 5.0):/ ⇒ 0.66667
+(3, 5.0):/ ⇒ BASEFUNCERROR
+(3.0, 0):/ ⇒ ZERODIVERROR
+(5):/ ⇒ BASEFUNCERROR
+5:/ ⇒ BASEFUNCERROR
+</pre></div>
+</div>
+</div>
+<div class="section" id="id16">
+<h4><span class="section-number">4.1.3.5. </span>Использование знака «%»<a class="headerlink" href="#id16" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Знак «<strong>%</strong>» используется для задания бинарной функции вычисления остатка от целочисленного деления. Его аргументом является двухэлементный целочисленный кортеж. Результат всегда является целым числом.</p>
+<p>При втором аргументе, равном нулю, выдается ошибка <strong>ZERODIVERROR</strong>. Во всех остальных случаях результатом является ошибка операции интерпретации <strong>BASEFUNCERROR</strong>.</p>
+<p>Функция, имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="o">%</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</pre></div>
+</div>
+<p>Примеры с формированием остатка:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(13,5): % ⇒ 3)
+(13,-5): % ⇒ 3)
+(-13,5): % ⇒ -3
+(-13,-5): % ⇒ -3
+</pre></div>
+</div>
+</div>
+<div class="section" id="id17">
+<h4><span class="section-number">4.1.3.6. </span>Использование знака «/%»<a class="headerlink" href="#id17" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Знак «<strong>/%</strong>» используется для одновременнного выполнения двух бинарных функций: целочисленного деления и  вычисления остатка. Его аргументом является двухэлементный целочисленный кортеж. Результат является двухэлементным целочисленным кортежом, первый элемент которого содержит частное от деления, а второй - остаток.</p>
+<p>При втором аргументе, равном нулю, выдается ошибка <strong>ZERODIVERROR</strong>. Во всех остальных случаях результатом является ошибка операции интерпретации <strong>BASEFUNCERROR</strong>.</p>
+<p>Функция, имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="o">/%</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Используется «компьютерная» интерпретация результатов, при которой частное округляется
+к нулю, а знак остатка равен знаку делимого. Операции связаны между собой следующими
+выражениями:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="n">DIV</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="n">MOD</span> <span class="n">y</span><span class="p">)</span>
+<span class="mi">0</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">x</span> <span class="n">MOD</span> <span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">y</span><span class="p">,</span> <span class="n">если</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="n">или</span>
+<span class="mi">0</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">x</span> <span class="n">MOD</span> <span class="n">y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">y</span><span class="p">,</span> <span class="n">если</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>Примеры целочисленного деления с формированием остатка:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(13,5): /% ⇒ (2, 3)
+(13,-5): /% ⇒ (-2, 3)
+(-13,5): /% ⇒ (-2, -3)
+(-13,-5): /% ⇒ (2, -3)
+</pre></div>
+</div>
+<p>Подобная трактовка отличается от математической, рассматриваемой, например в
+первом томе книги Дональда Кнута:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="n">DIV</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="n">MOD</span> <span class="n">y</span><span class="p">)</span>
+<span class="mi">0</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">x</span> <span class="n">MOD</span> <span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">y</span><span class="p">,</span> <span class="n">если</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="n">или</span>
+<span class="mi">0</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">x</span> <span class="n">MOD</span> <span class="n">y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">y</span><span class="p">,</span> <span class="n">если</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>Кстати, Кнут и не называет операцию MOD остатком. Получить математические
+версии функции, использую предопределенную операцию можно следующим образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>// функция целочисленного деления:
+div &lt;&lt; func x@(int, int) -&gt; int
+{
+    dm &lt;&lt; x:%:1;
+    {(dm,0):(&gt;=,&lt;):?}^
+    (
+        dm,
+        {(dm,1):-}
+    ):return
+}
+
+// функция выделения остатка от целочисленного деления:
+mod &lt;&lt; func x@(int, int) -&gt; int
+{
+    dm&lt;&lt;x:%;
+    {(dm:1,0):(&gt;=,&lt;):?}^
+    (
+        dm:2,
+        {(dm:2,0):(&gt;=,&lt;):?}^
+        (
+            {(dm:2,1):-:-},
+            {(dm:2,1):+:-}
+        )
+    ):return
+}
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p><em>Функции нужно внимательно проверить, так как написал их без особого контроля.</em></p>
+</div>
+</div>
+<div class="section" id="id18">
+<h4><span class="section-number">4.1.3.7. </span>Использование знаков: «=», «!=», «&lt;», «&lt;=», «&gt;», «&gt;=»<a class="headerlink" href="#id18" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Данные знаки используется для задания бинарных операции сравнения. Аргументом любого из них является двухэлементный кортеж, данные которого имеют одинаковый тип. Неявное автоматическое преобразование данных к одному типу внутри кортежа не происходит. Допускается сравнение между собой:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Целочисленных данных  - все операции;</p></li>
+<li><p>Действительных данных -все операции;</p></li>
+<li><p>Символов - все операции;</p></li>
+<li><p>Булевских данных - все операции;</p></li>
+<li><p>Данных, для которых тип не определен (пустой тип) -на равенство и неравенство;</p></li>
+<li><p>Типов - на равенство и неравенство;</p></li>
+<li><p>Функций - на равенство и неравенство.</p></li>
+</ul>
+</div></blockquote>
+<p>Результатом является булевское значение.</p>
+<p>Во всех остальных случаях результатом является ошибка операции интерпретации <strong>BASEFUNCERROR</strong>.</p>
+<p>Пусть cmp означает один из представленных выше знаков операции сравнения. Тогда функции имеют следующие обобщенны сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">cmp</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<span class="p">:</span><span class="n">cmp</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<span class="p">:</span><span class="n">cmp</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="n">char</span><span class="p">,</span> <span class="n">char</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<span class="p">:</span><span class="n">cmp</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<span class="p">:</span><span class="n">cmp</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="n">empty</span><span class="p">,</span> <span class="n">empty</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<span class="p">:</span><span class="n">cmp</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<span class="p">:</span><span class="n">cmp</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</pre></div>
+</div>
+<p>При этом необходимо учесть что не для каждого из представленных типов имеются все реализации операций сравнения.</p>
+</div>
+</div>
+<div class="section" id="id19">
+<h3><span class="section-number">4.1.4. </span>Использование в качестве функций предопределенных типов<a class="headerlink" href="#id19" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Применение статической типизации позволяет в большинстве случаев знать типы артефактов во время компиляции. Также во время компиляции многие типы выводимы из функций и других типов. Вместе с тем, в случае обобщений (при использовании типа <code class="docutils literal notranslate"><span class="pre">union</span></code>) необходимо определять тип артефакта во время выполнения. Поэтому наличие функций, обеспечивающих анализ типов в целом необходимо.</p>
+<p>Непосредственно типы в определяются как перечисления. При этом предопределенные типы заданы изначально. Пользовательские типы добавляются в процессе написания программы. Все они относятся к типу типов <code class="docutils literal notranslate"><span class="pre">type</span></code>. Непосредственно в функциях типы являются частью обрабатывамых значений, каждое из которых определяется в виде двойки:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Значение</span> <span class="o">=</span> <span class="p">(</span><span class="n">тип</span><span class="p">,</span> <span class="n">величина</span><span class="p">)</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Наряду с обработкой данных, осуществляемой неявно, допускается выделять тип любого элемента данных. Для этого используется предопределенная операция type. Формируемая при этом величина принадлежит к «типовым» и имеет точно такую же организацию, как и любой другой аргумент. Ее специфика проявляется лишь в том, что типом аргумента является type.</p>
+<blockquote>
+<div><p><strong>Структура типового элемента = (type, значение типа).</strong></p>
+</div></blockquote>
+<p>Поэтому для выделения типа ключевое слов type используется в качестве функции в операторе интерпретации. В результате возвращается значение типа, принадлежащее множеству допустимых типов артефактов. Функция получение типа значения имеет следующую сигнатуру:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span> <span class="o">-&gt;</span> <span class="nb">type</span>
+</pre></div>
+</div>
+<p>Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>10:type ⇒ int
+3.14:type ⇒ float
+(1, 2, 4, 7): type ⇒ tuple
+[1, 2, 3, 3, 4]: type ⇒ swarm
+</pre></div>
+</div>
+<p>Применение функции <strong>type</strong> к «типовому» элементу невозможно и ведет к ошибке интерпретации <strong>TYPEERROR</strong>, например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>int : type ⇒ TYPEERROR
+</pre></div>
+</div>
+<p>Предопределенные типы в качестве функций могут использоваться для различных операций преобразования типов, определяемых в языке. При этом можно считать, что выступая в качестве функций они имеют определенные сигнатуры, в которых аргументы-данные, принадлежащие входному типу, преобразуются в значения, тип которого определяется результатом.</p>
+<p>Существует также возможность, за счет использования пользовательской перегрузки, формировать собственные преобразователи как для предопределенных, так и порожденных именованных типов. В роле такого преобразователя выступает специальный оператор <code class="docutils literal notranslate"><span class="pre">transform</span></code>. По сути это некоторая функция-конструктор, синтаксис которой отличается от обычной функции в связи со спецификой использования. Синтаксис преобразователь задается следующим образом:</p>
+<p><strong>преобразователь = «transform» имя_аргумента » «&#64;» «имя_типа» «-&gt;» «имя_типа»</strong></p>
+<blockquote>
+<div><p><strong>[тело_преобразованиеля ].</strong></p>
+</div></blockquote>
+<p><strong>тело_преобразователя = [ «{» [ Элемент {«;» Элемент }] «}» ].</strong></p>
+<p>Практически тело преобразователя совпадает с телом функции. В результате при компиляции формируется описание сигнатуры (прототипа), которое полностью совпадает с описанием функции, имя которой совпадает с именем типа, что позволяет компилятору работать с преобразователями также как и с функциями.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>В данной ситуации при в общем-то понятной и достаточно прозрачной семантике встал вопрос, каким образом должен выглядеть синтаксис преобразователя типа. Рассматривались следующие варианты.</p>
+<ol class="arabic simple">
+<li><p>Описание всех преобразователей в виде специальной функции трансформации, перегружаемой на все возможные ситуации. Ее схематичный вид должен был выглядеть следующим образом:</p></li>
+</ol>
+<p><code class="docutils literal notranslate"><span class="pre">transform</span> <span class="pre">&lt;&lt;</span> <span class="pre">func</span> <span class="pre">имя_аргумента&#64;имя_входного_типа</span> <span class="pre">-&gt;</span> <span class="pre">имя_выходного_типа</span> <span class="pre">тело</span></code></p>
+<p>Например:</p>
+<p><code class="docutils literal notranslate"><span class="pre">transform</span> <span class="pre">&lt;&lt;</span> <span class="pre">func</span> <span class="pre">x&#64;float</span> <span class="pre">-&gt;</span> <span class="pre">int</span> <span class="pre">{...}</span></code></p>
+<p>Не понравилось: появляются одинаковы сигнатуры аргументов для разных выходных типов, что не соответствует данному ранее условию использования перегружаемых функций. Смотрится не очень логично и красиво. При выводе типов нужно учитывать имя функции в коде, а затем проверять, что на выходе.</p>
+<ol class="arabic simple" start="2">
+<li><p>Другой вариант связан с непосредственной перегрузкой имени типа в качестве имени функции. Например:</p></li>
+</ol>
+<p><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">&lt;&lt;</span> <span class="pre">func</span> <span class="pre">x&#64;float</span> <span class="pre">-&gt;</span> <span class="pre">int</span> <span class="pre">{...}</span></code></p>
+<p>В этой ситуации логика использования сохраняется. Однако подобная реализаци допускает при написании использовать разные имена функции и типа возвращаемого значения. Теоретически это возможно, но концептуально выглядит не очень хорошо. Можно для типов ввести дополнительных контроль на этапе компиляции, но в целом все это выглядит не очень красиво. Дважды повторяется имя типа.</p>
+<ol class="arabic simple" start="3">
+<li><p>Поэтому выбран вариант с вводом специального оператора <code class="docutils literal notranslate"><span class="pre">transform</span></code>, что позволяет избавиться от избыточности и акцентировать внимание не на сигнатуре, а на выходном параметре. Также видна логика преобразователя, как конструктора с аргументом на входе. Для внутреннего предствавления и формируемого экспорта сохранено описание преобразователя как прототипа функции, определяющего имя, аргумент и результат.</p></li>
+</ol>
+</div>
+<div class="section" id="int">
+<h4><span class="section-number">4.1.4.1. </span>Использование типа int<a class="headerlink" href="#int" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Функция осуществляет преобразование аргумента к целочисленному типу. Эти преобразования возможны для действительных чисел, символов, булевских величин. Действительные числа преобразуются к целым путем отсечения дробной части независимо от знака числа.</p>
+<p>Функция для экспорта имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">bool</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+<span class="nb">int</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">float</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+<span class="nb">int</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="n">char</span> <span class="o">-&gt;</span> <span class="nb">int</span>
+</pre></div>
+</div>
+<p>Примеры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>13.8:int  ⇒ 13
+-13.2:int  ⇒ -13
+-13.8:int  ⇒ -13
+&#39;0&#39;:int ⇒ 48
+true:int ⇒ 1
+false:int ⇒ 0
+</pre></div>
+</div>
+</div>
+<div class="section" id="bool">
+<h4><span class="section-number">4.1.4.2. </span>Использование типа bool<a class="headerlink" href="#bool" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Функция осуществляет преобразование аргумента к булевскому типу. Эти преобразования возможны для целых чисел. Если число равно нулю, то резульатом является <code class="docutils literal notranslate"><span class="pre">false</span></code>. В противном случае результат равен <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
+<p>Функция имеет следующую сигнатуру:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">bool</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">int</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</pre></div>
+</div>
+<p>Примеры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1:bool  ⇒ true
+-10:bool  ⇒ true
+100:bool ⇒ true
+0:bool ⇒ false
+</pre></div>
+</div>
+</div>
+<div class="section" id="signal">
+<h4><span class="section-number">4.1.4.3. </span>Использование типа signal<a class="headerlink" href="#signal" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Функция осуществляет преобразование аргумента любого типа к сигнальному значению. То есть идет потеря величины аргумента.</p>
+<p>Функция имеет следующую сигнатуру:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">signal</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span> <span class="o">-&gt;</span> <span class="n">signal</span>
+</pre></div>
+</div>
+<p>Примеры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1:signal  ⇒ !
+!:signal  ⇒ !
+</pre></div>
+</div>
+</div>
+<div class="section" id="error">
+<h4><span class="section-number">4.1.4.4. </span>Использование типа error<a class="headerlink" href="#error" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Функция осуществляет формирование общей ошибки и прерывание программы. Может применяться к любому аргументу.</p>
+<p>Функция имеет следующую сигнатуру:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">error</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span> <span class="o">-&gt;</span> <span class="n">ERROR</span>
+</pre></div>
+</div>
+<p>Примеры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1:error  ⇒ ERROR
+!:error  ⇒ ERROR
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id20">
+<h3><span class="section-number">4.1.5. </span>Использование в качестве функций имен составных типов<a class="headerlink" href="#id20" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Формируемые пользователем типы в основном базируются на составных типах, позволяющих конструировать разнообразные конфигурации данных, которым присваивются соответствующие имена. Эти имена пользовательских типов также могут использоваться для задания пользовательских функций. Однако ряде преобразований как уже сформированных пользовательских типов, так и программоформирующих операторов может осуществляться путем использования имен, определяющих составные типы. К этим именам относятся: vector, tuple, struct, swarm, stream, union.</p>
+<p>Для поддержки строгой типизации в языке запрещены неявные преобразования. С одной стороны это ведет к дополнительным проблемам для программиста. Но с другой стороны повышается надежность кода за счет дополнительного контроля над типами.</p>
+<div class="section" id="vector">
+<h4><span class="section-number">4.1.5.1. </span>Использование типа vector<a class="headerlink" href="#vector" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Задает преобразование аргумента в вектор. Аргумент может быть базовым элементарным типом. В этом случае он становится одноэлементным вектором. Также эта функция может использоваться с роями, преобразуя их в вектор. Это позволяет синхронизировать поступающие данные перед последующей обработкой.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>атом:vector ⇒ (атом)
+[элемент, ... элемент]:vector ⇒ vector(элемент, ... элемент)
+</pre></div>
+</div>
+<p>Функция также может применяться к потоку, который в этом случае преобразуется к вектору. Тем самым поэлементный вывод из потока трансформируется в формирование вектора, число элементов в котором определяется количеством элементов, порождаемых потоком (что не всегда хорошо).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>stream{}:vector ⇒ vector(элемент, ... элемент)
+</pre></div>
+</div>
+<p>Данная функция имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vector</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="n">vector</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span><span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="n">vector</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span><span class="p">{</span><span class="o">*</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Помимо этого можно задавать ряд преобразований, если они возможны во время компиляции. В частности допускается преобразовывать структуру, состоящую из элементов одного типа в вектор. Аналогичное преобразование в вектор возможно и для кортежа, все элементы которого имеют один тип. Для этих преобразований имеются соответствующие функции:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vector</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">any</span><span class="o">...</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="n">vector</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="n">struct</span><span class="p">([</span><span class="o">...</span><span class="p">]:</span><span class="nb">any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Если аргумент не соответствует сигнатуре, то результатом является ошибка операции интерпретации <strong>BASEFUNCERROR</strong>.</p>
+</div>
+<div class="section" id="tuple">
+<h4><span class="section-number">4.1.5.2. </span>Использование типа tuple<a class="headerlink" href="#tuple" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Задает преобразование аргумента в кортеж. Аргумент может быть базовым элементарным типом. В этом случае он становится одноэлементным кортежом. Также эта функция может использоваться с роями, преобразуя их в vector. Это позволяет синхронизировать поступающие данные перед последующей обработкой.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>атом:tuple ⇒ tuple(атом)
+[элемент, ... элемент]:tuple ⇒ tuple(элемент, ... элемент)
+</pre></div>
+</div>
+<p>Функция также может применяться к потоку, который в этом случае преобразуется к кортежу. Тем самым поэлементный вывод из потока трансформируется в формирование кортежа, число элементов в котором определяется количеством элементов, порождаемых потоком (что не всегда хорошо).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>stream{}:tuple ⇒ tuple(элемент, ... элемент)
+</pre></div>
+</div>
+<p>Данная функция имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">tuple</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">any</span><span class="o">...</span><span class="p">)</span>
+<span class="nb">tuple</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">any</span><span class="o">...</span><span class="p">)</span>
+<span class="nb">tuple</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span><span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">any</span><span class="o">...</span><span class="p">)</span>
+<span class="nb">tuple</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span><span class="p">{</span><span class="o">*</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">any</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Другим аналогичным преобразованием является преобразование в кортеж структуры. В этом случае именованный доступ к полученному результату заменяется на позиционный. Порядок следования типов данных в кортеже совпадает с порядком их следования в исходной структуре. Преобразование описывается следующей прототипом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">tuple</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="n">struct</span><span class="p">(</span><span class="n">a1</span><span class="p">:</span><span class="n">t1</span><span class="p">,</span> <span class="n">a2</span><span class="p">:</span><span class="n">t2</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Если аргумент не соответствует сигнатуре, то результатом является ошибка операции интерпретации <strong>BASEFUNCERROR</strong>.</p>
+</div>
+<div class="section" id="swarm">
+<h4><span class="section-number">4.1.5.3. </span>Использование типа swarm<a class="headerlink" href="#swarm" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Задает преобразование к рою. Аргумент может быть базовым элементарным типом. В этом случае он становится одноэлементным роем. Также эта функция может использоваться с векторами, преобразуя их в рой. Это позволяет сделать поступающие данные асинхронными, так как компилятор подобные преобразования может учесть в момент анализа программы. То есть преобразование может осуществиться до окончательного вычисления вектора или вообще до начала его вычисления.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>атом:swarm ⇒ [атом]
+vector(элемент, ... элемент):swarm ⇒ [элемент, ... элемент]
+</pre></div>
+</div>
+<p>Функция также может применяться к потоку, который в этом случае преобразуется к рою. Тем самым поэлементный вывод из потока трансформируется в формирование роя, число элементов в котором определяется количеством элементов, порождаемых потоком. Порядок элементов в рое совпадает с последовательностью их порождения потоком. Информация о каждом элементе поступает в оператор интерпретации асинхронно.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>stream{}:swarm ⇒ [элемент, ... элемент]
+</pre></div>
+</div>
+<p>Данная функция имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">swarm</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nb">any</span><span class="p">]</span>
+<span class="n">swarm</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">[</span><span class="o">*</span><span class="p">]</span>
+<span class="n">swarm</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span><span class="p">{</span><span class="o">*</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">[</span><span class="o">*</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Если аргумент не соответствует сигнатуре, то результатом является ошибка операции интерпретации <strong>BASEFUNCERROR</strong>.</p>
+</div>
+<div class="section" id="stream">
+<h4><span class="section-number">4.1.5.4. </span>Использование типа stream<a class="headerlink" href="#stream" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Задает преобразование к потоку. Аргумент может быть базовым элементарным типом. В этом случае он становится потоком, порождающим один элемент. Также эта функция может использоваться с векторами, преобразуя их в поток. Это позволяет сделать данные последовательно асинхронными, поступающими в произвольном порядке, так как компилятор подобные преобразования может учесть в момент анализа программы. То есть преобразование может осуществиться до окончательного вычисления вектора или вообще до начала его вычисления.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>атом:stream ⇒ stream{атом}
+vector(элемент, ... элемент):stream ⇒ stream{элемент, ... элемент}
+</pre></div>
+</div>
+<p>Аналогично вектору функция также может применяться и к рою.</p>
+<p>Данная функция имеет следующие сигнатуры:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stream</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">{</span><span class="o">*</span><span class="p">}</span>
+<span class="n">stream</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">{</span><span class="o">*</span><span class="p">}</span>
+<span class="n">stream</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="nb">any</span><span class="p">{</span><span class="o">*</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">{</span><span class="o">*</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Если аргумент не соответствует сигнатуре, то результатом является ошибка операции интерпретации <strong>BASEFUNCERROR</strong>.</p>
+</div>
+</div>
+<div class="section" id="id21">
+<h3><span class="section-number">4.1.6. </span>Использование в качестве функций пользовательских типов<a class="headerlink" href="#id21" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Разработчик программного обеспечения может создавать свои описания типов на основе уже существующих предопределенные типов и ранее разработанных именованных пользовательских типов. Как и предопределенные типы, именованные пользовательские типы могут использоваться в качестве функций. Однако алгоритмы, выполняемые этими функциями, а также их сигнатуры определяются явно разработчиками ПО с использованием преобразователя <code class="docutils literal notranslate"><span class="pre">transform</span></code>.</p>
+<p>Такой подход говорит о том, что в принципе пользователь может связать с такой функцией какие угодно вычисления, тем самым обеспечивая гибкость в использовании имен типов в качестве функций. Поэтому невозможно заранее предугадать их поведение.</p>
+</div>
+<div class="section" id="union">
+<h3><span class="section-number">4.1.7. </span>Использование в качестве функции обобщенного типа union<a class="headerlink" href="#union" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Обобщенный глобальный тип <code class="docutils literal notranslate"><span class="pre">union</span></code> в качестве признака фиксирует имя включаемого в него типа. Функция с именем <code class="docutils literal notranslate"><span class="pre">union</span></code>, формирует вокруг конкретного типа оболочку, включающу признак (тэг) и ссылку на охватываемый артефакт. В качестве охватываемого типа может использоваться любой именованный тип за исключением самого <code class="docutils literal notranslate"><span class="pre">union</span></code>. Таким образом, преобразование типа заключается в его охвате, как и в случае с пользовательским обобщением.</p>
+<p>Использование в качестве функции описывается следующим прототипом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">union</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="n">имя_типа</span> <span class="o">-&gt;</span> <span class="n">union</span>
+</pre></div>
+</div>
+<p>Для выделения конкретного артефакта из глобального обобщения any необходимо проверить признак, после чего выделить значения используя имя полученного типа в качестве функции, осуществляя тем самым явное приведение вложенного артефакта к его типу.</p>
+<p>То есть, если тип вложенного артефакта совпадает с типом, используемым в качестве функции, то результатом является артефакт указанного типа. В противном случае генерируется ошибка <strong>TYPEERROR</strong> и происходит прерывание программы.</p>
+<p>Проверка признака осуществляется функцией <code class="docutils literal notranslate"><span class="pre">tag</span></code>, которая применима ко всем обобщениям.</p>
+</div>
+</div>
+<div class="section" id="id22">
+<h2><span class="section-number">4.2. </span>Семантика хранилищ<a class="headerlink" href="#id22" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Наряду с тем, что различные типы данных используются в качестве аргументов в операторе интерпретации, они также имеют определенную структуру, которая определяет специфику представления этих данных в хранилищах. Особенностью хранилищ является то, что к ним применяется ограниченный набор функций. Этот набор ограничен чтением из хранилищ и записью в них (с соблюдением принципа единственного присваивания). Но даже описание операций чтения-записи требует определенного синтаксического сахара для их более удобного и понятного представления в языке (<em>последнее со стороны может выглядеть сомнительно</em>).</p>
+<div class="section" id="id23">
+<h3><span class="section-number">4.2.1. </span>Хранилища атомарных данных<a class="headerlink" href="#id23" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Чтение атомарных данных задается обращением к хранилищам как к аргументам по имени хранилища. То есть, здесь никаких вопросов не возникает. Обращение обычно эквивалентно к использованию переменных в традиционных языках программирования.</p>
+<p>Пример:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">чтение</span> <span class="n">из</span> <span class="n">хранилищ</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="n">и</span> <span class="n">сложение</span>
+<span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span><span class="o">+</span>
+</pre></div>
+</div>
+<p>Запись в атомарное хранилище также осуществляется по аналогии с записью в обычные переменные. Однако особенностью в данном случае является то, что хранилище используется в качестве функции в операторе интерпретации, который принимает поступающие данные и записывает их в хранилище:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">запись</span> <span class="n">данных</span> <span class="n">в</span> <span class="n">целочисленное</span> <span class="n">хранилище</span> <span class="n">a</span>
+<span class="n">a</span><span class="nd">@int</span>
+<span class="mi">10</span><span class="p">:</span><span class="n">a</span>
+</pre></div>
+</div>
+<p>Следует отметить, что тип записываемых данных должен совпадать с типом хранилища.</p>
+</div>
+<div class="section" id="id24">
+<h3><span class="section-number">4.2.2. </span>Общие особенности хранилищ составного типа<a class="headerlink" href="#id24" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Независимо от типа составного хранилища, чтение и запись в них осуществляется одинаково в случае, когда каждое из таких хранилищ построено на основе именованного типа. В этом случае описание хранилища практически не отличается от описания хранилищ атомарных типов. Чтение осуществляется обращением целиком ко всем данным, а селективна выборка при этом может определяться соответствием между типом хранилища и функцией, задаваемой в операторе интерпретации. При этом допускается неявное приведение типов данных в соответствии со сформированной сигнатурой функции</p>
+<p>Простейший вариант чтения заключается во взаимодействии одноименных по типу хранилищ, когда данные из одного копируются в другое:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">intPair</span> <span class="o">&lt;&lt;</span> <span class="o">@</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="n">a</span><span class="p">:</span><span class="n">intPair</span>
+<span class="n">b</span><span class="p">:</span><span class="n">intPair</span>
+<span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">):</span><span class="n">intPair</span><span class="p">:</span><span class="n">a</span>     <span class="o">//</span> <span class="n">явное</span> <span class="n">преобразование</span> <span class="n">типа</span> <span class="nb">tuple</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="n">a</span><span class="p">:</span><span class="n">b</span>                 <span class="o">//</span> <span class="n">запись</span> <span class="n">из</span> <span class="n">a</span> <span class="n">в</span> <span class="n">b</span> <span class="n">где</span> <span class="n">b</span> <span class="n">рассматривается</span> <span class="n">как</span> <span class="n">функция</span>
+                    <span class="o">//</span> <span class="n">с</span> <span class="n">сигнатурой</span><span class="p">:</span> <span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="n">func</span> <span class="n">x</span><span class="nd">@Pair</span> <span class="o">-&gt;</span> <span class="n">signal</span>
+</pre></div>
+</div>
+<p>Вместе с тем следует отметить, что специфические особенности организации каждого из хранилищ ведут к ряду особенностей, связанных с обращением к ним.</p>
+</div>
+<div class="section" id="id25">
+<h3><span class="section-number">4.2.3. </span>Особенности хранилищ векторного типа<a class="headerlink" href="#id25" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Наряду с непосредственным копированием данных между векторами одинакового типа и размера возможны различные варианты организации чтения из вектора элемента по индексу. Первый вариант связан с использованием целочисленных величин в качестве индексов. Он позволяет прочитать элемент в качестве разультата:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(1, 2, 3, 4, 5):vector: 3 ⇒ 3
+(1, 2, 3, 4, 5):vector: i ⇒ результат - i-й элемент вектора
+</pre></div>
+</div>
+<p>Другой вариант связан с представлением операции обращения к вектору с использованием специального его обозначения:</p>
+<p><strong>ЭлементВектора = ИмяВектора «(» Индекс «)».</strong></p>
+<p>Данный вариант полностью эквивалентен предыдущему, но может использоваться только в случае, когда вектор имеет имя:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>A &lt;&lt; (1, 2, 3, 4, 5):vector
+A(3) ⇒ 3
+B &lt;&lt; (1, 2, 3, 4, 5):vector
+B(i) ⇒ результат - i-й элемент вектора
+</pre></div>
+</div>
+<p>В качестве индекса допускается как целочисленная константа, так и целочисленное значение, полученное в ходе вычислений. Следует отметить, что в первом случае выход за границы вектора определяется компилятором.</p>
+<p>Запись в вектор возможна только в том случае, если он предварительно объявлен как незаполненное хранилище. При этом конструкция, определяющая элемент вектора используется как функция в операторе интерпретации:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="nd">@int</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="mi">7</span><span class="p">:</span><span class="n">A</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="mi">10</span><span class="p">:</span><span class="n">A</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>При попытке повторно записать в уже заполненный элемент, запрещенное принципом единственного присваивания, происходит прерывание программы</p>
+</div>
+<div class="section" id="id26">
+<h3><span class="section-number">4.2.4. </span>Особенности хранилищ имеющих тип кортеж<a class="headerlink" href="#id26" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Чтение-запись с использованием кортежей во многом напоминает аналогичные операции с векторами. Однако имеются и свои особенности. Спецификой кортежей является наличие в них элементов разных типов. Поэтому основной вид доступа связан с использованием в качестве индекса целочисленной константы. В этом случае компилятор может точно определить тип результата:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(1, 2, 3, 4, 5): 3 ⇒ 3@int
+(3, true, !): 2 ⇒ true@bool
+</pre></div>
+</div>
+<p>Ошибка компиляции происходит в том случае, если в качестве индекса выступает величина вычисляемая во время выполнения программы. Однако имеется исключение. Если все элементы кортежа имеют один и тот же тип, компилятор может допустить использование вычисляемой величины, так как тип результата становится известным:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(1, 2, 3, 4, 5): i ⇒ результат - i-й элемент кортежа однотипных элементов типа int
+(3, true, !): j ⇒ ошибка компиляции
+</pre></div>
+</div>
+<p>Для организации чтения может использоваться целое число как функция оператора интерпретации или обозначение элемента кортежа, аналогичное по синтаксису элементу вектора:</p>
+<p><strong>ЭлементКортежа = ИмяКортежа «(» Индекс «)».</strong></p>
+<p>Запись в кортеж-хранилище осуществляет по тем же правилам, что и чтение. В общем случае она происходит, если индекс задается константой, позволяющий сопоставить типы записываемых данных и поля кортежа. Вычисляемая величина допускается в качестве индекса, если все поля кортежа однотипны.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="o">@</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">signal</span><span class="p">)</span>
+<span class="n">false</span><span class="p">:</span><span class="n">X</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="mi">10</span><span class="p">:</span><span class="n">A</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id27">
+<h3><span class="section-number">4.2.5. </span>Особенности структурных хранилищ<a class="headerlink" href="#id27" title="Ссылка на этот заголовок">¶</a></h3>
+<p>По разнотипности своих элементов структуры аналогичны кортежам. Однако для доступа к полям структуры используются внутренние имена этих полей, с каждым из которых сопоставлен тип. Поэтому чтение-запись реализованы только с использованием этих полей без каких либо вычислений. Обычный доступ осуществляется через имя хранилища, после которого через точку следует имя поля:</p>
+<p><strong>ЭлементСтруктуры = ИмяХранилища «.» ИмяПоля.</strong></p>
+<p>Однако возможны ситуации, когда результат структурного типа формируется в ходе вычислений. В этом случае имя поля, предваряемого точкой, может быть указано в качестве функции в операторе интерпретации:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>TS &lt;&lt; @(x@int, b@bool)
+S@TS
+// Здесь какие-то вычисления порождающие структуру в качестве результата
+...:TS:.b  // После приведения к типу TS на выходе будет значение поля b
+S.a ⇒ возвращает значение поля a структуры S
+S:.a ⇒ аналогичный результат
+</pre></div>
+</div>
+<p>Запись в структуру-хранилище осуществляется с явным использованием элемента структуры в качестве аргумента-функции оператора интерпретации:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">S</span><span class="o">@</span><span class="p">(</span><span class="n">i</span><span class="nd">@int</span><span class="p">,</span> <span class="n">b</span><span class="nd">@bool</span><span class="p">,</span> <span class="n">s</span><span class="nd">@signal</span><span class="p">)</span>
+<span class="n">false</span><span class="p">:</span><span class="n">S</span><span class="o">.</span><span class="n">b</span>
+<span class="mi">10</span><span class="p">:</span><span class="n">S</span><span class="o">.</span><span class="n">i</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id28">
+<h3><span class="section-number">4.2.6. </span>Особенности хранилищ роевого типа<a class="headerlink" href="#id28" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Спецификой роя является асинхронное поступление данных и, как следствие отдельная сигнализация о поступлении каждого элемента в связанный с ним оператор интерпретации. Вместе с тем обращение к рою по индексу практически аналогично обращению к вектору. При отсутствии элемента происходит ожидание его появления. Поэтому возможны те же варианты:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[1, 2, 3, 4, 5]: 3 ⇒ 3
+[1, 2, 3, 4, 5]: i ⇒ результат - i-й элемент роя
+</pre></div>
+</div>
+<p>Другой вариант связан с представлением операции обращения к рою с использованием специального его обозначения:</p>
+<p><strong>ЭлементРоя = ИмяРоя «[» Индекс «]».</strong></p>
+<p>Данный вариант полностью эквивалентен предыдущему, но может использоваться только в случае, когда Рой имеет имя:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>R &lt;&lt; [1, 2, 3, 4, 5]
+A[3] ⇒ 3
+Q &lt;&lt; [1, 2, 3, 4, 5]
+Q[i] ⇒ результат - i-й элемент роя
+</pre></div>
+</div>
+<p>В качестве индекса допускается как целочисленная константа, так и целочисленное значение, полученное в ходе вычислений. Следует отметить, что в первом случае выход за границы роя определяется компилятором.</p>
+<p>Запись в рой возможна только в том случае, если он предварительно объявлен как незаполненное хранилище. При этом конструкция, определяющая элемент роя используется как функция в операторе интерпретации:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">R</span><span class="nd">@int</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+<span class="mi">7</span><span class="p">:</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<span class="mi">10</span><span class="p">:</span><span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>При попытке повторно записать в уже заполненный элемент, запрещенное принципом единственного присваивания, происходит прерывание программы</p>
+<div class="section" id="id29">
+<h4><span class="section-number">4.2.6.1. </span>Реагирование и доступ по мере поступления элементов в рой<a class="headerlink" href="#id29" title="Ссылка на этот заголовок">¶</a></h4>
+<p>Если рой является аргументом, то оператор интерпретации реагирует на появление каждого элемента. В этом случае можно использовать функции, которые также срабатывают на каждый элемент и обрабатывают рой по мере поступления отдельных данных, не дожидаясь полной синхронизации, как это происходит в случае вектора, кортежа или структуры.</p>
+<p>Для реализации дополнительных возможностей предполагается использовать ссылки, каждая из которых имеет дополнительные независимые механизмы по контролю за данными поступающими в рой.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p><em>Данный фрагмент нужно еще обдумать и дописать</em></p>
+</div>
+</div>
+</div>
+<div class="section" id="id30">
+<h3><span class="section-number">4.2.7. </span>Особенности хранилищ - потоков<a class="headerlink" href="#id30" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Основной спецификой потоков является отсутствие информации о количестве поступающих данных. В результате завершение потока определяется по достижению «маркера дна». То есть, признака, указывающего на то, что данные в потоке отсутствуют и больше не появятся. В связи с этим возникает определенная специфика в формировании семантики этого артефакта.</p>
+<p>В целом поведение потока во многом аналогично поведению асинхронного списка, реализованного в языке программирования Пифагор. Однако ряд специфических моментов требуют других решений при манипуляции с ним.</p>
+<p>Первая особенность заключается в том, что при чтении данных может возвратиться или значение, или признак завершения данных. При использовании статической типизации это два разных вида информации, поэтому необходимо разделение возвращаемых данных, которое можно сделать реализовав две функции:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>функцию проверку на наличие в потоке данных (<code class="docutils literal notranslate"><span class="pre">is</span></code>), которая возвращает <code class="docutils literal notranslate"><span class="pre">true</span></code>, если данные еще поступают, и <code class="docutils literal notranslate"><span class="pre">false</span></code> если данные в поток поступать перестали;</p></li>
+<li><p>функцию получения элемента из потока (<code class="docutils literal notranslate"><span class="pre">get</span></code>), которая при наличии в нем данных выбирает первый элемент, тип которого определяется из описания потока, а отсутствие данных ведет к прерыванию программы.</p></li>
+</ul>
+</div></blockquote>
+<p>Помимо этого необходимо вытолкнуть из потока прочитанный элемент, чтобы иметь доступ к следующему. Для этого можно использовать функцию <code class="docutils literal notranslate"><span class="pre">pop</span></code>.</p>
+<p>Вместе с тем использование нескольких функций может привести к коллизиям, если к потоку идет одновременное обращение из нескольких точек программы. Для предотвращения коллизий необходимо использовать атомарные функции, выполняющие все необходимые действия за один раз таким образом, чтобы при каждом обращении происходила корректная обработка данных. Можно например, совместить проверку с чтением элемента, возвращая пару значений: (данные, признак наличия данных). Если признак наличия данных будет равен <code class="docutils literal notranslate"><span class="pre">true</span></code>, то прочитаны корректные данные. Их можно обрабатывать. В противном случае данные неактуальны, так как поток завершил их порождение. Однако в этом случае коллизии могут все равно возникать и быть связаны с выталкиванием данных.</p>
+<p>Более надежным смотрится вариант, когда в одной атомарной функции совмещаются все три, описанные выше. То есть, когда при наличии данных происходит их выдача в виде двойки и выталкивание элемента из потока. Тогда каждая из операций чтения будет брать только свои уникальные данные и убирать их из потока. При обращении множества операций к пустому потоку все они получат значение признака наличия данных, равное <code class="docutils literal notranslate"><span class="pre">false</span></code>. При этом прерывания программы не происходит. Предполагается, что в качестве такой неделимой операции будет использоваться применением потока в качестве данных оператора интерпретации. Например:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">S</span><span class="nd">@int</span><span class="p">{}</span>
+<span class="p">(</span><span class="n">S</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="n">S</span><span class="p">:</span><span class="mi">1</span><span class="p">):</span><span class="o">+</span>
+</pre></div>
+</div>
+<p>В примере демонстрируется двойное обращение к потоку, после чего полученные числа складываются. В данной ситуации порядок выдачи данных из потока недетерминирован. То есть неясно, в какой аргумент функции сложения попадет из потока первый элемент данных. Для реализации детерминированности необходимо формировать дополнительные сигналы обеспечивающие требуемую последовательность:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">S</span><span class="nd">@int</span><span class="p">{}</span>
+<span class="n">x1</span> <span class="o">&lt;&lt;</span> <span class="n">S</span><span class="p">:</span><span class="mi">1</span>
+<span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">S</span><span class="p">:{</span><span class="n">x1</span><span class="p">:</span><span class="n">signal</span><span class="p">}):</span><span class="o">+</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Расширить возможности манипуляций с потоком, поддерживающими многократное дублирование доступа, можно через ссылки. Но это отдельная тема для анализа и реализации. Пока нет.</p>
+</div>
+<p>Запись в поток осуществляет за счет использования имени потока в качестве функции:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">S</span><span class="nd">@int</span><span class="p">{}</span>
+<span class="mi">5</span><span class="p">:</span><span class="n">S</span>
+</pre></div>
+</div>
+<p>Можно также осуществлять непосредственную передачу данных из одного потока в другой, которая может сочетаться с передачей независимых данных. Порядок передачи при этом также может быть недетерминированнм:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">S1</span><span class="nd">@int</span><span class="p">{}</span>
+<span class="n">S2</span><span class="nd">@int</span><span class="p">{}</span>
+<span class="n">S1</span><span class="p">:</span><span class="n">S2</span>
+<span class="mi">5</span><span class="p">:</span><span class="n">S2</span>
+<span class="mi">10</span><span class="p">:</span><span class="n">S1</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Более детальную проработка описания потоков предполагается сделать, когда начнется разработка и анализ реализация функций - примеров.</p>
+</div>
+</div>
+</div>
+<div class="section" id="id31">
+<h2><span class="section-number">4.3. </span>Семантика программоформирующих операторов<a class="headerlink" href="#id31" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Программоформирующие операторы обеспечивают группировку данных, используя предопределенные методы. Они также могутиспользоваться в качестве данных и функций в операторе интерпретации. Основное отличие от составных типов заключается в отсутствии предварительного описания. Поэтому текущее значение формируется во время вычислений. Однако использование статической типизации позволяет вывести тип во время компиляции и использовать полученный результат для контроля взаимодействия различных артефактов.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Следует отметить, что представленные ниже функции практически дублируют их использование в опереторе групповой интерпретации. Это ведет к определенной избыточности языка, что не является хорошей манерой. Поэтому, скорее всего, использование программоформирующих операторов в качестве функций пока будет запрещено. Возможно в перспективе, если появятся отличия в реализации, этот вопрос будет снова поднят. Ниже лежащий текст подраздела пока оставлен. Может быть он будет перенесен в раздел описывающий семантику оператора групповой интерпретации.</p>
+<p>Возможно, что изменения могут затронуть именно групповую интерпретацию…</p>
+<p>Последнее ощущение, что в данном операторе оставлю как есть…</p>
+</div>
+<div class="section" id="id32">
+<h3><span class="section-number">4.3.1. </span>Оператор группировки в кортеж<a class="headerlink" href="#id32" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Используется для объединения как однотипных, так и неоднотипных данных. Если группируются данные одного типа, то результат группировки может обрабатываться как аргумент функции, манипулирующей векторами. Основная задача данного оператора заключается в синхронизации поступающих данных перед последующим использованием. То есть, готовность к выполнению оператора интерпретации, в котором кортеж используется в качестве одного из аргументов сформируется тогда, когда будут вычислены все элементы кортежа. Кортеж может являться аргументом-данными как в предопределенных функциях, так и в функциях разрабатываемых пользователем. В этом случае особенности его выполнения связаны с особенностями  семантики аргумента-функции оператора интерпретации.</p>
+<p>С другой стороны кортеж может использоваться в качестве аргумента функции одиночного оператора интерпретации. В этой ситуации каждый элемент внутри кортежа определяется как отдельная функция, которая осуществляет обработку одного и того же аргумента-данных. Результатом выполнения является кортеж, в котором собраны все вычисленные величины. Можно привести эквивалентное преобразование, определяющее одну из формул алгебры преобразования языка программирования:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>data:(f1, f2, f3, ... fn) ≡ (data:f1, data:f2, data:f3, ... data:fn)
+</pre></div>
+</div>
+<p>Пример:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(10, 3):(+, -, *, /, %) ⇒ (13, 7, 30, 3, 1)
+</pre></div>
+</div>
+</div>
+<div class="section" id="id33">
+<h3><span class="section-number">4.3.2. </span>Оператор группировки в рой<a class="headerlink" href="#id33" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Используется для асинхронной группировки, когда появление каждого элемента сопровождается передачей информации оператору интерпретации. Использование роя в качестве аргумента-данных зависит от того, какая функция над ним выполняется. Когда рой является аргументом-функцией оператора интерпретации, то его поведение во многом аналогично использованию в качестве функции кортежа. Вместе с тем, если функции вычисляются, то есть, формируются в разныем моменты времени, то обработка данных осуществляется асинхронно, также независимо на выходе появляются результаты вычислений, которые группируются в соответствующем рое. Следующая формула описывает эквивалетное преобразование роя:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>data:[f1, f2, f3, ... fn] ≡ [data:f1, data:f2, data:f3, ... data:fn]
+</pre></div>
+</div>
+<p>Пример:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(10, 3):[+, -, *, /, %] ⇒ [13, 7, 30, 3, 1]
+</pre></div>
+</div>
+<p>Следует отметит, что все элементы роя, выступающие в роли функций, по определению должны иметь одинаковую сигнатуру и порождать на выходе однотипные результаты в отличие от результатов, которые могут порождать функции, сгруппированные в кортеж.</p>
+</div>
+<div class="section" id="id34">
+<h3><span class="section-number">4.3.3. </span>Оператор группировки в поток<a class="headerlink" href="#id34" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Данный оператор используется для формирования асинхронно порождаемых последовательностей. Как и другие операторы группировки он позволяет объединить несколько элементов окончательно формируемые значения которых должны быть одного типа. Спецификой данного оператора является отсутствие фиксированной длины, что позволяет использовать в качестве элементов другие операторы группировки в поток, порождающие данные того же типа, что и тип оператора группировки. Использование в качестве аргумента-данных, как и в предыдущих операторах, предполагает, что семантика определяется аргументом-функцией, обрабатывающей данный поток. Семантика при использовании оператора в качестве аргумента-функции определяется теми элементами, которые поступают в поток и применяются в порядке поступления к каждому аргументу. Следует отметить, что в связи с асинхронностью и разным временем обработки аргумента-данных расположение результатов в выходном потоке может отличаться от порядка функций в исходном потоке. Обработка данных потоком функций может быть представлена следующим образом:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>data:stream{f1, f2, f3, ... fn} ≡ stream{data:f1, data:f2, data:f3, ... data:fn}
+</pre></div>
+</div>
+<p>Пример выполнения, демонстрирующий один из вариантов возможной недетерминированной перестановки результатов на выходе, что определяется спецификой обработки:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(10, 3):stream{+, -, *, /, %} ⇒ stream{7, 13, 1, 3, 30}
+</pre></div>
+</div>
+</div>
+<div class="section" id="id35">
+<h3><span class="section-number">4.3.4. </span>Оператор задержки<a class="headerlink" href="#id35" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Основное назначение данного оператора заключается в задержке вычислений описанного в нем выражения независимо от того будет результат использоваться в качестве данных или функции. Оператор интерпретации раскрывает задержку, что ведет к ранее отложенному вычислению результата, тип которого определяется в зависимости от написанного выражения. Дальнейшая обработка полученной величины оператором интерпретации зависит от этого типа. Каких-либо дополнительных особенностей семантики оператора задержки нет.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Следует отметить, что в принципе возможны и другие эквивалентные способы группировки и выполнения вычислений, аналогичные описанным. Они возникают из-за возможности предварительного описания величин с последующей записью в них данных с применением принципа единственного присваивания. Также свой вклад может внести использование массового оператора интерпретации. Все эти варианты предполагается рассмотреть и сравнить в разделе примеров, описывающих технику программирования. Также обобщение вариантов предполагается сделать в разделе по алгебре эквивалентных преобразований.</p>
+</div>
+</div>
+</div>
+<div class="section" id="id36">
+<h2><span class="section-number">4.4. </span>Использование функций с массовым оператором интерпретации<a class="headerlink" href="#id36" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Применение массового оператора интерпретации в первую очередь ориентирована о использование одной функции для обработки множества данных (эквивалентно стратегии ОКМД в классификации Флинна). Предполагается что данные одного типа размещаются в контейнере (вектор, рой, поток) и к ним применяется одна и та же функция, формируя на выходе контейнер результатов такого же типа. Подобные преобразования можно описать следующими выражениями:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(d1, d2, ... dn)::f ≡ (d1:f, d2:f, ... dn:f)
+[d1, d2, ... dn]::f ≡ [d1:f, d2:f, ... dn:f]
+stream{d1, d2, ... dn}::f ≡ stream{d1:f, d2:f, ... dn:f}
+</pre></div>
+</div>
+<p>Следует отметить, что в случае потока результаты на выходе могут не соответствовать порядку, определяемому исходными данными, так как возможны недетерминированные перестановки, связанные с разным временем выполнения функций.</p>
+<p>Помимо этого возможна ситуация, когда один элемент данных обрабатывается нескольким функциями:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>d::(f1, f2, ... fk) ≡ (d:f1, d:f2, ... d:fk)
+d::[f1, f2, ... fk] ≡ [d:f1, d:f2, ... d:fk]
+d::stream{f1, f2, ... fk} ≡ stream{d:f1, d:f2, ... d:fk}
+</pre></div>
+</div>
+<p>То есть, данная ситуация эквивалентна случаю, связанному с использованием программоформирующих операторов в качестве функций.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Возможно это тот повод, который позволит отменить использование при одиночной интерпретации программоформирующие операторы в качестве функций. Зачем дублировать? Может тогда и другие проблемы и вопросы будут сняты. Надо думать…</p>
+<p>Но пока хочется одиночный вариант оставить…</p>
+</div>
+<p>Другим фактором, определяющим специфику массового оператора интерпретации является то, что аргумент-функция может также задаваться с использованием программоформирующих операторов. Поэтому в ряде случаев возможно появление множества функций, обрабатывающих множество потоков. При этом контейнерные типы данных могут отличаться от контейнерных типов функций. То есть возможны следующие комбинации:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(d1, d2, ... dn)::(f1, f2, ... fk) ≡
+    (d1:(f1, f2, ... fk), d2:(f1, f2, ... fk), ... dn:(f1, f2, ... fk)) ≡
+        ((d1:f1, d1:f2, ... d1:fk), (d2:f1, d2:f2, ... d2:fk) ... (dn:f1, dn:f2, ... dn:fk))
+
+[d1, d2, ... dn]::(f1, f2, ... fk) ≡
+    [d1:(f1, f2, ... fk), d2:(f1, f2, ... fk), ... dn:(f1, f2, ... fk)] ≡
+        [(d1:f1, d1:f2, ... d1:fk), (d2:f1, d2:f2, ... d2:fk) ... (dn:f1, dn:f2, ... dn:fk)]
+
+(d1, d2, ... dn)::[f1, f2, ... fk] ≡
+    (d1:[f1, f2, ... fk], d2:[f1, f2, ... fk], ... dn:[f1, f2, ... fk]) ≡
+        ([d1:f1, d1:f2, ... d1:fk], [d2:f1, d2:f2, ... d2:fk] ... [dn:f1, dn:f2, ... dn:fk])
+
+[d1, d2, ... dn]::[f1, f2, ... fk] ≡
+    [d1:[f1, f2, ... fk], d2:[f1, f2, ... fk], ... dn:[f1, f2, ... fk]] ≡
+        [[d1:f1, d1:f2, ... d1:fk], [d2:f1, d2:f2, ... d2:fk] ... [dn:f1, dn:f2, ... dn:fk]]
+
+и далее все комбинации, включая потоки.
+</pre></div>
+</div>
+<p>То есть, в этом случае в начале контейнерная функция применяется к каждому из элементов данных, после чего идет дальнейшее разложение. Как и в более простых ситуациях комбинации с потоками ведут к недетерминированным вычислениям и смене порядка следования результатов относительно порядка в исходых данных.</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Оглавление</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">4. Семантика оператора интерпретации</a><ul>
+<li><a class="reference internal" href="#id2">4.1. Использование функций с одиночным оператором интерпретации</a><ul>
+<li><a class="reference internal" href="#id3">4.1.1. Предопределенные функции</a><ul>
+<li><a class="reference internal" href="#id4">4.1.1.1. Предопределенные функции общего назначения</a></li>
+<li><a class="reference internal" href="#id5">4.1.1.2. Использование знака «|»</a></li>
+<li><a class="reference internal" href="#id6">4.1.1.3. Использование знака «?»</a></li>
+<li><a class="reference internal" href="#id7">4.1.1.4. Использование знака «??»</a></li>
+<li><a class="reference internal" href="#id8">4.1.1.5. Использование знака «..»</a></li>
+<li><a class="reference internal" href="#dup">4.1.1.6. Использование функции «dup»</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id9">4.1.2. Использование данных</a><ul>
+<li><a class="reference internal" href="#id10">4.1.2.1. Использование булевских значений в качестве функций</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id11">4.1.3. Функции, выполняющие вычисления</a><ul>
+<li><a class="reference internal" href="#id12">4.1.3.1. Сложение «<strong>+</strong>»</a></li>
+<li><a class="reference internal" href="#id13">4.1.3.2. Использование знака «-»</a></li>
+<li><a class="reference internal" href="#id14">4.1.3.3. Использование знака «*»</a></li>
+<li><a class="reference internal" href="#id15">4.1.3.4. Использование знака «/»</a></li>
+<li><a class="reference internal" href="#id16">4.1.3.5. Использование знака «%»</a></li>
+<li><a class="reference internal" href="#id17">4.1.3.6. Использование знака «/%»</a></li>
+<li><a class="reference internal" href="#id18">4.1.3.7. Использование знаков: «=», «!=», «&lt;», «&lt;=», «&gt;», «&gt;=»</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id19">4.1.4. Использование в качестве функций предопределенных типов</a><ul>
+<li><a class="reference internal" href="#int">4.1.4.1. Использование типа int</a></li>
+<li><a class="reference internal" href="#bool">4.1.4.2. Использование типа bool</a></li>
+<li><a class="reference internal" href="#signal">4.1.4.3. Использование типа signal</a></li>
+<li><a class="reference internal" href="#error">4.1.4.4. Использование типа error</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id20">4.1.5. Использование в качестве функций имен составных типов</a><ul>
+<li><a class="reference internal" href="#vector">4.1.5.1. Использование типа vector</a></li>
+<li><a class="reference internal" href="#tuple">4.1.5.2. Использование типа tuple</a></li>
+<li><a class="reference internal" href="#swarm">4.1.5.3. Использование типа swarm</a></li>
+<li><a class="reference internal" href="#stream">4.1.5.4. Использование типа stream</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id21">4.1.6. Использование в качестве функций пользовательских типов</a></li>
+<li><a class="reference internal" href="#union">4.1.7. Использование в качестве функции обобщенного типа union</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id22">4.2. Семантика хранилищ</a><ul>
+<li><a class="reference internal" href="#id23">4.2.1. Хранилища атомарных данных</a></li>
+<li><a class="reference internal" href="#id24">4.2.2. Общие особенности хранилищ составного типа</a></li>
+<li><a class="reference internal" href="#id25">4.2.3. Особенности хранилищ векторного типа</a></li>
+<li><a class="reference internal" href="#id26">4.2.4. Особенности хранилищ имеющих тип кортеж</a></li>
+<li><a class="reference internal" href="#id27">4.2.5. Особенности структурных хранилищ</a></li>
+<li><a class="reference internal" href="#id28">4.2.6. Особенности хранилищ роевого типа</a><ul>
+<li><a class="reference internal" href="#id29">4.2.6.1. Реагирование и доступ по мере поступления элементов в рой</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id30">4.2.7. Особенности хранилищ - потоков</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id31">4.3. Семантика программоформирующих операторов</a><ul>
+<li><a class="reference internal" href="#id32">4.3.1. Оператор группировки в кортеж</a></li>
+<li><a class="reference internal" href="#id33">4.3.2. Оператор группировки в рой</a></li>
+<li><a class="reference internal" href="#id34">4.3.3. Оператор группировки в поток</a></li>
+<li><a class="reference internal" href="#id35">4.3.4. Оператор задержки</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id36">4.4. Использование функций с массовым оператором интерпретации</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Предыдущий раздел</h4>
+  <p class="topless"><a href="SmileReference.html"
+                        title="предыдущая глава"><span class="section-number">3. </span>Язык программирования Smile. Предварительное описание</a></p>
+  <h4>Следующий раздел</h4>
+  <p class="topless"><a href="SmileSyntaxRu.html"
+                        title="следующая глава"><span class="section-number">5. </span>Синтаксис языка программирования Smile</a></p>
+  <div role="note" aria-label="source link">
+    <h3>Эта страница</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/InterpSemantic.rst.txt"
+            rel="nofollow">Исходный текст</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Быстрый поиск</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Искать" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             >указатель</a></li>
+        <li class="right" >
+          <a href="SmileSyntaxRu.html" title="5. Синтаксис языка программирования Smile"
+             >вперёд</a> |</li>
+        <li class="right" >
+          <a href="SmileReference.html" title="3. Язык программирования Smile. Предварительное описание"
+             >назад</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><span class="section-number">4. </span>Семантика оператора интерпретации</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Alexander Legalov.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.2.
+    </div>
+  </body>
+</html>

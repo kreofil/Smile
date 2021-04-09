@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Документация по системе программирования Smile &#8212; документация smile </title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="shortcut icon" href="_static/smile48.png"/>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="1. Введение" href="Introduction.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             accesskey="I">указатель</a></li>
+        <li class="right" >
+          <a href="Introduction.html" title="1. Введение"
+             accesskey="N">вперёд</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Документация по системе программирования Smile</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="smile">
+<h1>Документация по системе программирования Smile<a class="headerlink" href="#smile" title="Ссылка на этот заголовок">¶</a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Содержание:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">1. Введение</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ModelReference.html">2. Статически типизированная модель модель функционально-потоковых параллельных вычислений</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ModelReference.html#id2">2.1. Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModelReference.html#id3">2.2. Общие принципы организации модели</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModelReference.html#id4">2.3. Описание программо-формирующих операторов</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ModelReference.html#id5">2.3.1. Операторы интерпретации</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ModelReference.html#id6">2.3.2. Константный оператор</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ModelReference.html#id7">2.3.3. Оператор копирования</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ModelReference.html#id8">2.3.4. Оператор группировки в кортеж</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ModelReference.html#id9">2.3.5. Оператор группировки в рой</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ModelReference.html#id10">2.3.6. Оператор задержки</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ModelReference.html#id11">2.3.7. Хранилища данных</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ModelReference.html#id12">2.4. Основные типы данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModelReference.html#id13">2.5. Описание динамики функционирования</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModelReference.html#id14">2.6. Эквивалентные преобразования</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ModelReference.html#id15">2.6.1. Отсутствие в СТМФППВ неявных преобразований внутри составных конструкций</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="SmileReference.html">3. Язык программирования Smile. Предварительное описание</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id1">3.1. Общие соображения</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id2">3.2. Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id3">3.3. Используемый метаязык</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id4">3.4. Элементарные конструкции</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id5">3.4.1. Разделители</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id6">3.4.2. Комментарии</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id7">3.4.3. Идентификаторы</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id8">3.4.4. Зарезервированные слова</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id9">3.4.5. Специальные знаки</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id10">3.5. Обозначения</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id11">3.6. Артефакты</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id12">3.6.1. Типы артефактов</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id13">3.7. Константы</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id14">3.7.1. Сигнальная константа</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id15">3.7.2. Целая константа</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id16">3.7.3. Логическая константа</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id17">3.7.4. Константы ошибок</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id18">3.7.5. Описание именованных констант</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id19">3.8. Описания типов</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id20">3.8.1. Переименование типа</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id21">3.8.2. Конструирование типа</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id22">3.8.3. Предопределенные атомарные типы</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id28">3.8.4. Составные типы</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id39">3.8.5. Преобразование (приведение) величин разных типов</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id42">3.9. Данные (величины)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id43">3.10. Операторы</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id44">3.11. Функция</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id45">3.11.1. Перегрузка имен функций</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id46">3.11.2. Определение спецзнаков в качестве имен функций</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SmileReference.html#id47">3.11.3. Базовые (предопределенные) функции</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id48">3.12. Блок</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id49">3.13. Выражение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmileReference.html#id50">3.14. Структура программы</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="InterpSemantic.html">4. Семантика оператора интерпретации</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="InterpSemantic.html#id2">4.1. Использование функций с одиночным оператором интерпретации</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id3">4.1.1. Предопределенные функции</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id9">4.1.2. Использование данных</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id11">4.1.3. Функции, выполняющие вычисления</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id19">4.1.4. Использование в качестве функций предопределенных типов</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id20">4.1.5. Использование в качестве функций имен составных типов</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id21">4.1.6. Использование в качестве функций пользовательских типов</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#union">4.1.7. Использование в качестве функции обобщенного типа union</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="InterpSemantic.html#id22">4.2. Семантика хранилищ</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id23">4.2.1. Хранилища атомарных данных</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id24">4.2.2. Общие особенности хранилищ составного типа</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id25">4.2.3. Особенности хранилищ векторного типа</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id26">4.2.4. Особенности хранилищ имеющих тип кортеж</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id27">4.2.5. Особенности структурных хранилищ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id28">4.2.6. Особенности хранилищ роевого типа</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id30">4.2.7. Особенности хранилищ - потоков</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="InterpSemantic.html#id31">4.3. Семантика программоформирующих операторов</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id32">4.3.1. Оператор группировки в кортеж</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id33">4.3.2. Оператор группировки в рой</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id34">4.3.3. Оператор группировки в поток</a></li>
+<li class="toctree-l3"><a class="reference internal" href="InterpSemantic.html#id35">4.3.4. Оператор задержки</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="InterpSemantic.html#id36">4.4. Использование функций с массовым оператором интерпретации</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="SmileSyntaxRu.html">5. Синтаксис языка программирования Smile</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SmileSyntaxRu.html#id1">5.1. Лексемы</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmileSyntaxRu.html#id2">5.2. Программные объекты</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="DataFormats.html">6. Форматы хранимых данных</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="DataFormats.html#id2">6.1. Описание экспорта</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DataFormats.html#id3">6.2. Реверсивный информационный граф</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="TypeSystem.html">7. Заметки по поводу типов в Smile</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="TypeSystem.html#id1">7.1. Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TypeSystem.html#id2">7.2. Представление статических типов</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="TypeSystem.html#id3">7.2.1. Атомарные типы</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TypeSystem.html#id5">7.2.2. Составные (конструируемые) типы</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="TypeSystem.html#id12">7.3. Описание функциональных типов</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="TypeSystem.html#id13">7.3.1. Размышления по поводу именованной и структурной эквивалентности типов</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="TypeSystem.html#id14">7.4. Расширение системы типов за счет использования методов поддержки полиморфизма</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="TypeSystem.html#id15">7.4.1. Рассматриваемые варианты</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TypeSystem.html#id16">7.4.2. Наследование (расширение)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TypeSystem.html#go">7.4.3. Go-полиморфизм</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TypeSystem.html#id22">7.4.4. Процедурно-параметрический полиморфизм</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TypeSystem.html#id24">7.4.5. Сравнительный анализа рассмотренных подходов</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TypeSystem.html#id27">7.4.6. Поддержка множественного полиморфизма</a></li>
+<li class="toctree-l3"><a class="reference internal" href="TypeSystem.html#id31">7.4.7. Целесообразность совместного использования различных подходов</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="SmileFunctions.html">8. Заметки по поводу функций в Smile</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SmileFunctions.html#id1">8.1. Синтаксис определения обычной функции</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="SemModel.html">9. Семантическая модель системы программирования и языка</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SemModel.html#id2">9.1. Архитектура семантической модели</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SemModel.html#id3">9.2. Организация таблицы экспорта</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="SemModel.html#id4">9.2.1. Назначение таблицы экспорта</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SemModel.html#id5">9.2.2. Содержание таблицы экспорта</a></li>
+<li class="toctree-l3"><a class="reference internal" href="SemModel.html#id6">9.2.3. Форматы описаний, хранимых в таблице экспорта</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ModuleSystem.html">10. Размышления по поводу модуля базовых артефактов</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ModuleSystem.html#id2">10.1. Фрагмент модуля систем для подъязыка с традиционной семантикой</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ModuleSystem.html#id3">10.1.1. Описания артефактов в списке экспорта</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ModuleSystem.html#id4">10.1.2. Вариант ввода новых базовых описаний</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ModuleSystem.html#id5">10.2. Возражения</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModuleSystem.html#id6">10.3. Резюме</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ModuleStructure.html">11. Организация модульной структуры</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ModuleStructure.html#id2">11.1. Организация программного кода</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ModuleStructure.html#id3">11.2. Программа</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="SmileTranslator.html">12. Транслятор языка программирования Smile</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SmileTranslator.html#id1">12.1. Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmileTranslator.html#id2">12.2. Семантическая модель языка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SmileTranslator.html#id3">12.3. Синтаксис языка</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="SmileTranslator.html#id4">12.3.1. Список правил</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Pralanguage.html">13. Об ядре языка как о праязыке</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Pralanguage.html#id2">13.1. Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Pralanguage.html#id3">13.2. Определения</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Pralanguage.html#id4">13.3. Состав праязыка</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Pralanguage.html#id5">13.3.1. Элементарные конструкции</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Pralanguage.html#id6">13.3.2. Обозначения</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Pralanguage.html#id7">13.3.3. Предопределенные типы данных</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Pralanguage.html#id8">13.4. Значащие величины (константы)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Pralanguage.html#id9">13.4.1. Значащие величины (константы)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Pralanguage.html#id10">13.4.2. Описания типов</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Pralanguage.html#id11">13.4.3. Описания функций</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Pralanguage.html#id12">13.4.4. Описания импорта</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Pralanguage.html#id13">13.4.5. Операторы и операции в теле функции или динамического описания типа</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="More.html">14. Что еще стоит не забыть</a></li>
+<li class="toctree-l1"><a class="reference internal" href="References.html">15. Список используемых источников</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Abbreviations.html">16. Список сокращений</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Ссылка на этот заголовок">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Алфавитный указатель</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Состав модуля</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Поиск</span></a></p></li>
+</ul>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Оглавление</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Документация по системе программирования Smile</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h4>Следующий раздел</h4>
+  <p class="topless"><a href="Introduction.html"
+                        title="следующая глава"><span class="section-number">1. </span>Введение</a></p>
+  <div role="note" aria-label="source link">
+    <h3>Эта страница</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Исходный текст</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Быстрый поиск</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Искать" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Навигация</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Алфавитный указатель"
+             >указатель</a></li>
+        <li class="right" >
+          <a href="Introduction.html" title="1. Введение"
+             >вперёд</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">документация smile </a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Документация по системе программирования Smile</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Alexander Legalov.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.2.
+    </div>
+  </body>
+</html>
