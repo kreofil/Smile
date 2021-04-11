@@ -1,6 +1,8 @@
 #ifndef __declaration__
 #define __declaration__
 
+#include <string>
+
 #include "const.h"
 #include "type.h"
 

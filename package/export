@@ -15,3 +15,6 @@ FuncSenSignal02 func 1 signal signal
 FuncSenSignal03 func 1 int signal
 FuncInc01 func 2 int int tuple 2 int int int
 FuncAdd01 func 1 tuple 2 int int int
+tuple02 type tuple 3 bool int float
+pi3 const float 3.14159
+pi4 const float 3.14

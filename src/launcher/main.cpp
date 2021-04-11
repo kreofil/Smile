@@ -65,7 +65,7 @@ int main(int argc, const char *argv[])
             return 0;
         }
     
-        // Вывод непозиционныз параметров (в нашем случае он один
+        // Вывод непозиционных параметров (в нашем случае он один
         if (vm.count("entity")) {
             /*
             to_cout(vm["entity"].as<std::vector<std::string>>());

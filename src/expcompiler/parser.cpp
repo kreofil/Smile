@@ -34,7 +34,7 @@ bool ExportCompile(std::vector<std::string> &e, SemanticModel* sm) {
     std::cout << "***** EXPORT COMPILER STARTED *****" << std::endl;
 
     // Запускается обход строк файла экспорта
-    for(auto i = 0; i < e.size(); i++) {
+    for(size_t i = 0; i < e.size(); i++) {
         ec.setLine(e[i], i);
         if(ec.isExport()) {
             continue;

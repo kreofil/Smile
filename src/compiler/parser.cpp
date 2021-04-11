@@ -178,15 +178,18 @@ bool Compiler::isConstDefinition(Declaration** ppdcl) {
         Ignore();
         goto _1;
     }
+    if(isConstExpression(&pcv)) {
+        goto _end;
+    }
     return false;
 _1: // Проверяется корректность константного выражения
     if(isConstExpression(&pcv)) {
-        *ppdcl = sm.newDeclarationConst(pcv);
         goto _end;
     }
     Err("ConstDefinition: ConstExpression wated");
     return false;
 _end:
+    *ppdcl = sm.newDeclarationConst(pcv);
     return true;
 }
 
@@ -574,7 +577,12 @@ bool Compiler::isProtoDefinition() {
 // Определение типа.
 bool Compiler::isTypeDefinition(Declaration** ppdcl) {
     Type* ptv;
-//_0: Проверка текущей лексемы на ключевое слово type
+//_0: Проверка текущей лексемы на ключевое слово type или значок "@"
+    if(isSymbol('@')) {
+        nextSym();
+        Ignore();
+        goto _1;
+    }
     if(isReservedWord("type")) {
         Ignore();
         goto _1;
