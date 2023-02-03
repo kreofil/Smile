@@ -1,0 +1,10 @@
+*.o
+*.a
+*.html
+
+bin/
+build/
+documents/SmileDocumentation/build/
+lib/
+
+*.swp
