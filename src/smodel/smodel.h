@@ -9,6 +9,7 @@
 //#include "declaration.h"
 #include "funcdeclaration.h"
 #include "tuple.h"
+#include "struct.h"
 #include "nametable.h"
 
 // Семантическая модель языка программирования Smile
@@ -77,6 +78,8 @@ public:
     Func* NewFunc();
     // Создание кортежа
     TypeTuple* NewTuple();
+    // Создание структуры
+    StructType* NewStruct();
 
     //------------------------------------------------------------------
     // Формирование объявления для прототипа функции

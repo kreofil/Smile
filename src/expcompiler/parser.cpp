@@ -78,9 +78,9 @@ bool ExportCompiler::isExport() {
         goto _1;
     }
     // Возможен пустой файл, если отсутствуют откомпилированные описания
-    //if isEnd() {
-    //    goto _end;
-    //}
+    if (isEnd()) {
+        return true;
+    }
     Err("Export: Incorrect symbols at  the end or it is not name of exporting declaration");
     return false;
 _1: // Далее пошли варианты с описанием альтернативных артефактов с постфиксным обозначением
@@ -135,10 +135,10 @@ _1: // Проверяется тип константы
         Ignore();
         goto _4;
     }
-//    if(isReservedWord("signal")) {
-//        Ignore()
-//        goto _end
-//    }
+    if(isReservedWord("signal")) {
+        Ignore();
+        goto _5;
+    }
     Err("isConstExport: Type of constant wated");
     return false;
 _2: // Проверяется наличие целочисленного значения    
@@ -166,6 +166,9 @@ _4: // Проверяется наличие действительного зн
         goto _end;
     }
     return false;
+_5:
+    *dcl = sm.newDeclarationConst(sm.NewSignalValue());
+    goto _end;
 _end:
     //fmt.Println("isConstExport-->")
     
@@ -324,7 +327,7 @@ _end:
 //--------------------------------------------------------------------------
 // Определение типа.
 bool ExportCompiler::isTypeExport(Declaration** ppdcl) {
-    Type* ptv;
+    Type* ptv = nullptr;
 //_0: Проверка текущей лексемы на ключевое слово type
     if(isReservedWord("type")) {
         Ignore();
@@ -336,6 +339,9 @@ _1: // Анализ вариантов экспортируемого типа
         goto _end;
     }
     if(isTupleExport(&ptv)) { // переименованный тип
+        goto _end;
+    }
+    if(isStructExport(&ptv)) { // тип-структура
         goto _end;
     }
     Err("isTypeExport: A type definition have been expected");
@@ -424,6 +430,82 @@ _2: // Проверка на заданное число типов
     return false;
 _end:
     *pptv = typeTuple;
+    return true;
+}
+
+bool ExportCompiler::isStructExport(Type** pptv) {
+    std::string fieldName, fieldTypeName;
+    DeclarationType *pdt = nullptr; // Объявление типа поля
+    StructType *pst = sm.NewStruct();
+
+    Ignore();
+
+    if (isReservedWord("struct")) {
+        Ignore();
+    }
+
+    if (isSymbol('(')) {
+        nextSym();
+        Ignore();
+    } else {
+        Err("Expected `(` in export file struct definition");
+        return false;
+    }
+
+    while (true) {
+        if (isSymbol(')')) {
+            nextSym();
+            Ignore();
+            break;
+        }
+
+        if (isId()) {
+            fieldName = lexValue;
+            Ignore();
+        } else {
+            Err("Execpted field name in export file struct defintion");
+            return false;
+        }
+
+        if (isSymbol('@')) {
+            nextSym();
+            Ignore();
+        } else {
+            Err("Expected `@` in export file struct definition");
+            return false;
+        }
+
+        if (isId()) {
+            fieldTypeName = lexValue;
+            Ignore();
+        } else {
+            Err("Expected field type name in export file struct definition");
+            return false;
+        }
+
+        if (isSymbol(',')) {
+            nextSym();
+            Ignore();
+        } else {
+            Err("Expected `,` in export file struct definition");
+            return false;
+        }
+
+        pdt = sm.FindTypeDeclaration(fieldTypeName);
+        if (pdt == nullptr) {
+            Err("Failed to find type declaration");
+            std::cout << "fieldTypeName = " << fieldTypeName << "\n";
+            return false;
+        }
+
+        if (!pst->AddField(fieldName, pdt)) {
+            Err("Field names in struct are not unique");
+            std::cout << "fieldName = " << fieldName << "\n";
+            return false;
+        }
+    }
+
+    *pptv = pst;
     return true;
 }
 

@@ -304,4 +304,6 @@ DeclarationFunc* SemanticModel::GetDeclarationSubMin() {
     return &dclSubMin;
 }
 
-
+StructType* SemanticModel::NewStruct() {
+    return new StructType{};   
+}

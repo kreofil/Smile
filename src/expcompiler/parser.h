@@ -53,6 +53,8 @@ private:
     bool isBaseExport(Type** pptv);
     // Экспорт кортежа
     bool isTupleExport(Type** pptv);
+    // Экспорт структуры
+    bool isStructExport(Type** pptv);
     // Экспорт импорта.
     bool isImportExport();
     

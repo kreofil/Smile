@@ -384,13 +384,17 @@ bool Compiler::isElement(Func& f) {
     auto isymbol{symbol};
     auto iline{line};
     auto icolumn{column};
+    std::string idName;
+    Actor* pa = nullptr;
+    DeclarationActor *da = nullptr;
     ///auto erFlag = false;     // флаг для отката или ошибки
 //_0:
     if(isId()) { // Левое обозначение выражения
+        idName = lexValue;
         Ignore();
         goto _1;
     }
-    if(isExpression(f)) { // Выражение
+    if(isExpression(f, &pa)) { // Выражение
         Ignore();
         goto _3;
     }
@@ -406,14 +410,14 @@ _1:
     symbol = isymbol;
     line = iline;
     column = icolumn;
-    if(isExpression(f)) { // Выражение
+    if(isExpression(f, &pa)) { // Выражение
         Ignore();
         goto _3;
     }
     Err("Element: It is not Left Assignment (<<)");
     return false;
 _2:
-    if(isExpression(f)) { // Выражение
+    if(isExpression(f, &pa)) { // Выражение
         Ignore();
         goto _end;
     }
@@ -424,20 +428,26 @@ _3:
         Ignore();
         goto _4;
     }
-    goto _end;  // Выражение без обозначений возможны
+    goto _end2;  // Выражение без обозначений возможны
 _4:
     if(isId()) { // Правое обозначение выражения
+        idName = lexValue;
         Ignore();
         goto _end;
     }
     Err("Element: Right Name of Expression was expected");
     return false;
-_end:
+_end: // Конец для выражений с обозначением
+    da = new DeclarationActor{idName, pa};
+    f.AddToLocalNameTable(da);
+    return true;
+
+_end2: // Конец для выражений без обозначения
     return true;
 }
 
 // Выражение в теле функции
-bool Compiler::isExpression(Func& f) {
+bool Compiler::isExpression(Func& f, Actor** ppa) {
     Actor* aLeft = nullptr;
     Actor* aRight = nullptr;
     ActorInterpret* pai1 = nullptr;
@@ -452,6 +462,7 @@ _1:
     if(isSymbol(':')) {
         // Можно начать формирование одноаргументного оператора интерпретации
         pai1 = new ActorInterpret{f.ActorNumber()};
+        *ppa = pai1;
         f.AddActor(pai1);
         pai1->SetArg(aLeft);
         nextSym();
@@ -476,6 +487,7 @@ _3:
     if(isSymbol(':')) {
         // Можно начать формирование одноаргументного оператора интерпретации
         pai2 = new ActorInterpret{f.ActorNumber()};
+        *ppa = pai2;
         f.AddActor(pai2);
         pai2->SetArg(pai1);
         pai1 = pai2;
@@ -556,6 +568,17 @@ bool Compiler::isTerm(Func& f, Actor** ppa) {
             // Имя является обозначением актора, на который ссылается.
             *ppa = pda->GetActor();
         }
+
+        if (Declaration* pd = sm.FindExportedDeclaration(name); pd != nullptr) {
+            *ppa = new ActorFunc{pd, f.ActorNumber()};
+        }
+
+        if (*ppa == nullptr) {
+            Err("Term: local name table look up failed");
+            std::cout << "name = " << name << "\n";
+            return false;
+        }
+
         Ignore();
         goto _end;
     }
@@ -576,7 +599,7 @@ bool Compiler::isProtoDefinition() {
 //--------------------------------------------------------------------------
 // Определение типа.
 bool Compiler::isTypeDefinition(Declaration** ppdcl) {
-    Type* ptv;
+    Type* ptv = nullptr;
 //_0: Проверка текущей лексемы на ключевое слово type или значок "@"
     if(isSymbol('@')) {
         nextSym();
@@ -600,7 +623,7 @@ _1:
         goto _end;
     }
     // Проверка на структуру
-    if(isStruct()) {
+    if(isStruct(&ptv)) {
         Ignore();
         goto _end;
     }
@@ -727,13 +750,16 @@ _end:
 
 //--------------------------------------------------------------------------
 // Определение именованной структуры.
-bool Compiler::isStruct() {
+bool Compiler::isStruct(Type** pptv) {
     // Сохранение позиции для возможного отката назад
     auto ipos{pos};
     auto isymbol{symbol};
     auto iline{line};
     auto icolumn{column};
     auto erFlag = false;     // флаг для отката или ошибки
+    std::string fieldName, fieldTypeName;
+    DeclarationType* pdt = nullptr; // Объявление типа поля
+    StructType* pst = sm.NewStruct(); // Тип-структура, который будет возвращена через pptv
 //_0:    
     if(isSymbol('(')) {
         nextSym();
@@ -751,6 +777,7 @@ _1:
         goto _2;
     }
     if(isId()) { // 
+        fieldName = lexValue;
         Ignore();
         goto _4;
     }
@@ -767,6 +794,7 @@ _1:
     return false;    
 _2:
     if(isId()) { // 
+        fieldName = lexValue;
         Ignore();
         goto _3;
     }
@@ -808,15 +836,28 @@ _4:
 _5:
     if(isQualId()) { // 
         Ignore();
+        fieldTypeName = lexValue;
         goto _6;
     }
     if(isId()) { // 
         Ignore();
+        fieldTypeName = lexValue;
         goto _6;
     }
     Err("isStruct: Expected type name");
     return false;
 _6:
+    pdt = sm.FindTypeDeclaration(fieldTypeName);
+    if (pdt == nullptr) {
+        Err("Failed to find declaration for type");
+        std::cout << "typeName: " << fieldTypeName << "\n";
+        return false;
+    }
+    if (!pst->AddField(fieldName, pdt)) {
+        Err("Fields of struct are not unique");
+        std::cout << "fieldName: " << fieldName << "\n";
+        return false;
+    }
     if(isSymbol(',')) {
         nextSym();
         Ignore();
@@ -832,6 +873,7 @@ _6:
     Err("isStruct: Expected ',' or')'");
     return false;
 _end:
+    *pptv = pst;
     return true;
 }
 

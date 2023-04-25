@@ -47,7 +47,7 @@ private:
     // Элемент тела функции
     bool isElement(Func& f);
     // Выражение в теле функции
-    bool isExpression(Func& f);
+    bool isExpression(Func& f, Actor** ppa);
     // Префиксное подвыражение в теле функции
     bool isPrefixExpression(Func& f);
     // Терм
@@ -59,7 +59,7 @@ private:
     // Определение вектора.
     bool isArray(Type** pptv);
     // Определение именованной структуры.
-    bool isStruct();
+    bool isStruct(Type **pptv);
     // Определение неименованной структуры.
     bool isTuple(Type **pptv);
     // Определение роя.
