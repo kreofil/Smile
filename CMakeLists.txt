@@ -31,11 +31,13 @@ set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type is Debug" FORCE)
 
 #set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(BEFORE
+    src/util
     src/smodel
 )
 
 #target_link_libraries(smile ${Boost_LIBRARIES})
 #target_compile_features(smile PRIVATE cxx_auto_type cxx_range_for)
+add_subdirectory(src/util)
 add_subdirectory(src/compiler)
 add_subdirectory(src/expcompiler)
 add_subdirectory(src/launcher)

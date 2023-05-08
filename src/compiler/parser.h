@@ -113,7 +113,7 @@ private:
     // Действительная константа со знаком или без знака
     bool isFloat();
     // Символьная константа
-    bool isChar();
+    bool isRune(rune &r);
     // Одна из базовых функций, задаваемых специальным знаком или их набором
     bool isBaseFunc(DeclarationFunc** ppdf);
     

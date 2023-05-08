@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include "utf8.h"
+
 // Класс, определяющий обобщенную константу
 class Const {
 public:
@@ -48,5 +50,13 @@ public:
     virtual void DebugOut();
 };
 
+// Представление константы-руны
+class ConstRune : public Const {
+    rune value;
+public:
+    explicit ConstRune(rune r);
+    std::string toString() override;
+    void DebugOut() override;
+};
 
 #endif

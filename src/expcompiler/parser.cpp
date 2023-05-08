@@ -114,6 +114,7 @@ _end:
 //--------------------------------------------------------------------------
 // Экспорт константы
 bool ExportCompiler::isConstExport(Declaration** dcl) {
+    rune r;
 //_0: Проверка текущей лексемы на ключевое слово const
     if(isReservedWord("const")) {
         ////std::cout << "--> const keyword = " << lexValue << " OK" << std::endl;
@@ -138,6 +139,10 @@ _1: // Проверяется тип константы
     if(isReservedWord("signal")) {
         Ignore();
         goto _5;
+    }
+    if (isReservedWord("char")) {
+        Ignore();
+        goto _char;
     }
     Err("isConstExport: Type of constant wated");
     return false;
@@ -169,10 +174,70 @@ _4: // Проверяется наличие действительного зн
 _5:
     *dcl = sm.newDeclarationConst(sm.NewSignalValue());
     goto _end;
+_char:
+    if (isRune(r)) {
+        *dcl = sm.newDeclarationConst(sm.NewRuneValue(r));
+        goto _end;
+    }
+    return false;
 _end:
     //fmt.Println("isConstExport-->")
     
     return true;
+}
+
+//--------------------------------------------------------------------------
+// Символьная константа
+// TODO: This is copy-paste from src/compiler/parser.cpp
+// TODO: And therefore severe violation of DRY principle
+bool ExportCompiler::isRune(rune& r) {
+    storePos();
+
+    if (isSymbol('\'')) {
+        nextSym();
+    } else {
+        goto failure;
+    }
+
+    if (isSymbol('\\')) {
+        nextSym();
+
+        if (isSymbol('n')) {
+            r = static_cast<rune>('\n');
+            nextSym();
+        } else if (isSymbol('r')) {
+            r = static_cast<rune>('\r');
+            nextSym();
+        } else if (isSymbol('t')) {
+            r = static_cast<rune>('\t');
+            nextSym();
+        } else {
+            goto failure;
+        }
+    } else {
+        const auto result = utf8::fetchRune(reinterpret_cast<const uint8_t*>(&currentDcl[column]), currentDcl.size() - static_cast<size_t>(column));
+        if (result.success) {
+            for (size_t i = 0; i < result.bytesRead; ++i) {
+                nextSym();
+            }
+
+            r = result.r;
+        } else {
+            goto failure;
+        }
+    }
+
+    if (isSymbol('\'')) {
+        nextSym();
+    } else {
+        goto failure;
+    }
+
+    return true;
+
+failure:
+    restorePos();
+    return false;
 }
 
 /*

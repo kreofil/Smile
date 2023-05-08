@@ -83,6 +83,11 @@ Const* SemanticModel::NewFloatValue(double fv) {
     return new ConstFloat(fv);
 }
 
+// Создание константы-руны
+Const* SemanticModel::NewRuneValue(rune r) {
+    return new ConstRune(r);
+}
+
 //------------------------------------------------------------------
 // Формирование объявление полученной обобщенной константы
 Declaration* SemanticModel::newDeclarationConst(Const* c) {

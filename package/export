@@ -21,7 +21,10 @@ newInt type int
 newSignal type signal
 pi const float 3.14
 pi2 const float 3.14159
+Quote1 const char '"'
 Real01 const float -5.14e+34
 Signal const signal
+Tab const char '\t'
 True const bool true
 tuple01 type tuple 3 bool int float
+Z const char 'Z'

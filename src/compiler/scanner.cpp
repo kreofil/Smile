@@ -555,54 +555,6 @@ _end:
 }
 
 //--------------------------------------------------------------------------
-// Символьная константа
-bool Compiler::isChar() {
-    std::string tmpValue{""};      // Предварительная очистка временного буфера
-// 0:
-    if(isSymbol('\'')) {
-        nextSym();
-        goto _1;
-    }
-    return false;
-_1:
-    if(isSymbol('\\')) { // Проверка на слэш-префикс
-        nextSym();
-        goto _2;
-    }
-    // Допустимый частный случай для символа без слэша - кавычки
-    if(isSymbol('"')) { // Проверка на кавычку без слэша
-        lexValue = symbol;
-        nextSym();
-        goto _3;
-    }
-    if(isUsingSlashSymbol()) { // Если символ, недопустимый без слэша
-        Err("Char: Slash before this symbol is necessary.");
-        return false;
-    }
-    // Если любой другой символ, допустимый без слэша, то прыгаем через него
-    lexValue = symbol;
-        nextSym();
-        goto _3;
-_2:
-    if(isAfterSlashSymbol(tmpValue)) { // Символ, допустимый только после слэша
-        lexValue = tmpValue;
-        ///fmt.Println("Character:", Value)
-        nextSym();
-        goto _3;
-    }
-_3:
-    if(isSymbol('\'')) { // Закрытие символа
-        nextSym();
-        goto _end;
-    }
-    Err("Char: The character '" + lexValue + "' is not closed.");
-    return false;
-_end:
-    Ignore();
-    return true;
-}
-
-//--------------------------------------------------------------------------
 // Одна из базовых функций, задаваемых специальным знаком или их набором
 // Каждой такой функции соответствует свой функциональный объект в семантической модели
 bool Compiler::isBaseFunc(DeclarationFunc** ppdf) {

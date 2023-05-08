@@ -83,3 +83,28 @@ void ConstFloat::DebugOut() {
     std::cout << "float = " << value;
 }
 
+ConstRune::ConstRune(rune r): value(r) {
+}
+
+std::string ConstRune::toString() {
+    std::ostringstream os;
+    os << Const::toString();
+    os << "char '";
+
+    if (value == static_cast<rune>('\t')) {
+        os << "\\t";
+    } else if (value == static_cast<rune>('\n')) {
+        os << "\\n";
+    } else if (value == static_cast<rune>('\r')) {
+        os << "\\r";
+    } else {
+        utf8::writeRune(os, value);
+    }
+
+    os << '\'';
+    return os.str();
+}
+
+void ConstRune::DebugOut() {
+    std::cout << toString();
+}

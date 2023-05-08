@@ -1135,6 +1135,12 @@ bool Compiler::isAtom(Const** ppcv) {
         //fmt.Println("Int const  (isAtom):", *)
         goto _end;
     }
+
+    rune r;
+    if (isRune(r)) {
+        pcv = sm.NewRuneValue(r);
+        goto _end;
+    }
     /*
     if(isChar()) {
         // Формирование значения целочисленной константы в виде элемента семантической модели
@@ -1166,6 +1172,58 @@ bool Compiler::isAtom(Const** ppcv) {
 _end:
     *ppcv = pcv;
     return true;
+}
+
+//--------------------------------------------------------------------------
+// Символьная константа
+bool Compiler::isRune(rune &r) {
+    storePos();
+
+    if (isSymbol('\'')) {
+        nextSym();
+    } else {
+        goto failure;
+    }
+
+    if (isSymbol('\\')) {
+        nextSym();
+
+        if (isSymbol('n')) {
+            r = static_cast<rune>('\n');
+            nextSym();
+        } else if (isSymbol('r')) {
+            r = static_cast<rune>('\r');
+            nextSym();
+        } else if (isSymbol('t')) {
+            r = static_cast<rune>('\t');
+            nextSym();
+        } else {
+            goto failure;
+        }
+    } else {
+        const auto result = utf8::fetchRune(reinterpret_cast<const uint8_t*>(&artefact[pos]), artefact.size() - static_cast<size_t>(pos));
+        if (result.success) {
+            for (size_t i = 0; i < result.bytesRead; ++i) {
+                nextSym();
+            }
+
+            r = result.r;
+        } else {
+            goto failure;
+        }
+    }
+
+    if (isSymbol('\'')) {
+        nextSym();
+    } else {
+        goto failure;
+    }
+
+    return true;
+
+failure:
+    restorePos();
+    return false;
 }
 
 //--------------------------------------------------------------------------

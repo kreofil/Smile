@@ -35,5 +35,6 @@ echo > ./package/export
 ./bin/smile -p package -e Signal && \
 ./bin/smile -p package -e Tab && \
 ./bin/smile -p package -e True && \
-./bin/smile -p package -e tuple01
-# ./bin/smile -p package -e Z
+./bin/smile -p package -e tuple01 && \
+./bin/smile -p package -e Z && \
+./bin/smile -p package -e cyrillic-ya
