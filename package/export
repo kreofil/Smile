@@ -28,3 +28,5 @@ Tab const char '\t'
 True const bool true
 tuple01 type tuple 3 bool int float
 Z const char 'Z'
+testfunc func 1 int int
+min func 1 tuple 2 int int int

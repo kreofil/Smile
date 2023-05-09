@@ -37,4 +37,6 @@ echo > ./package/export
 ./bin/smile -p package -e True && \
 ./bin/smile -p package -e tuple01 && \
 ./bin/smile -p package -e Z && \
-./bin/smile -p package -e cyrillic-ya
+./bin/smile -p package -e cyrillic-ya && \
+./bin/smile -p package -e func-with-parenthesis && \
+./bin/smile -p package -e min

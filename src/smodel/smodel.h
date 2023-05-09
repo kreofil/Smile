@@ -116,6 +116,16 @@ public:
     DeclarationFunc* GetDeclarationDec();
     // Получение объявления функции -
     DeclarationFunc* GetDeclarationSubMin();
+    // Получение объявления функции <
+    DeclarationFunc* GetDeclarationLess();
+    // Получение объявления функции <=
+    DeclarationFunc* GetDeclarationLessOrEq();
+    // Получение объявления функции >
+    DeclarationFunc* GetDeclarationGreater();
+    // Получение объявления функции >=
+    DeclarationFunc* GetDeclarationGreaterOrEq();
+    // Получение объявления функции ?
+    DeclarationFunc* GetDeclarationQuestionMark();
 };
 
 #endif

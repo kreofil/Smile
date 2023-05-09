@@ -1,0 +1,3 @@
+min << func X@(int, int) -> int {
+    X:(X:(<, >=):?):return;
+}

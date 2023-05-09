@@ -16,10 +16,12 @@ class Compiler {
     std::string lexValue;       // подстрока, определяющая текущую набранную лексему
     int errCount;               // счетчик ошибок
     char symbol;                // текущий символ
-    int oldPos;
-    int oldLine;
-    int oldColumn;
-    char oldSymbol;
+
+    struct State {
+        int pos, line, column;
+        char symbol;
+    };
+
     int qualCount;              // Счетчик идентификаторов в составном имени
     static std::vector<std::string> keyWords;   // таблица ключевых слов
     SemanticModel &sm;          // Семантическая модель языка
@@ -147,9 +149,9 @@ private:
     // Читает следующий символ из входной строки
     void nextSym();
     // Сохранение текущей позиции для возврата назад
-    void storePos();
+    State storePos();
     // Восстановление позиции после отката
-    void restorePos();
+    void restorePos(State& state);
     // Пропуск пробельных символов и комментариев
     void Ignore();
     // Выдача сообщения об ошибке

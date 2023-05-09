@@ -97,3 +97,25 @@ std::string DeclarationActor::toString() {
 
 void DeclarationActor::DebugOut() {
 }
+
+void ActorTuple::DebugOut() {
+    Actor::DebugOut();
+    std::cout << "Tuple{";
+    for (Actor* pa: elements) {
+        std::cout << " ";
+        pa->DebugOut();
+    }
+    std::cout << "}";
+}
+
+void ActorTuple::AddElement(Actor* pa) {
+    elements.push_back(pa);
+}
+
+size_t ActorTuple::GetElementCount() const {
+    return elements.size();
+}
+
+Actor* ActorTuple::GetElement(size_t i) const {
+    return elements.at(i);
+}

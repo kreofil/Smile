@@ -115,7 +115,18 @@ public:
 };
 
 //==============================================================================
+// Вершина, определяющая кортеж
 class ActorTuple: public Actor {
+    std::vector<Actor*> elements;
+public:
+    explicit ActorTuple(int n = -1): Actor(n) {}
+    explicit ActorTuple(Declaration *pd, int n): Actor(pd, n) {}
+
+    void DebugOut() override;
+
+    void AddElement(Actor *pa);
+    size_t GetElementCount() const;
+    Actor* GetElement(size_t i) const;
 };
 
 //==============================================================================

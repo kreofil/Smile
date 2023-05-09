@@ -537,12 +537,79 @@ bool Compiler::isTerm(Func& f, Actor** ppa) {
     Const* pcv;
     DeclarationFunc* pdf;
 //_0:
+    Ignore();
+
     if(isReservedWord("return")) {
         // Актор возврата уже существует и стоит на второй позиции.
         // Поэтому его формировать не нужно. Но необходимо передать оператору интерпретации
         *ppa = f.GetActor(1);
         Ignore();
         goto _end;
+    }
+    if (isSymbol('(')) {
+        nextSym();
+        Ignore();
+
+        State state = storePos();
+        if (isExpression(f, ppa)) {
+            Ignore();
+
+            if (isSymbol(')')) {
+                nextSym();
+                Ignore();
+
+                goto _end;
+            }
+
+            Err("Closing parenthesis `)` expected after expression");
+        }
+
+        restorePos(state);
+        if (isTerm(f, ppa)) {
+            Ignore();
+
+            if (isSymbol(')')) {
+                nextSym();
+                Ignore();
+
+                goto _end;
+            }
+
+            Err("Closing parenthesis `)` expected after expression");
+        }
+
+        restorePos(state);
+        ActorTuple *pat = new ActorTuple{f.ActorNumber()};
+        f.AddActor(pat);
+        while (true) {
+            Actor* pa = nullptr;
+            if (isTerm(f, &pa)) {
+                Ignore();  
+
+                pat->AddElement(pa);
+            } else {
+                return false;
+            }
+
+            if (isSymbol(')')) {
+                nextSym();
+                Ignore();
+
+                *ppa = pat;
+
+                goto _end;
+            }
+
+            if (isSymbol(',')) {
+                nextSym();
+                Ignore();
+            } else {
+                return false;
+            }
+        }
+
+        Err("IsTerm: Incorrect Term with `(`");
+        return false;
     }
     if(isBaseFunc(&pdf)) {
         // Создание актора, определяющего функцию для базовой функции
@@ -1177,7 +1244,7 @@ _end:
 //--------------------------------------------------------------------------
 // Символьная константа
 bool Compiler::isRune(rune &r) {
-    storePos();
+    State state = storePos();
 
     if (isSymbol('\'')) {
         nextSym();
@@ -1222,7 +1289,7 @@ bool Compiler::isRune(rune &r) {
     return true;
 
 failure:
-    restorePos();
+    restorePos(state);
     return false;
 }
 

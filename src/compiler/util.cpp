@@ -24,19 +24,23 @@ void Compiler::nextSym() {
 }
 
 // Сохранение текущей позиции для возврата назад
-void Compiler::storePos() {
-    oldPos = pos;
-    oldSymbol = symbol;
-    oldLine = line;
-    oldColumn = column;
+Compiler::State Compiler::storePos() {
+    Compiler::State state;
+
+    state.pos = pos;
+    state.symbol = symbol;
+    state.line = line;
+    state.column = column;
+
+    return state;
 }
     
 // Восстановление позиции после отката
-void Compiler::restorePos() {
-    pos = oldPos;
-    symbol = oldSymbol;
-    line = oldLine;
-    column = oldColumn;
+void Compiler::restorePos(Compiler::State& state) {
+    pos = state.pos;
+    symbol = state.symbol;
+    line = state.line;
+    column = state.column;
 }
 
 //--------------------------------------------------------------------------
