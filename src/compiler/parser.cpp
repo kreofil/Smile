@@ -384,13 +384,17 @@ bool Compiler::isElement(Func& f) {
     auto isymbol{symbol};
     auto iline{line};
     auto icolumn{column};
+    std::string idName;
+    Actor* pa = nullptr;
+    DeclarationActor *da = nullptr;
     ///auto erFlag = false;     // флаг для отката или ошибки
 //_0:
     if(isId()) { // Левое обозначение выражения
+        idName = lexValue;
         Ignore();
         goto _1;
     }
-    if(isExpression(f)) { // Выражение
+    if(isExpression(f, &pa)) { // Выражение
         Ignore();
         goto _3;
     }
@@ -406,14 +410,14 @@ _1:
     symbol = isymbol;
     line = iline;
     column = icolumn;
-    if(isExpression(f)) { // Выражение
+    if(isExpression(f, &pa)) { // Выражение
         Ignore();
         goto _3;
     }
     Err("Element: It is not Left Assignment (<<)");
     return false;
 _2:
-    if(isExpression(f)) { // Выражение
+    if(isExpression(f, &pa)) { // Выражение
         Ignore();
         goto _end;
     }
@@ -424,20 +428,26 @@ _3:
         Ignore();
         goto _4;
     }
-    goto _end;  // Выражение без обозначений возможны
+    goto _end2;  // Выражение без обозначений возможны
 _4:
     if(isId()) { // Правое обозначение выражения
+        idName = lexValue;
         Ignore();
         goto _end;
     }
     Err("Element: Right Name of Expression was expected");
     return false;
-_end:
+_end: // Конец для выражений с обозначением
+    da = new DeclarationActor{idName, pa};
+    f.AddToLocalNameTable(da);
+    return true;
+
+_end2: // Конец для выражений без обозначения
     return true;
 }
 
 // Выражение в теле функции
-bool Compiler::isExpression(Func& f) {
+bool Compiler::isExpression(Func& f, Actor** ppa) {
     Actor* aLeft = nullptr;
     Actor* aRight = nullptr;
     ActorInterpret* pai1 = nullptr;
@@ -452,6 +462,7 @@ _1:
     if(isSymbol(':')) {
         // Можно начать формирование одноаргументного оператора интерпретации
         pai1 = new ActorInterpret{f.ActorNumber()};
+        *ppa = pai1;
         f.AddActor(pai1);
         pai1->SetArg(aLeft);
         nextSym();
@@ -476,6 +487,7 @@ _3:
     if(isSymbol(':')) {
         // Можно начать формирование одноаргументного оператора интерпретации
         pai2 = new ActorInterpret{f.ActorNumber()};
+        *ppa = pai2;
         f.AddActor(pai2);
         pai2->SetArg(pai1);
         pai1 = pai2;
@@ -525,12 +537,79 @@ bool Compiler::isTerm(Func& f, Actor** ppa) {
     Const* pcv;
     DeclarationFunc* pdf;
 //_0:
+    Ignore();
+
     if(isReservedWord("return")) {
         // Актор возврата уже существует и стоит на второй позиции.
         // Поэтому его формировать не нужно. Но необходимо передать оператору интерпретации
         *ppa = f.GetActor(1);
         Ignore();
         goto _end;
+    }
+    if (isSymbol('(')) {
+        nextSym();
+        Ignore();
+
+        State state = storePos();
+        if (isExpression(f, ppa)) {
+            Ignore();
+
+            if (isSymbol(')')) {
+                nextSym();
+                Ignore();
+
+                goto _end;
+            }
+
+            Err("Closing parenthesis `)` expected after expression");
+        }
+
+        restorePos(state);
+        if (isTerm(f, ppa)) {
+            Ignore();
+
+            if (isSymbol(')')) {
+                nextSym();
+                Ignore();
+
+                goto _end;
+            }
+
+            Err("Closing parenthesis `)` expected after expression");
+        }
+
+        restorePos(state);
+        ActorTuple *pat = new ActorTuple{f.ActorNumber()};
+        f.AddActor(pat);
+        while (true) {
+            Actor* pa = nullptr;
+            if (isTerm(f, &pa)) {
+                Ignore();  
+
+                pat->AddElement(pa);
+            } else {
+                return false;
+            }
+
+            if (isSymbol(')')) {
+                nextSym();
+                Ignore();
+
+                *ppa = pat;
+
+                goto _end;
+            }
+
+            if (isSymbol(',')) {
+                nextSym();
+                Ignore();
+            } else {
+                return false;
+            }
+        }
+
+        Err("IsTerm: Incorrect Term with `(`");
+        return false;
     }
     if(isBaseFunc(&pdf)) {
         // Создание актора, определяющего функцию для базовой функции
@@ -556,6 +635,17 @@ bool Compiler::isTerm(Func& f, Actor** ppa) {
             // Имя является обозначением актора, на который ссылается.
             *ppa = pda->GetActor();
         }
+
+        if (Declaration* pd = sm.FindExportedDeclaration(name); pd != nullptr) {
+            *ppa = new ActorFunc{pd, f.ActorNumber()};
+        }
+
+        if (*ppa == nullptr) {
+            Err("Term: local name table look up failed");
+            std::cout << "name = " << name << "\n";
+            return false;
+        }
+
         Ignore();
         goto _end;
     }
@@ -576,7 +666,7 @@ bool Compiler::isProtoDefinition() {
 //--------------------------------------------------------------------------
 // Определение типа.
 bool Compiler::isTypeDefinition(Declaration** ppdcl) {
-    Type* ptv;
+    Type* ptv = nullptr;
 //_0: Проверка текущей лексемы на ключевое слово type или значок "@"
     if(isSymbol('@')) {
         nextSym();
@@ -600,7 +690,7 @@ _1:
         goto _end;
     }
     // Проверка на структуру
-    if(isStruct()) {
+    if(isStruct(&ptv)) {
         Ignore();
         goto _end;
     }
@@ -727,13 +817,16 @@ _end:
 
 //--------------------------------------------------------------------------
 // Определение именованной структуры.
-bool Compiler::isStruct() {
+bool Compiler::isStruct(Type** pptv) {
     // Сохранение позиции для возможного отката назад
     auto ipos{pos};
     auto isymbol{symbol};
     auto iline{line};
     auto icolumn{column};
     auto erFlag = false;     // флаг для отката или ошибки
+    std::string fieldName, fieldTypeName;
+    DeclarationType* pdt = nullptr; // Объявление типа поля
+    StructType* pst = sm.NewStruct(); // Тип-структура, который будет возвращена через pptv
 //_0:    
     if(isSymbol('(')) {
         nextSym();
@@ -751,6 +844,7 @@ _1:
         goto _2;
     }
     if(isId()) { // 
+        fieldName = lexValue;
         Ignore();
         goto _4;
     }
@@ -767,6 +861,7 @@ _1:
     return false;    
 _2:
     if(isId()) { // 
+        fieldName = lexValue;
         Ignore();
         goto _3;
     }
@@ -808,15 +903,28 @@ _4:
 _5:
     if(isQualId()) { // 
         Ignore();
+        fieldTypeName = lexValue;
         goto _6;
     }
     if(isId()) { // 
         Ignore();
+        fieldTypeName = lexValue;
         goto _6;
     }
     Err("isStruct: Expected type name");
     return false;
 _6:
+    pdt = sm.FindTypeDeclaration(fieldTypeName);
+    if (pdt == nullptr) {
+        Err("Failed to find declaration for type");
+        std::cout << "typeName: " << fieldTypeName << "\n";
+        return false;
+    }
+    if (!pst->AddField(fieldName, pdt)) {
+        Err("Fields of struct are not unique");
+        std::cout << "fieldName: " << fieldName << "\n";
+        return false;
+    }
     if(isSymbol(',')) {
         nextSym();
         Ignore();
@@ -832,6 +940,7 @@ _6:
     Err("isStruct: Expected ',' or')'");
     return false;
 _end:
+    *pptv = pst;
     return true;
 }
 
@@ -1093,6 +1202,12 @@ bool Compiler::isAtom(Const** ppcv) {
         //fmt.Println("Int const  (isAtom):", *)
         goto _end;
     }
+
+    rune r;
+    if (isRune(r)) {
+        pcv = sm.NewRuneValue(r);
+        goto _end;
+    }
     /*
     if(isChar()) {
         // Формирование значения целочисленной константы в виде элемента семантической модели
@@ -1124,6 +1239,58 @@ bool Compiler::isAtom(Const** ppcv) {
 _end:
     *ppcv = pcv;
     return true;
+}
+
+//--------------------------------------------------------------------------
+// Символьная константа
+bool Compiler::isRune(rune &r) {
+    State state = storePos();
+
+    if (isSymbol('\'')) {
+        nextSym();
+    } else {
+        goto failure;
+    }
+
+    if (isSymbol('\\')) {
+        nextSym();
+
+        if (isSymbol('n')) {
+            r = static_cast<rune>('\n');
+            nextSym();
+        } else if (isSymbol('r')) {
+            r = static_cast<rune>('\r');
+            nextSym();
+        } else if (isSymbol('t')) {
+            r = static_cast<rune>('\t');
+            nextSym();
+        } else {
+            goto failure;
+        }
+    } else {
+        const auto result = utf8::fetchRune(reinterpret_cast<const uint8_t*>(&artefact[pos]), artefact.size() - static_cast<size_t>(pos));
+        if (result.success) {
+            for (size_t i = 0; i < result.bytesRead; ++i) {
+                nextSym();
+            }
+
+            r = result.r;
+        } else {
+            goto failure;
+        }
+    }
+
+    if (isSymbol('\'')) {
+        nextSym();
+    } else {
+        goto failure;
+    }
+
+    return true;
+
+failure:
+    restorePos(state);
+    return false;
 }
 
 //--------------------------------------------------------------------------

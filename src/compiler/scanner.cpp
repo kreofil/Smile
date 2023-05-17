@@ -10,7 +10,7 @@
 // Идентификатор. Не должен быть ключевым словом
 bool Compiler::isId() {
     ///std::cout <<"-->isId\n";
-    storePos();
+    State state = storePos();
     // Предварительная очистка временного буфера:
     std::string tmpValue{""};
 //_0:
@@ -29,7 +29,7 @@ _1:
     lexValue = tmpValue;
     // Проверка, что это одно из ключевых слов
     if(isOneOfReservedWord(lexValue)) {
-        restorePos();
+        restorePos(state);
         ///std::cout << "Id: it is key word " << lexValue << " instead identifier!\n";
         return false;
     }
@@ -121,7 +121,7 @@ bool Compiler::isReservedWord(std::string &&v) {
     // Фиксация текущей позиции для возврата при неудаче
     ///startPos := iSym
     ///startSymbol := symbol
-    storePos();
+    State state = storePos();
     std::string tmpValue{""};      // Предварительная очистка временного буфера:
 //_0:
     if(isLetter(symbol) || isSymbol('_')) {
@@ -145,7 +145,7 @@ _1:
     // В противном случае откат к началу
     ///iSym = startPos // Восстановление начальной позиции
     ///symbol = startSymbol
-    restorePos();
+    restorePos(state);
     return false;
 }
 
@@ -172,7 +172,7 @@ bool Compiler::isOneStringComment() {
     // Фиксация текущей позиции для возврата при неудаче
     ///startPos := iSym
     //startSymbol := symbol
-    storePos();
+    State state = storePos();
     std::string tmpValue{""};      // Предварительная очистка временного буфера
 //_0:
     if(isSymbol('/')) {
@@ -189,7 +189,7 @@ _1:
     }
     ///iSym = startPos     // Восстановление начальной позиции
     ///symbol = startSymbol
-    restorePos();
+    restorePos(state);
     return false;
 _2:
     if(isSymbol('\n') || isEnd()) {
@@ -211,7 +211,7 @@ _end:
 // Многострочный комментарий.
 bool Compiler::isManyStringComment() {
     // Фиксация текущей позиции для возврата при неудаче
-    storePos();
+    State state = storePos();
     std::string tmpValue{""};      // Предварительная очистка временного буфера
 //_0:
     if(isSymbol('/')) {
@@ -229,7 +229,7 @@ _1:
     }
     ///iSym = startPos // Восстановление начальной позиции
     ///symbol = startSymbol
-    restorePos();
+    restorePos(state);
     return false;;
 _2:
     if(isSymbol('*')) { // Возможное начало завершения комментария
@@ -270,7 +270,7 @@ bool Compiler::isLeftAssign() {
     // Фиксация текущей позиции для возврата при неудаче
     ///startPos := iSym;
     ///startSymbol := Symbol
-    storePos();
+    State state = storePos();
     std::string tmpValue{""};      // Предварительная очистка временного буфера
 // 0:
     if(isSymbol('<')) {
@@ -287,7 +287,7 @@ _1:
     }
     ///iSym = startPos // Восстановление начальной позиции
     ///Symbol = startSymbol
-    restorePos();
+    restorePos(state);
     return false;
 _end:
     lexValue = tmpValue;
@@ -298,7 +298,7 @@ _end:
 // Правое обозначение
 bool Compiler::isRightAssign() {
     // Фиксация текущей позиции для возврата при неудаче
-    storePos();
+    State state = storePos();
     std::string tmpValue{""};      // Предварительная очистка временного буфера
 // 0:
     if(isSymbol('>')) {
@@ -315,7 +315,7 @@ _1:
     }
     ///iSym = startPos // Восстановление начальной позиции
     ///Symbol = startSymbol
-    restorePos();
+    restorePos(state);
     return false;
 _end:
     lexValue = tmpValue;
@@ -326,7 +326,7 @@ _end:
 // Разделитель аргумента и результата
 bool Compiler::isArrow() {
     // Фиксация текущей позиции для возврата при неудаче
-    storePos();
+    State state = storePos();
     std::string tmpValue{""};      // Предварительная очистка временного буфера
 // 0:
     if(isSymbol('-')) {
@@ -343,7 +343,7 @@ _1:
     }
     ///iSym = startPos // Восстановление начальной позиции
     ///Symbol = startSymbol
-    restorePos();
+    restorePos(state);
     return false;
 _end:
     lexValue = tmpValue;
@@ -357,7 +357,7 @@ bool Compiler::isBoolean() {
     // Фиксация текущей позиции для возврата при неудаче
     ///startPos := iSym;
     ///startSymbol := Symbol
-    storePos();
+    State state = storePos();
 
     //if(isReservedWord("false") || isReservedWord("true")) {
     if(isReservedWord("false")) {
@@ -370,7 +370,7 @@ bool Compiler::isBoolean() {
     }
     ///iSym = startPos     // Восстановление начальной позиции
     ///Symbol = startSymbol
-    restorePos();
+    restorePos(state);
     return false;
 }
 
@@ -379,7 +379,7 @@ bool Compiler::isBoolean() {
 bool Compiler::isInteger() {
     //fmt.Println("-->isInteger")
     // Фиксация текущей позиции для возврата при неудаче
-    storePos();
+    State state = storePos();
     std::string tmpValue{""};      // Предварительная очистка временного буфера
     std::string oneSym{""};
 // 0:
@@ -405,7 +405,7 @@ _1:
     // ErrorOut("Integer: Incorrect symbol after sign. Digit wated.");
     ///iSym = startPos     // Восстановление начальной позиции
     ///Symbol = startSymbol
-    restorePos();
+    restorePos(state);
     return false;
 _2:
     // Накопление цифр целого числа
@@ -431,7 +431,7 @@ _end:
 // Действительная константа со знаком или без знака
 bool Compiler::isFloat() {
     // Фиксация текущей позиции для возврата при неудаче
-    storePos();
+    State state = storePos();
     std::string tmpValue{""};      // Предварительная очистка временного буфера
     std::string oneSym{""};
 // 0:
@@ -456,7 +456,7 @@ _1:
     }
     ///iSym = startPos     // Восстановление начальной позиции
     ///Symbol = startSymbol
-    restorePos();
+    restorePos(state);
     // ErrorOut("Real: Incorrect symbol after sign. Digit wated.");
     return false;
 _2:
@@ -480,7 +480,7 @@ _2:
     }
     ///iSym = startPos // Восстановление начальной позиции
     ///Symbol = startSymbol
-    restorePos();
+    restorePos(state);
     // При откате назад сообщение об ошибке не нужно. Пробуется другая версия.
     //ErrorOut("Real: Incorrect Real Number.");
     return false;
@@ -555,59 +555,9 @@ _end:
 }
 
 //--------------------------------------------------------------------------
-// Символьная константа
-bool Compiler::isChar() {
-    std::string tmpValue{""};      // Предварительная очистка временного буфера
-// 0:
-    if(isSymbol('\'')) {
-        nextSym();
-        goto _1;
-    }
-    return false;
-_1:
-    if(isSymbol('\\')) { // Проверка на слэш-префикс
-        nextSym();
-        goto _2;
-    }
-    // Допустимый частный случай для символа без слэша - кавычки
-    if(isSymbol('"')) { // Проверка на кавычку без слэша
-        lexValue = symbol;
-        nextSym();
-        goto _3;
-    }
-    if(isUsingSlashSymbol()) { // Если символ, недопустимый без слэша
-        Err("Char: Slash before this symbol is necessary.");
-        return false;
-    }
-    // Если любой другой символ, допустимый без слэша, то прыгаем через него
-    lexValue = symbol;
-        nextSym();
-        goto _3;
-_2:
-    if(isAfterSlashSymbol(tmpValue)) { // Символ, допустимый только после слэша
-        lexValue = tmpValue;
-        ///fmt.Println("Character:", Value)
-        nextSym();
-        goto _3;
-    }
-_3:
-    if(isSymbol('\'')) { // Закрытие символа
-        nextSym();
-        goto _end;
-    }
-    Err("Char: The character '" + lexValue + "' is not closed.");
-    return false;
-_end:
-    Ignore();
-    return true;
-}
-
-//--------------------------------------------------------------------------
 // Одна из базовых функций, задаваемых специальным знаком или их набором
 // Каждой такой функции соответствует свой функциональный объект в семантической модели
 bool Compiler::isBaseFunc(DeclarationFunc** ppdf) {
-    // Фиксация текущей позиции для возврата при неудаче
-    storePos();
 //_0:
     if(isSymbol('+')) { // Проверки базовых функций, начинающихся со знака '+'
         nextSym();
@@ -633,6 +583,38 @@ bool Compiler::isBaseFunc(DeclarationFunc** ppdf) {
         // минус
         *ppdf = sm.GetDeclarationSubMin();
         //nextSym(); -- Уже взяли следующий символ
+        goto _end;
+    }
+    if (isSymbol('<')) {
+        nextSym();
+
+        if (isSymbol('=')) {
+            nextSym();
+
+            *ppdf = sm.GetDeclarationLessOrEq();
+            goto _end;
+        }
+
+        *ppdf = sm.GetDeclarationLess();
+        goto _end;
+    }
+    if (isSymbol('>')) {
+        nextSym();
+
+        if (isSymbol('=')) {
+            nextSym();
+
+            *ppdf = sm.GetDeclarationGreaterOrEq();
+            goto _end;
+        }
+
+        *ppdf = sm.GetDeclarationGreater();
+        goto _end;
+    }
+    if (isSymbol('?')) {
+        nextSym();
+
+        *ppdf = sm.GetDeclarationQuestionMark();
         goto _end;
     }
     // Наличие базовой функции не подтвердилось.

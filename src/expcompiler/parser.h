@@ -53,6 +53,8 @@ private:
     bool isBaseExport(Type** pptv);
     // Экспорт кортежа
     bool isTupleExport(Type** pptv);
+    // Экспорт структуры
+    bool isStructExport(Type** pptv);
     // Экспорт импорта.
     bool isImportExport();
     
@@ -89,7 +91,7 @@ private:
     // Действительная константа со знаком или без знака
     bool isFloat();
     // Символьная константа
-    bool isChar();
+    bool isRune(rune& r);
     
     //=============================================================================
     // Методы транслитератора

@@ -13,6 +13,7 @@ set(SOURCE_LIB
     tuple.h
     actor.h
     smodel.h
+    struct.h
     
     #sources
     const.cpp
@@ -24,6 +25,7 @@ set(SOURCE_LIB
     tuple.cpp
     actor.cpp
     smodel.cpp
+    struct.cpp
 )
 
 set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type is Debug" FORCE)

@@ -78,9 +78,9 @@ bool ExportCompiler::isExport() {
         goto _1;
     }
     // Возможен пустой файл, если отсутствуют откомпилированные описания
-    //if isEnd() {
-    //    goto _end;
-    //}
+    if (isEnd()) {
+        return true;
+    }
     Err("Export: Incorrect symbols at  the end or it is not name of exporting declaration");
     return false;
 _1: // Далее пошли варианты с описанием альтернативных артефактов с постфиксным обозначением
@@ -114,6 +114,7 @@ _end:
 //--------------------------------------------------------------------------
 // Экспорт константы
 bool ExportCompiler::isConstExport(Declaration** dcl) {
+    rune r;
 //_0: Проверка текущей лексемы на ключевое слово const
     if(isReservedWord("const")) {
         ////std::cout << "--> const keyword = " << lexValue << " OK" << std::endl;
@@ -135,10 +136,14 @@ _1: // Проверяется тип константы
         Ignore();
         goto _4;
     }
-//    if(isReservedWord("signal")) {
-//        Ignore()
-//        goto _end
-//    }
+    if(isReservedWord("signal")) {
+        Ignore();
+        goto _5;
+    }
+    if (isReservedWord("char")) {
+        Ignore();
+        goto _char;
+    }
     Err("isConstExport: Type of constant wated");
     return false;
 _2: // Проверяется наличие целочисленного значения    
@@ -166,10 +171,73 @@ _4: // Проверяется наличие действительного зн
         goto _end;
     }
     return false;
+_5:
+    *dcl = sm.newDeclarationConst(sm.NewSignalValue());
+    goto _end;
+_char:
+    if (isRune(r)) {
+        *dcl = sm.newDeclarationConst(sm.NewRuneValue(r));
+        goto _end;
+    }
+    return false;
 _end:
     //fmt.Println("isConstExport-->")
     
     return true;
+}
+
+//--------------------------------------------------------------------------
+// Символьная константа
+// TODO: This is copy-paste from src/compiler/parser.cpp
+// TODO: And therefore severe violation of DRY principle
+bool ExportCompiler::isRune(rune& r) {
+    storePos();
+
+    if (isSymbol('\'')) {
+        nextSym();
+    } else {
+        goto failure;
+    }
+
+    if (isSymbol('\\')) {
+        nextSym();
+
+        if (isSymbol('n')) {
+            r = static_cast<rune>('\n');
+            nextSym();
+        } else if (isSymbol('r')) {
+            r = static_cast<rune>('\r');
+            nextSym();
+        } else if (isSymbol('t')) {
+            r = static_cast<rune>('\t');
+            nextSym();
+        } else {
+            goto failure;
+        }
+    } else {
+        const auto result = utf8::fetchRune(reinterpret_cast<const uint8_t*>(&currentDcl[column]), currentDcl.size() - static_cast<size_t>(column));
+        if (result.success) {
+            for (size_t i = 0; i < result.bytesRead; ++i) {
+                nextSym();
+            }
+
+            r = result.r;
+        } else {
+            goto failure;
+        }
+    }
+
+    if (isSymbol('\'')) {
+        nextSym();
+    } else {
+        goto failure;
+    }
+
+    return true;
+
+failure:
+    restorePos();
+    return false;
 }
 
 /*
@@ -324,7 +392,7 @@ _end:
 //--------------------------------------------------------------------------
 // Определение типа.
 bool ExportCompiler::isTypeExport(Declaration** ppdcl) {
-    Type* ptv;
+    Type* ptv = nullptr;
 //_0: Проверка текущей лексемы на ключевое слово type
     if(isReservedWord("type")) {
         Ignore();
@@ -336,6 +404,9 @@ _1: // Анализ вариантов экспортируемого типа
         goto _end;
     }
     if(isTupleExport(&ptv)) { // переименованный тип
+        goto _end;
+    }
+    if(isStructExport(&ptv)) { // тип-структура
         goto _end;
     }
     Err("isTypeExport: A type definition have been expected");
@@ -424,6 +495,82 @@ _2: // Проверка на заданное число типов
     return false;
 _end:
     *pptv = typeTuple;
+    return true;
+}
+
+bool ExportCompiler::isStructExport(Type** pptv) {
+    std::string fieldName, fieldTypeName;
+    DeclarationType *pdt = nullptr; // Объявление типа поля
+    StructType *pst = sm.NewStruct();
+
+    Ignore();
+
+    if (isReservedWord("struct")) {
+        Ignore();
+    }
+
+    if (isSymbol('(')) {
+        nextSym();
+        Ignore();
+    } else {
+        Err("Expected `(` in export file struct definition");
+        return false;
+    }
+
+    while (true) {
+        if (isSymbol(')')) {
+            nextSym();
+            Ignore();
+            break;
+        }
+
+        if (isId()) {
+            fieldName = lexValue;
+            Ignore();
+        } else {
+            Err("Execpted field name in export file struct defintion");
+            return false;
+        }
+
+        if (isSymbol('@')) {
+            nextSym();
+            Ignore();
+        } else {
+            Err("Expected `@` in export file struct definition");
+            return false;
+        }
+
+        if (isId()) {
+            fieldTypeName = lexValue;
+            Ignore();
+        } else {
+            Err("Expected field type name in export file struct definition");
+            return false;
+        }
+
+        if (isSymbol(',')) {
+            nextSym();
+            Ignore();
+        } else {
+            Err("Expected `,` in export file struct definition");
+            return false;
+        }
+
+        pdt = sm.FindTypeDeclaration(fieldTypeName);
+        if (pdt == nullptr) {
+            Err("Failed to find type declaration");
+            std::cout << "fieldTypeName = " << fieldTypeName << "\n";
+            return false;
+        }
+
+        if (!pst->AddField(fieldName, pdt)) {
+            Err("Field names in struct are not unique");
+            std::cout << "fieldName = " << fieldName << "\n";
+            return false;
+        }
+    }
+
+    *pptv = pst;
     return true;
 }
 

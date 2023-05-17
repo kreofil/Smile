@@ -16,10 +16,12 @@ class Compiler {
     std::string lexValue;       // подстрока, определяющая текущую набранную лексему
     int errCount;               // счетчик ошибок
     char symbol;                // текущий символ
-    int oldPos;
-    int oldLine;
-    int oldColumn;
-    char oldSymbol;
+
+    struct State {
+        int pos, line, column;
+        char symbol;
+    };
+
     int qualCount;              // Счетчик идентификаторов в составном имени
     static std::vector<std::string> keyWords;   // таблица ключевых слов
     SemanticModel &sm;          // Семантическая модель языка
@@ -47,7 +49,7 @@ private:
     // Элемент тела функции
     bool isElement(Func& f);
     // Выражение в теле функции
-    bool isExpression(Func& f);
+    bool isExpression(Func& f, Actor** ppa);
     // Префиксное подвыражение в теле функции
     bool isPrefixExpression(Func& f);
     // Терм
@@ -59,7 +61,7 @@ private:
     // Определение вектора.
     bool isArray(Type** pptv);
     // Определение именованной структуры.
-    bool isStruct();
+    bool isStruct(Type **pptv);
     // Определение неименованной структуры.
     bool isTuple(Type **pptv);
     // Определение роя.
@@ -113,7 +115,7 @@ private:
     // Действительная константа со знаком или без знака
     bool isFloat();
     // Символьная константа
-    bool isChar();
+    bool isRune(rune &r);
     // Одна из базовых функций, задаваемых специальным знаком или их набором
     bool isBaseFunc(DeclarationFunc** ppdf);
     
@@ -147,9 +149,9 @@ private:
     // Читает следующий символ из входной строки
     void nextSym();
     // Сохранение текущей позиции для возврата назад
-    void storePos();
+    State storePos();
     // Восстановление позиции после отката
-    void restorePos();
+    void restorePos(State& state);
     // Пропуск пробельных символов и комментариев
     void Ignore();
     // Выдача сообщения об ошибке

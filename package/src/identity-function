@@ -1,0 +1,3 @@
+identityFunction << func x@int -> int {
+    x:return;
+}

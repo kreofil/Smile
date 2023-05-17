@@ -22,4 +22,5 @@ set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type is Debug" FORCE)
 
 add_library(compiler STATIC ${SOURCE_LIB})   # Создание статической библиотеки
 
+target_link_libraries(compiler util)       # Линковка библиотеки с библиотекой утилит
 target_link_libraries(compiler smodel)       # Линковка библиотеки с библиотекой семантической модели

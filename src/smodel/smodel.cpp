@@ -83,6 +83,11 @@ Const* SemanticModel::NewFloatValue(double fv) {
     return new ConstFloat(fv);
 }
 
+// Создание константы-руны
+Const* SemanticModel::NewRuneValue(rune r) {
+    return new ConstRune(r);
+}
+
 //------------------------------------------------------------------
 // Формирование объявление полученной обобщенной константы
 Declaration* SemanticModel::newDeclarationConst(Const* c) {
@@ -245,6 +250,21 @@ namespace {
 
     FuncProto subMin;
     DeclarationFunc dclSubMin("-", &subMin);
+
+    FuncProto less;
+    DeclarationFunc dclLess("<", &less);
+
+    FuncProto lessOrEq;
+    DeclarationFunc dclLessOrEq("<=", &lessOrEq);
+
+    FuncProto greater;
+    DeclarationFunc dclGreater(">", &greater);
+
+    FuncProto greaterOrEq;
+    DeclarationFunc dclGreaterOrEq(">=", &greaterOrEq);
+
+    FuncProto questionMark;
+    DeclarationFunc dclQuestionMark("?", &questionMark);
 }
 
 
@@ -304,4 +324,31 @@ DeclarationFunc* SemanticModel::GetDeclarationSubMin() {
     return &dclSubMin;
 }
 
+// Получение объявления функции <
+DeclarationFunc* SemanticModel::GetDeclarationLess() {
+    return &dclLess;
+}
 
+// Получение объявления функции <=
+DeclarationFunc* SemanticModel::GetDeclarationLessOrEq() {
+    return &dclLessOrEq;
+}
+
+// Получение объявления функции >
+DeclarationFunc* SemanticModel::GetDeclarationGreater() {
+    return &dclGreater;
+}
+
+// Получение объявления функции >=
+DeclarationFunc* SemanticModel::GetDeclarationGreaterOrEq() {
+    return &dclGreaterOrEq;
+}
+
+// Получение объявления функции ?
+DeclarationFunc* SemanticModel::GetDeclarationQuestionMark() {
+    return &dclQuestionMark;
+}
+
+StructType* SemanticModel::NewStruct() {
+    return new StructType{};   
+}

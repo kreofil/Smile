@@ -9,6 +9,7 @@
 //#include "declaration.h"
 #include "funcdeclaration.h"
 #include "tuple.h"
+#include "struct.h"
 #include "nametable.h"
 
 // Семантическая модель языка программирования Smile
@@ -45,6 +46,8 @@ public:
     Const* NewBoolValue(bool bv);
     // Создание действительной константы
     Const* NewFloatValue(double fv);
+    // Создание константы-руны (юникод кодпоинта)
+    Const* NewRuneValue(rune r);
     
     //------------------------------------------------------------------
     // Формирование объявление полученной обобщенной константы
@@ -77,6 +80,8 @@ public:
     Func* NewFunc();
     // Создание кортежа
     TypeTuple* NewTuple();
+    // Создание структуры
+    StructType* NewStruct();
 
     //------------------------------------------------------------------
     // Формирование объявления для прототипа функции
@@ -111,6 +116,16 @@ public:
     DeclarationFunc* GetDeclarationDec();
     // Получение объявления функции -
     DeclarationFunc* GetDeclarationSubMin();
+    // Получение объявления функции <
+    DeclarationFunc* GetDeclarationLess();
+    // Получение объявления функции <=
+    DeclarationFunc* GetDeclarationLessOrEq();
+    // Получение объявления функции >
+    DeclarationFunc* GetDeclarationGreater();
+    // Получение объявления функции >=
+    DeclarationFunc* GetDeclarationGreaterOrEq();
+    // Получение объявления функции ?
+    DeclarationFunc* GetDeclarationQuestionMark();
 };
 
 #endif

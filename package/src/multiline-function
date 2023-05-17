@@ -1,0 +1,6 @@
+multilineFunction << func x@(int,int) -> int {
+    sum << x:+;
+    sum2 << sum:identityFunction;
+    sum3 << sum2:identityFunction;
+    sum3:return;
+}

@@ -16,7 +16,7 @@ add_executable(smile main.cpp)
 target_link_libraries(smile ${Boost_LIBRARIES})
 target_compile_features(smile PRIVATE cxx_auto_type cxx_range_for)
 
-
+target_link_libraries(smile util)         # Линковка программы с библиотекой утилит 
 target_link_libraries(smile compiler)     # Линковка программы с библиотекой компилятора артефактов
 target_link_libraries(smile expcompiler)  # Линковка программы с библиотекой компилятора экспорта
 target_link_libraries(smile smodel)       # Линковка программы с библиотекой семантической модели

@@ -1,20 +1,32 @@
-pi const float 3.14
-pi2 const float 3.14159
-newBool type bool
-triangle type tuple 3 int int int
-rectangle type tuple 2 int int
-tuple01 type tuple 3 bool int float
+add func 2 tuple 2 float float float tuple 2 int int int
+circle type struct (r@int,)
+False const bool false
 func01 func 3 int bool float bool bool float
 func02 func 1 signal float
 func03 func 1 signal float
 func04 func 1 tuple 2 int int int
-add func 2 tuple 2 int int int tuple 2 float float float
-newSignal type signal
+FuncAdd01 func 1 tuple 2 int int int
+FuncInc01 func 1 int int
 FuncSenSignal01 func 1 signal signal
 FuncSenSignal02 func 1 signal signal
-FuncSenSignal03 func 1 int signal
-FuncInc01 func 2 int int tuple 2 int int int
-FuncAdd01 func 1 tuple 2 int int int
-tuple02 type tuple 3 bool int float
-pi3 const float 3.14159
-pi4 const float 3.14
+iAmVaryOld const int 65
+identityFunction func 1 int int
+IgorWasBorn const int 1982
+iWasBorn const int 1956
+LudaWasBorn const int 1957
+multilineFunction func 1 tuple 2 int int int
+newBool type bool
+newFloat type float
+newInt type int
+newSignal type signal
+pi const float 3.14
+pi2 const float 3.14159
+Quote1 const char '"'
+Real01 const float -5.14e+34
+Signal const signal
+Tab const char '\t'
+True const bool true
+tuple01 type tuple 3 bool int float
+Z const char 'Z'
+testfunc func 1 int int
+min func 1 tuple 2 int int int
