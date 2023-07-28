@@ -1,0 +1,90 @@
+% Выбор класса документа
+%\documentclass {book}
+%\documentclass {article}
+\documentclass [a4paper, 12pt, oneside]{scrbook}
+% Чтобы можно было использовать русские буквы в формулах,
+%но в случае использования предупреждать об этом
+\usepackage [warn]{mathtext}
+% Выбор внутренней TEX−кодировки
+\usepackage[T2A]{fontenc}
+% Выбор кодовой страницы документа
+% Так же можно выбрать cp1251 или utf8
+\usepackage[utf8]{inputenc}
+% Выбор языка документа
+\usepackage[english,russian]{babel}
+% Начинать первый параграф
+\usepackage{indentfirst}
+% Загрузка пакета hyperref
+\usepackage[unicode=true] {hyperref}
+\usepackage{url}
+
+\usepackage{graphicx}
+\graphicspath{{pictures/}}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+
+\usepackage{csquotes}
+\usepackage{debate}
+\usepackage[nopygments,nonumbers,noframes]{ffcode}
+\usepackage{to-be-determined}
+
+\usepackage{listings}
+
+\newcommand\code[1]{\ff{#1}}
+
+%установка тире для подрисуночной подписи
+\RequirePackage{caption}
+\DeclareCaptionLabelSeparator{defffis}{ --- }
+\captionsetup{justification=centering,labelsep=defffis}
+
+
+%\makeatletter
+%\renewcommand*{\@biblabel}[1]{\hfill#1.}
+%\makeatother
+
+%\usepackage[backend=biber]{biblatex}
+%\addbibresource{references.bib}
+
+
+% Конец преамбулы и начало документа
+\begin {document}
+
+% Изменение начала подрисуночной надписи
+\renewcommand\figurename{Рисунок}
+
+\title{\Huge{Язык программирования Smile}}
+\author {\Large{А.\,И.~Легалов}}
+%\date {}
+\maketitle
+
+% --- Оглавление -------------------------------------------
+\tableofcontents
+
+% Основная часть
+%\mainmatter
+
+%\part*{Введение}
+%\addcontentsline{toc}{part}{Введение}
+
+% --- Введение -------------------------------------------
+\input{intro.tex}
+
+% --- Факторы архитектурной независимости параллельных программ ---
+\input{aipp-factors.tex}
+
+
+% --- СТМФППВ ---
+\input{static-typed-model.tex}
+
+% --- Язык программирования Smile ---
+\input{smile.tex}
+
+% --- Семантика оператора интерпретации Smile ---
+
+% --- Заключение ---
+\input{conclusion.tex}
+
+
+% --- Список использованных источников ---
+\input{biblio.tex}
+
+\end {document}
