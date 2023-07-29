@@ -1,0 +1,26 @@
+int_1957_pre_const const int 1957
+int_1956_pre_const const int 1956
+signal_post_const const signal
+char_apostrof_pre_const const char '\''
+int_67_post const int 67
+bool_false_pre_const const bool false
+int_5_post const int 5
+bool_true_pre_const const bool true
+bool_true_post_const const bool true
+char_tab_pre_const const char '\t'
+float_pi_pre const float 3.14
+char_lf_pre const char '\n'
+char_Quote_post const char '\"'
+float_pi_post_const const float 3.14159
+int_10_pre const int 10
+int_65_post_const const int 65
+char_Quote_post_const const char '\"'
+char_Z_pre_const const char 'Z'
+char_BackSlash_pre const char '\\'
+float_minus_5_14e34_pre_const const float -5.14e+34
+signal_pre_const const signal
+signal_post const signal
+bool_true_pre const bool true
+bool_true_post const bool true
+int_1982_pre_const const int 1982
+signal_pre const signal

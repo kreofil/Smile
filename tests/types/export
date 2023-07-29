@@ -1,0 +1,12 @@
+float_post_at type float
+bool_pre_type type bool
+signal_pre_type type signal
+bool_pre_at type bool
+tuple_pre_type type tuple 3 bool int float
+signal_post_at type signal
+int_pre_type type int
+signal_pre_at type signal
+int_pre_at type int
+int_pre_at2 type int
+tuple_pre_at type tuple 3 bool int float
+float_post_type type float
