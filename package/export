@@ -1,20 +1,4 @@
 pi const float 3.14
-pi2 const float 3.14159
-newBool type bool
-triangle type tuple 3 int int int
-rectangle type tuple 2 int int
-tuple01 type tuple 3 bool int float
-func01 func 3 int bool float bool bool float
-func02 func 1 signal float
-func03 func 1 signal float
-func04 func 1 tuple 2 int int int
-add func 2 tuple 2 int int int tuple 2 float float float
-newSignal type signal
-FuncSenSignal01 func 1 signal signal
-FuncSenSignal02 func 1 signal signal
-FuncSenSignal03 func 1 int signal
-FuncInc01 func 2 int int tuple 2 int int int
-FuncAdd01 func 1 tuple 2 int int int
-tuple02 type tuple 3 bool int float
-pi3 const float 3.14159
-pi4 const float 3.14
+ten const int 10
+five const int 5
+is_true const bool true

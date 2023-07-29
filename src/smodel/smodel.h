@@ -39,6 +39,8 @@ public:
     //------------------------------------------------------------------
     // Формирование указателя на сигнальную константу
     Const* NewSignalValue();
+    // Создание символьной константы
+    Const *NewCharValue(char iv);
     // Создание целочисленной константы
     Const* NewIntValue(int iv);
     // Создание булевской константы
@@ -49,12 +51,15 @@ public:
     //------------------------------------------------------------------
     // Формирование объявление полученной обобщенной константы
     Declaration* newDeclarationConst(Const* c);
+    Declaration *newDeclarationConstSignal();
     // Формирование объявления целочисленной константы
     Declaration* newDeclarationConstInt(int v);
     // Формирование объявления булевской константы
     Declaration* newDeclarationConstBool(bool v);
     // Формирование объявления действительной константы
     Declaration* newDeclarationConstFloat(double v);
+   // Формирование объявления символьной константы
+    Declaration* newDeclarationConstChar(char v);
 
     //------------------------------------------------------------------
     // Получение указателя на сигнальный тип

@@ -21,6 +21,15 @@ public:
     virtual void DebugOut();
 };
 
+// Представление символьной константы
+class ConstChar: public Const {
+    char value;
+public:
+    explicit ConstChar(char v);
+    virtual std::string toString();
+    virtual void DebugOut();
+};
+
 // Представление целочисленной константы
 class ConstInt: public Const {
     int value;

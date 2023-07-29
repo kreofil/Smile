@@ -13,11 +13,13 @@ void ExportCompile(std::vector<std::string> &e);
 std::vector<std::string> Compiler::keyWords {
     "array",
     "const",
+    "false",
     "func",
     "safe",
     "stream",
     "struct",
     "swarm",
+    "true",
     "var",
     "vector",
     "type",
@@ -66,7 +68,7 @@ bool Compiler::isArtefact() {
     std::string artefactName;
     Ignore();   // пропуск пробельных символов и комментариев перед первой лексемой
 //_0: Проверка на имя артефакта или начало его определения
-    // В начале идет проверка на обозначение артефакта
+    // Проверка на обозначение артефакта
     if(isSimpleName()) {
         artefactName = lexValue; // Фиксация имени артефакта
         //smodel.SetArtefactName() // Фиксация имени артефакта
@@ -1093,24 +1095,19 @@ bool Compiler::isAtom(Const** ppcv) {
         //fmt.Println("Int const  (isAtom):", *)
         goto _end;
     }
-    /*
     if(isChar()) {
-        // Формирование значения целочисленной константы в виде элемента семантической модели
-        cv := rune(Value)
-        // Формирование значения для данной константы
-        charValue := smodel.NewIntValue(iv)
-        // Тестовый вывод константы как значения
-        fmt.Println("Int const intValue (isAtom):", intValue)
-        * = intValue
-        // Тестовый вывод константы как значения
-        fmt.Println("Int const  (isAtom):", *)
+        // Формирование значения целочисленной константы 
+        // в виде элемента семантической модели
+        char cv = lexValue[0];
+        pcv = sm.NewCharValue(cv);
         goto _end;
     }
     //fmt.Println("Symbol ==", string(Symbol))
     //!!!! Возникла мысль о том, что не имеет смысла использовать сигналы как именованные константы,
     //!!!! Так как они не имеют альтернативных значений. Поэтому их можно вынести из константных величин
+    /*
     if(isSymbol('!')) { // Пустое (сигнальное) значение
-        //*v = new ValueSignal()
+        *v = new ValueSignal()
         nextSym();
         Ignore();
         goto _end;

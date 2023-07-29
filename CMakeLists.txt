@@ -6,6 +6,7 @@ project(smile LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 #find_package(Boost 1.72 REQUIRED program_options)
 #include_directories(${Boost_INCLUDE_DIRS})
@@ -14,9 +15,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED on)
 set(BUILD_DIR "${CMAKE_BINARY_DIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${BUILD_DIR}/../bin")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${BUILD_DIR}/../lib")
-
-set(CMAKE_CXX_COMPILER "/usr/bin/c++")
-#set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 
 message(STATUS "Is the C++ compiler loaded? ${CMAKE_CXX_COMPILER_LOADED}")
 if(CMAKE_CXX_COMPILER_LOADED)

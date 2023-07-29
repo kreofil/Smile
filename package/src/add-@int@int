@@ -1,3 +1,0 @@
-add << func intPair@(int,int) -> int {
-    intPair:+:return
-}

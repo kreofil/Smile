@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-//#include "../smodel/smodel.h"
-#include "smodel.h"
+#include "../smodel/smodel.h"
+// #include "smodel.h"
 
 class Compiler {
     std::string &artefact;      // ссылка на строку с артефактом

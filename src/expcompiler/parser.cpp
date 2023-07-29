@@ -135,10 +135,15 @@ _1: // Проверяется тип константы
         Ignore();
         goto _4;
     }
-//    if(isReservedWord("signal")) {
-//        Ignore()
-//        goto _end
-//    }
+    if(isReservedWord("char")) {
+        Ignore();
+        goto _5;
+    }
+   if(isReservedWord("signal")) {
+        *dcl = sm.newDeclarationConstSignal();
+        Ignore();
+        goto _end;
+    }
     Err("isConstExport: Type of constant wated");
     return false;
 _2: // Проверяется наличие целочисленного значения    
@@ -163,6 +168,12 @@ _3: // Проверяется наличие булевского значени
 _4: // Проверяется наличие действительного значения    
     if(isFloat()) {
         *dcl = sm.newDeclarationConstFloat(std::stod(lexValue));
+        goto _end;
+    }
+    return false;
+_5: // Проверяется наличие символьного значения    
+    if(isChar()) {
+        *dcl = sm.newDeclarationConstChar(lexValue[0]);
         goto _end;
     }
     return false;

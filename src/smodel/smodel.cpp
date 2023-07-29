@@ -68,6 +68,11 @@ Const* SemanticModel::NewSignalValue() {
     return &s;
 }
 
+// Создание символьной константы
+Const* SemanticModel::NewCharValue(char iv) {
+    return new ConstChar(iv);
+}
+
 // Создание целочисленной константы
 Const* SemanticModel::NewIntValue(int iv) {
     return new ConstInt(iv);
@@ -87,6 +92,16 @@ Const* SemanticModel::NewFloatValue(double fv) {
 // Формирование объявление полученной обобщенной константы
 Declaration* SemanticModel::newDeclarationConst(Const* c) {
     return new DeclarationConst(c);
+}
+
+// Формирование объявления сигнальной константы
+Declaration* SemanticModel::newDeclarationConstSignal() {
+    return new DeclarationConst(NewSignalValue());
+}
+
+// Формирование объявления символьной константы
+Declaration* SemanticModel::newDeclarationConstChar(char v) {
+    return new DeclarationConst(NewCharValue(v));
 }
 
 // Формирование объявления целочисленной константы

@@ -1,3 +1,0 @@
-FuncAdd01 << func x@(int,int) -> int {
-    x:+:return;
-}

@@ -1,3 +1,0 @@
-FuncSenSignal01 << func -> signal {
-    !:return
-}

@@ -10,7 +10,6 @@ using namespace boost::program_options;
 
 #include "smodel.h"
 
-
 // Создатель семантической модели
 class SemanticModel;
 SemanticModel* GetSemanticModel();
@@ -29,7 +28,7 @@ int main(int argc, const char *argv[])
 {
     // Распознавание опций командной строки, обеспечивающих выбор
     // каталога проекта и компилируемой сущности (артефакта)
-    std::string packageDir;     // каталог пакета содержащего компилируемую сущность
+    std::string packageDir; // каталог пакета содержащего компилируемую сущность
     std::string entityName;         // компилируемая сущность
 
     try {
@@ -37,9 +36,8 @@ int main(int argc, const char *argv[])
         desc.add_options()
             ("help,h", "Help screen")
             ("package,p", value(&packageDir), "Package")
-/*            ("entity,e", value<std::vector<std::string>>()->
-                multitoken()->zero_tokens()->composing(), "Compiled entity");
-*/
+            // ("entity,e", value<std::vector<std::string>>()->
+            //     multitoken()->zero_tokens()->composing(), "Compiled entity");
             ("entity,e", value(&entityName), "Compiled entity");
 
         // Ограничение позиционных аргументов одним (возможны без опции)
@@ -67,11 +65,9 @@ int main(int argc, const char *argv[])
     
         // Вывод непозиционных параметров (в нашем случае он один
         if (vm.count("entity")) {
-            /*
-            to_cout(vm["entity"].as<std::vector<std::string>>());
-            std::cout << "Entity is: " << vm["entity"].as<std::vector<std::string>>()[0] << "\n";
-            */
-            std::cout << "Entity is: " << entityName << "\n";
+            // to_cout(vm["entity"].as<std::vector<std::string>>());
+            // std::cout << "Entity is: " << vm["entity"].as<std::vector<std::string>>()[0] << "\n";
+            std::cout << "Entity is: " << entityName << "\n";  
         }
 
         if (vm.count("package")) {
@@ -126,7 +122,8 @@ int main(int argc, const char *argv[])
         std::cout << "Error in Export" << std::endl;
         return 3;
     }
-    if(Compile(artefact, sm)) {
+    bool compileResult = Compile(artefact, sm);
+    if(compileResult) {
         // Повторное открытие файла экспорта для записи результата компиляции артефакта
         // и перезаписи экспортируемых объявлений
         std::ofstream toExportStream(exportName);
@@ -138,5 +135,5 @@ int main(int argc, const char *argv[])
         toExportStream.close();
     }
     
-    return 0;
+    return !compileResult;
 }
