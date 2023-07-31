@@ -32,6 +32,12 @@ int main(int argc, const char *argv[])
     std::string entityName;         // компилируемая сущность
 
     try {
+        std::cout << "argc = " << argc << "\n";
+        for(int i = 0; i < argc; ++i) {
+            std::cout << "  " << argv[i];
+        }
+        std::cout << "\n";
+
         options_description desc{"Options"};
         desc.add_options()
             ("help,h", "Help screen")

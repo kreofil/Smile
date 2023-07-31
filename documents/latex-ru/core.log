@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Arch Linux) (preloaded format=pdflatex 2023.7.11)  16 JUL 2023 13:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Arch Linux) (preloaded format=pdflatex 2023.7.28)  30 JUL 2023 23:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1507,41 +1507,42 @@ Overfull \hbox (0.85469pt too wide) in paragraph at lines 10--11
 
 
 ]
-Overfull \hbox (1.19266pt too wide) in paragraph at lines 20--21
+Overfull \hbox (1.19266pt too wide) in paragraph at lines 22--23
 []\T2A/cmr/m/up/12 »спользование тек-сто-во-го пред-став-ле-ни€ па-рал-лель-ных
  про-грамм св€-за-но с труд-
  []
 
 
-Overfull \hbox (47.35371pt too wide) in paragraph at lines 22--23
+Overfull \hbox (47.35371pt too wide) in paragraph at lines 24--25
 []\T2A/cmr/m/up/12 ќтличительной осо-бен-но-стью —“ћ‘ѕѕ¬ €в-л€-ет-с€ ори-ен-та-
 ци€ программо-формирующих
  []
 
 [11]
 LaTeX Font Info:    Font shape `OML/cmr/m/up' in size <14.4> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 32.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 34.
 LaTeX Font Info:    Font shape `OML/cmr/m/up' in size <7> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 32.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 34.
 LaTeX Font Info:    Font shape `OMS/cmr/m/up' in size <14.4> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 32.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 34.
 LaTeX Font Info:    Font shape `OMS/cmr/m/up' in size <7> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 32.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 34.
 
-Overfull \hbox (4.77924pt too wide) in paragraph at lines 57--58
+Overfull \hbox (4.77924pt too wide) in paragraph at lines 59--60
 []\T2A/cmr/bx/n/12 ќператоры ин-тер-пре-та-ции \T2A/cmr/m/up/12 пред-на-зна-че-
 ны дл€ опи-са-ни€ функ-ци-о-наль-ных пре-
  []
 
+[12]
 LaTeX Font Info:    Trying to load font information for T2A+cmtt on input line 
-59.
-(/usr/share/texmf-dist/tex/latex/cyrillic/t2acmtt.fd
+61.
+ (/usr/share/texmf-dist/tex/latex/cyrillic/t2acmtt.fd
 File: t2acmtt.fd 2001/08/11 v1.0a Computer Modern Cyrillic font definitions
-) [12] [13] [14] [15]
+) [13] [14] [15]
 [16]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\\' on input line 153.
+(hyperref)                removing `\\' on input line 155.
 
 [17] [18] [19] [20]) (./smile.tex [21]
 chapter 3.
@@ -1684,10 +1685,10 @@ Package rerunfilecheck Info: File `core.out' has not changed.
 ### simple group (level 1) entered at line 13 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 38112 strings out of 477459
- 770418 string characters out of 5832156
+ 38116 strings out of 477459
+ 770504 string characters out of 5832156
  1864388 words of memory out of 5000000
- 57475 multiletter control sequences out of 15000+600000
+ 57479 multiletter control sequences out of 15000+600000
  537533 words of font info for 87 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
  114i,9n,117p,10627b,894s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1710,7 +1711,7 @@ xmf-dist/fonts/type1/public/cm-super/sfsx1728.pfb></usr/share/texmf-dist/fonts/
 type1/public/cm-super/sfsx2488.pfb></usr/share/texmf-dist/fonts/type1/public/cm
 -super/sfti1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sftt1200
 .pfb>
-Output written on core.pdf (59 pages, 557845 bytes).
+Output written on core.pdf (59 pages, 558854 bytes).
 PDF statistics:
  815 PDF objects out of 1000 (max. 8388607)
  678 compressed objects within 7 object streams
