@@ -1,0 +1,8 @@
+# Tex intermediate files
+*.aux
+*.log
+*.out
+*.gz
+*.toc
+*.zip
+
