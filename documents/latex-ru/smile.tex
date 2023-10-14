@@ -296,20 +296,23 @@
 
 \begin{itemize}
 	\item \verb|ERROR| --- неидентифицируемая ошибка;
-	\item \verb|REALERROR| --- некорректное преобразование действительного числа;
-	\item \verb|INTERROR| --- некорректное преобразование целого числа;
-	\item \verb|ZERODIVIDE| --- деление на ноль;
-	\item \verb|INTERPRERROR| --- ошибка операции интерпретации;
-	\item \verb|BOUNDERROR| --- ошибка выхода за границы диапазона;
-	\item \verb|BASEFUNCERROR| --- неправильное использование предопределенной функции.
-	\item \verb|NOERROR| --- отсутствие ошибки
+	\item \verb|REAL_ERROR| --- некорректное преобразование действительного числа;
+	\item \verb|INT_ERROR| --- некорректное преобразование целого числа;
+	\item \verb|ZERODIVIDE_ERROR| --- деление на ноль;
+	\item \verb|INTERPR_ERROR| --- ошибка операции интерпретации;
+	\item \verb|BOUND_ERROR| --- ошибка выхода за границы диапазона;
+    \item \verb|EMPTY_ERROR| --- попытка обращения к опустевшему (завершенному) потоку;
+	\item \verb|BASEFUNC_ERROR| --- неправильное использование предопределенной функции;
+    \item \verb|SINGLE_ERROR| --- нарушение принципа единственного присваивания;
+	\item \verb|NO_ERROR| --- отсутствие ошибки.
 \end{itemize}
 
 Эти имена запрещается использовать в программе в другом контексте.
 
 \begin{verbatim}
-    константа_ошибки = ERROR | REALERROR | INTERROR | ZERODIVIDE |
-              INTERPRERROR | BOUNDERROR | BASEFUNCERROR | NOERROR.
+    константа_ошибки = ERROR | REAL_ERROR | INT_ERROR |
+            ZERODIVIDE_ERROR | INTERPR_ERROR | BOUND_ERROR |
+            EMPTY_ERROR | BASEFUNC_ERROR | SINGLE_ERROR | NO_ERROR.
 \end{verbatim}
 
 Значение \verb|NOERROR| формируется в том случае, если при получении результата вычислений необходимо вместо конкретного значения ошибки вернуть информацию о том, что ошибка отсутствует.
@@ -747,6 +750,12 @@
 
 
 \subsubsection{Тип <<Поток>>}
+
+Описание потока в языке программирования Smile определяется следующим синтаксисом:
+\begin{verbatim}
+    поток = имя_типа_элементов "<[]".
+\end{verbatim}
+
 
 \subsubsection{Тип Обобщение}
 
